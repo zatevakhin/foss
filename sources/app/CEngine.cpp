@@ -4,8 +4,6 @@
 #include "core/auxiliary/imgui.hpp"
 #include "core/resources/CRegistry.hpp"
 
-#include "core/auxiliary/strings.hpp"
-
 #include "core/shading/CShaderProgram.hpp"
 
 #include "app/input/CCameraListener.hpp"

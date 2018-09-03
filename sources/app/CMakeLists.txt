@@ -1,4 +1,4 @@
-add_subdirectory(components)
+
 add_subdirectory(entities)
 add_subdirectory(input)
 add_subdirectory(renderers)
@@ -13,7 +13,6 @@ target_link_libraries(foss.app
         app_shading
         app_entities_windows
 
-        core_auxiliary 
         core_shading
         core_resources
         core_textures
@@ -33,4 +32,5 @@ target_link_libraries(foss.app
         boost_system
         boost_filesystem
         assimp
+        fmt
     )

@@ -4,8 +4,10 @@
 #include "core/textures/CTexture2D.hpp"
 #include "nlohmann/json.hpp"
 #include "core/auxiliary/opengl.hpp"
-#include "core/auxiliary/strings.hpp"
 
+#include <fmt/core.h>
+#include <fmt/format.h>
+#include <iostream>
 #include <sstream>
 
 using json = nlohmann::json;
@@ -142,7 +144,7 @@ CTextureSharedPtr CResourceLoader::loadCubeMap(const fs::path& path, unsigned in
 
 //    if (cubeMapData["sizes"].find(size))
 //    {
-//        throw std::invalid_argument(aux::format("This cubemap not have size '%d'!", size));
+//        throw std::invalid_argument(fmt::format("This cubemap not have size '%d'!", size));
 //    }
 
     std::string type = cubeMapData.at("filetype").get<std::string>();
@@ -158,9 +160,9 @@ CTextureSharedPtr CResourceLoader::loadCubeMap(const fs::path& path, unsigned in
     );
 
     bool hasAlpha;
-    for (GLuint i = 0; i < cubeMapData["files"].get<int>(); ++i)
+    for (auto i = 0U; i < cubeMapData["files"].get<int>(); ++i)
     {
-        std::string file(aux::format("%s/%d.%d.png", path.native().c_str(), size, i + 1));
+        std::string file(fmt::format("{}/{}.{}.png", path.string(), size, i + 1));
 
         TSurfacePtr surface = loadImage(file.c_str(), hasAlpha);
         const GLenum pixelFormat = hasAlpha ? GL_RGBA : GL_RGB;

@@ -1,7 +1,6 @@
 
 #include "CTextureCubeMap.hpp"
 #include "core/resources/CResourceLoader.hpp"
-#include "core/auxiliary/strings.hpp"
 #include "core/auxiliary/opengl.hpp"
 
 

@@ -1,6 +1,3 @@
-//
-// Created by zatevaxin on 04.02.18.
-//
 
 #ifndef FOSS_IMGUI_HPP
 #define FOSS_IMGUI_HPP
