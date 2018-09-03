@@ -18,12 +18,10 @@ CInputEventManager::~CInputEventManager()
     }
 }
 
-
 void CInputEventManager::addListener(IEventListener * listener)
 {
     mListeners.push_back(listener);
 }
-
 
 void CInputEventManager::handle()
 {

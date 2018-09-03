@@ -23,24 +23,24 @@ constexpr double CAMERA_FAR    = 1000.0;
 constexpr double CAMERA_RADIANS_IN_PIXEL = 1.0 / 200.0;
 
 
-glm::vec3 getMoveDirection(const std::set<eCameraMoveDirection> & directions)
+glm::vec3 getMoveDirection(const std::set<ECameraMoveDirection> & directions)
 {
     glm::vec3 direction(0.f);
 
-    if (directions.count(eCameraMoveDirection::Forward))
+    if (directions.count(ECameraMoveDirection::eForward))
     {
         direction.z = +1.f;
     }
-    else if (directions.count(eCameraMoveDirection::Back))
+    else if (directions.count(ECameraMoveDirection::eBack))
     {
         direction.z = -1.f;
     }
 
-    if (directions.count(eCameraMoveDirection::Right))
+    if (directions.count(ECameraMoveDirection::eRight))
     {
         direction.x = -1.f;
     }
-    else if (directions.count(eCameraMoveDirection::Left))
+    else if (directions.count(ECameraMoveDirection::eLeft))
     {
         direction.x = +1.f;
     }
@@ -110,13 +110,13 @@ void CCamera::setMoveSpeed(double speed)
 }
 
 
-void CCamera::addMoveDirection(const eCameraMoveDirection& direction)
+void CCamera::addMoveDirection(const ECameraMoveDirection& direction)
 {
     mDirections.insert(direction);
 }
 
 
-void CCamera::removeMoveDirection(const eCameraMoveDirection& direction)
+void CCamera::removeMoveDirection(const ECameraMoveDirection& direction)
 {
     mDirections.erase(direction);
 }

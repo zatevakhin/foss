@@ -18,35 +18,26 @@ void CCubeMapRenderer::draw(SStaticModel3D & model)
         throw std::runtime_error("Cannot draw 3D model while no program set");
     }
 
+    // TODO: do something with this!!
     auto cubeMap = CRegistry::get<CTextureSharedPtr>("texture/skybox");
 
     mProgram->uniform("projection") = mProjection;
     mProgram->uniform("view") = mView;
 
     model.mGeometry->bind();
+    // TODO: and this!!
     cubeMap->bind();
 
     for (CStaticMesh3D & mesh : model.mMeshes)
     {
-        // applyModelView(mesh.mLocal);
         bindAttributes(mesh.mLayout);
         renderers::drawRangeElements(mesh.mLayout);
     }
 }
 
-
-// void CCubeMapRenderer::applyModelView(const glm::mat4 & local)
-// {
-    // const glm::mat4 worldMatrix = mView * mTransform * local;
-    // const glm::mat4 normalMatrix = glm::transpose(glm::inverse(worldMatrix));
-    // mProgram->uniform("position") = worldMatrix;
-    // mProgram->uniform("normal") = normalMatrix;
-    // mProgram->uniform("model") = local;
-// }
-
 void CCubeMapRenderer::bindAttributes(const geometry::SGeometryLayout & layout) const
 {
-    auto bind = [&](const char* attr, size_t offset, unsigned numComponents, bool needClamp) {
+    auto bind = [&](const char * attr, size_t offset, unsigned int numComponents, bool needClamp) {
         CVertexAttribute attrVar = mProgram->attribute(attr);
         if (offset == geometry::SGeometryLayout::UNSET)
         {

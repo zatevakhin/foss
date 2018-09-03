@@ -19,13 +19,6 @@
  * */
 class CChronometer
 {
-public:
-    /*!
-     * @brief The default time behind which must be executed frame
-     *
-     * this is a frame length in milliseconds.
-     * */
-    constexpr static unsigned long DEFAULT_FRAME_PERIOD = 16UL;
 
 public:
 
@@ -46,7 +39,7 @@ public:
      * @brief Stopping current thread if the passed time is less than \b framePeriod.
      * @param framePeriod - frame length in milliseconds.
      * */
-    void wait(const long& framePeriod = DEFAULT_FRAME_PERIOD);
+    void wait(const unsigned long & framePeriod);
 
 private:
     /*!

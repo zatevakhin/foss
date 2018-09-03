@@ -9,17 +9,17 @@
 #include <vector>
 
 
-enum class eBufferType
+enum class EBufferType
 {
-    Attributes, // GL_ARRAY_BUFFER
-    Indexes,    // GL_ELEMENT_ARRAY_BUFFER
+    eAttributes, // GL_ARRAY_BUFFER
+    eIndexes,    // GL_ELEMENT_ARRAY_BUFFER
 };
 
-enum class eBufferUsage
+enum class EBufferUsage
 {
-    StaticDraw,
-    DynamicDraw,
-    StreamDraw,
+    eStaticDraw,
+    eDynamicDraw,
+    eStreamDraw,
 };
 
 
@@ -27,10 +27,10 @@ enum class eBufferUsage
 class CBufferObject : private boost::noncopyable
 {
 public:
-    explicit CBufferObject(eBufferType type, eBufferUsage usage = eBufferUsage::StaticDraw);
+    explicit CBufferObject(EBufferType type, EBufferUsage usage = EBufferUsage::eStaticDraw);
     ~CBufferObject();
 
-    static void unbind(eBufferType type);
+    static void unbind(EBufferType type);
 
     void bind() const;
 
@@ -50,8 +50,8 @@ public:
 private:
     GLuint mId = 0;
 
-    eBufferType mType;
-    eBufferUsage mUsage;
+    EBufferType mType;
+    EBufferUsage mUsage;
 
 };
 

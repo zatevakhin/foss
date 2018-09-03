@@ -22,7 +22,7 @@ private:
     std::set<int> mAcceptable;
 
 private:
-    void onQuit(const CInputEvent& event);
+    void onQuit(const CInputEvent & event);
 };
 
 #endif //FOSS_APP_INPUT_CENGINELISTENER_HPP

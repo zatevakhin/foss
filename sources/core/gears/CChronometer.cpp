@@ -7,7 +7,6 @@ CChronometer::CChronometer()
 {
 }
 
-
 double CChronometer::getDelta()
 {
     auto t = std::chrono::system_clock::now();
@@ -17,8 +16,7 @@ double CChronometer::getDelta()
     return 0.001 * double(timePassed.count());
 };
 
-
-void CChronometer::wait(const long& framePeriod)
+void CChronometer::wait(const unsigned long & framePeriod)
 {
     auto t = mLastTimePoint + std::chrono::milliseconds(framePeriod);
     std::this_thread::sleep_until(t);

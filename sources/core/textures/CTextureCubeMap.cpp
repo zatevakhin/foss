@@ -36,10 +36,10 @@ void CTextureCubeMap::genMipMap()
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 }
 
-void CTextureCubeMap::setWrapMode(textures::eTextureWrapMode s, textures::eTextureWrapMode t, textures::eTextureWrapMode r)
+void CTextureCubeMap::setWrapMode(ETextureWrapMode s, ETextureWrapMode t, ETextureWrapMode r)
 {
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, textures::mapTextureWrapMode(s));
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, textures::mapTextureWrapMode(t));
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, textures::mapTextureWrapMode(r));
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, mapTextureWrapMode(s));
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, mapTextureWrapMode(t));
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, mapTextureWrapMode(r));
 }
 

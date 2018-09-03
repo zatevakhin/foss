@@ -1,11 +1,14 @@
+
 #ifndef FOSS_CORE_RESOURCES_AUXILIARY_HPP
 #define FOSS_CORE_RESOURCES_AUXILIARY_HPP
 
 #include <boost/filesystem/path.hpp>
 
+
 class CResourceLoader;
 struct SPhongMaterial;
-struct aiScene;
+
+struct aiScene; // from assimp
 
 
 using boost::filesystem::path;

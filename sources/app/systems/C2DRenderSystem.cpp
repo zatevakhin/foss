@@ -5,11 +5,9 @@
 
 void C2DRenderSystem::render(const glm::mat4 & view, const glm::mat4 & projection)
 {
-    for (const auto &entity : getEntities())
+    for (const auto & entity : getEntities())
     {
-        const auto &compponent = entity.getComponent<CWindowComponent>();
+        const auto & compponent = entity.getComponent<CWindowComponent>();
         compponent.mWindow->draw();
     }
 }
-
-

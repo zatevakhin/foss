@@ -7,8 +7,6 @@
 
 #include <anax/System.hpp>
 
-class CWindowComponent;
-
 
 class C2DRenderSystem
     : public anax::System<anax::Requires<CWindowComponent>>
@@ -17,6 +15,5 @@ class C2DRenderSystem
         C2DRenderSystem() = default;
         void render(const glm::mat4 & view, const glm::mat4 & projection);
 };
-
 
 #endif //FOSS_C2DRENDERSYSTEM_HPP

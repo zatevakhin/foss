@@ -2,11 +2,12 @@
 #ifndef FOSS_CINPUTEVENTMANAGER_HPP
 #define FOSS_CINPUTEVENTMANAGER_HPP
 
+#include "core/input/IEventListener.hpp"
+
 #include <SDL2/SDL_events.h>
 #include <vector>
 #include <map>
 
-#include "core/input/IEventListener.hpp"
 
 class CInputEventManager
 {

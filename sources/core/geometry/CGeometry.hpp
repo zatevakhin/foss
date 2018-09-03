@@ -12,9 +12,9 @@
 #include <memory>
 #include <vector>
 
+
 namespace geometry
 {
-
 
 template <class TV, class TI>
 struct SGeometryData

@@ -123,8 +123,8 @@ CTextureSharedPtr CResourceLoader::loadTexture(const fs::path& path)
 //    texture->ApplyTrilinearFilter();
 //    texture->ApplyMaxAnisotropy();
     texture->setWrapMode(
-        textures::eTextureWrapMode::Repeat,
-        textures::eTextureWrapMode::Repeat
+        textures::ETextureWrapMode::eRepeat,
+        textures::ETextureWrapMode::eRepeat
     );
     texture->setSurface(*surface);
     //    texture->GenerateMipmaps();
@@ -154,9 +154,9 @@ CTextureSharedPtr CResourceLoader::loadCubeMap(const fs::path& path, unsigned in
 
     texture->bind();
     texture->setWrapMode(
-        textures::eTextureWrapMode::ClampToEdge,
-        textures::eTextureWrapMode::ClampToEdge,
-        textures::eTextureWrapMode::ClampToEdge
+        textures::ETextureWrapMode::eClampToEdge,
+        textures::ETextureWrapMode::eClampToEdge,
+        textures::ETextureWrapMode::eClampToEdge
     );
 
     bool hasAlpha;

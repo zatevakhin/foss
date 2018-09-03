@@ -11,7 +11,6 @@ CEngineSettingsWindow::CEngineSettingsWindow(SEngineSettings & settings)
 
 CEngineSettingsWindow::~CEngineSettingsWindow()
 {
-
 }
 
 void CEngineSettingsWindow::draw()

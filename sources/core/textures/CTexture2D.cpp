@@ -57,10 +57,10 @@ void CTexture2D::setSurface(const SDL_Surface& surface)
 }
 
 
-void CTexture2D::setWrapMode(textures::eTextureWrapMode s, textures::eTextureWrapMode t)
+void CTexture2D::setWrapMode(ETextureWrapMode s, ETextureWrapMode t)
 {
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, textures::mapTextureWrapMode(s));
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, textures::mapTextureWrapMode(t));
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, mapTextureWrapMode(s));
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, mapTextureWrapMode(t));
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 }

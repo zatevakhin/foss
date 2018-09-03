@@ -11,13 +11,13 @@
 #include <set>
 
 
-enum class eCameraMoveDirection
+enum class ECameraMoveDirection
 {
-    Forward,
-    Back,
-    Left,
-    Right,
-    None
+    eForward,
+    eBack,
+    eLeft,
+    eRight,
+    eNone
 };
 
 class CCamera : private boost::noncopyable, public anax::Component
@@ -35,15 +35,15 @@ public:
 
     double getMoveSpeed() const;
     void setMoveSpeed(double speed);
-    void addMoveDirection(const eCameraMoveDirection& direction);
-    void removeMoveDirection(const eCameraMoveDirection& direction);
+    void addMoveDirection(const ECameraMoveDirection& direction);
+    void removeMoveDirection(const ECameraMoveDirection& direction);
     void mouseMove(const glm::ivec2& delta);
 
 private:
     bool mIsActive;
     double mSpeed;
 
-    std::set<eCameraMoveDirection> mDirections;
+    std::set<ECameraMoveDirection> mDirections;
     glm::vec3 mPosition;
     glm::vec3 mForward;
     glm::vec3 mUp;

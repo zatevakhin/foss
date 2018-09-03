@@ -6,16 +6,16 @@
 namespace
 {
 
-inline eCameraMoveDirection getDirecton(const CInputEvent& event)
+inline ECameraMoveDirection getDirecton(const CInputEvent& event)
 {
-    eCameraMoveDirection direction;
+    ECameraMoveDirection direction;
     switch (event.event().key.keysym.sym)
     {
-        case SDLK_w: direction = eCameraMoveDirection::Forward; break;
-        case SDLK_s: direction = eCameraMoveDirection::Back;    break;
-        case SDLK_a: direction = eCameraMoveDirection::Left;    break;
-        case SDLK_d: direction = eCameraMoveDirection::Right;   break;
-        default:     direction = eCameraMoveDirection::None;    break;
+        case SDLK_w: direction = ECameraMoveDirection::eForward; break;
+        case SDLK_s: direction = ECameraMoveDirection::eBack;    break;
+        case SDLK_a: direction = ECameraMoveDirection::eLeft;    break;
+        case SDLK_d: direction = ECameraMoveDirection::eRight;   break;
+        default:     direction = ECameraMoveDirection::eNone;    break;
     }
 
     return direction;
@@ -75,9 +75,9 @@ void CCameraListener::onMouseMotion(const CInputEvent& event)
 
 void CCameraListener::onKeyDown(const CInputEvent& event)
 {
-    eCameraMoveDirection direction = getDirecton(event);
+    ECameraMoveDirection direction = getDirecton(event);
 
-    if (eCameraMoveDirection::None != direction)
+    if (ECameraMoveDirection::eNone != direction)
     {
         mCamera->addMoveDirection(direction);
     }
@@ -85,9 +85,9 @@ void CCameraListener::onKeyDown(const CInputEvent& event)
 
 void CCameraListener::onKeyUp(const CInputEvent& event)
 {
-    eCameraMoveDirection direction = getDirecton(event);
+    ECameraMoveDirection direction = getDirecton(event);
 
-    if (eCameraMoveDirection::None != direction)
+    if (ECameraMoveDirection::eNone != direction)
     {
         mCamera->removeMoveDirection(direction);
     }

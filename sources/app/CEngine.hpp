@@ -33,13 +33,13 @@ public:
     void stop();
 
 private:
-    CMainWindow* mMainWindow;
+    CMainWindow * mMainWindow;
 
-    CChronometer* mChronometer;
+    CChronometer * mChronometer;
 
-    CInputEventManager* mInputManager;
+    CInputEventManager * mInputManager;
 
-    CResourceLoader* mResourceLoader;
+    CResourceLoader * mResourceLoader;
 
     CCamera mCamera;
 

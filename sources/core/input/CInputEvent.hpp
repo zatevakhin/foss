@@ -1,6 +1,3 @@
-//
-// Created by zatevaxin on 11.02.18.
-//
 
 #ifndef FOSS_CINPUTEVENT_HPP
 #define FOSS_CINPUTEVENT_HPP

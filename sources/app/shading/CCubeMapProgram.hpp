@@ -1,16 +1,15 @@
 
-
 #ifndef FOSS_CCUBEMAPPROGRAM_HPP
 #define FOSS_CCUBEMAPPROGRAM_HPP
 
 #include "core/shading/CShaderProgram.hpp"
 
-class CCubemapProgram : public CShaderProgram
+
+class CCubeMapProgram : public CShaderProgram
 {
 public:
-    CCubemapProgram();
-    ~CCubemapProgram() override = default;
+    CCubeMapProgram();
+    ~CCubeMapProgram() override = default;
 };
-
 
 #endif //FOSS_CCUBEMAPPROGRAM_HPP

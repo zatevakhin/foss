@@ -30,7 +30,7 @@ public:
      * @param key - Registry key
      * @param value - The value which can be any type
      * */
-    inline static void set(const std::string& key, boost::any value)
+    inline static void set(const std::string & key, boost::any value)
     {
         CRegistry::registry[key] = value;
     }
@@ -41,7 +41,7 @@ public:
      * @return The value which is stored in the registry
      * */
     template <typename Type>
-    inline static Type get(const std::string& key)
+    inline static Type get(const std::string & key)
     {
         return boost::any_cast<Type>(CRegistry::registry[key]);
     }

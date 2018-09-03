@@ -7,6 +7,7 @@
 class IShaderProgram;
 class SStaticModel3D;
 
+
 namespace geometry
 {
     class SGeometryLayout;

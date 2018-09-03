@@ -10,6 +10,9 @@
 #include <boost/noncopyable.hpp>
 
 
+using namespace textures;
+
+
 class CTexture2D :
     private boost::noncopyable,
     public ITexture
@@ -25,7 +28,7 @@ public:
     static void unbind();
 
     void setSurface(const SDL_Surface& surface);
-    void setWrapMode(textures::eTextureWrapMode s, textures::eTextureWrapMode t);
+    void setWrapMode(ETextureWrapMode s, ETextureWrapMode t);
 
     inline unsigned int id()
     {

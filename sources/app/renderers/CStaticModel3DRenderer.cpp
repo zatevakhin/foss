@@ -22,18 +22,19 @@
 
 void CStaticModel3DRenderer::use(IShaderProgram & program)
 {
-    mProgram = &program;
-    mProgram->use();
-    mProgram->uniform("diffuseMap")  = 0;  // GL_TEXTURE0
+    C3DRendererBase::use(program);
+    
+    mProgram->uniform("diffuseMap")  = 0; // GL_TEXTURE0
     mProgram->uniform("specularMap") = 1; // GL_TEXTURE1
     mProgram->uniform("emissiveMap") = 2; // GL_TEXTURE2
 
+    // TODO: Move light to scene config ??
     mProgram->uniform("light0.position") = glm::vec4(100.f, 100.f, 100.f, 0);
     mProgram->uniform("light0.diffuse") = glm::vec4(0.8f,  0.5f,  0.5f, 1);
     mProgram->uniform("light0.specular") = glm::vec4(0.3f, 0.3f, 0.3f, 1.0f);
 }
 
-void CStaticModel3DRenderer::draw(SStaticModel3D &model)
+void CStaticModel3DRenderer::draw(SStaticModel3D & model)
 {
     if (!mProgram)
     {
@@ -45,7 +46,7 @@ void CStaticModel3DRenderer::draw(SStaticModel3D &model)
 
     model.mGeometry->bind();
 
-    for (CStaticMesh3D &mesh : model.mMeshes)
+    for (CStaticMesh3D & mesh : model.mMeshes)
     {
         applyModelView(mesh.mLocal);
         applyMaterial(model.mMaterials[mesh.mMaterialIndex]);
@@ -54,7 +55,7 @@ void CStaticModel3DRenderer::draw(SStaticModel3D &model)
     }
 }
 
-void CStaticModel3DRenderer::applyModelView(const glm::mat4 &local)
+void CStaticModel3DRenderer::applyModelView(const glm::mat4 & local)
 {   
     const glm::mat4 worldMatrix = mView * mTransform * local;
     const glm::mat4 normalMatrix = glm::transpose(glm::inverse(worldMatrix));
@@ -79,7 +80,7 @@ void CStaticModel3DRenderer::applyMaterial(const SPhongMaterial & material) cons
 
 void CStaticModel3DRenderer::bindAttributes(const geometry::SGeometryLayout &layout) const
 {
-    auto bind = [&](const char* attr, size_t offset, unsigned numComponents, bool needClamp) {
+    auto bind = [&](const char * attr, size_t offset, unsigned int numComponents, bool needClamp) {
         CVertexAttribute attrVar = mProgram->attribute(attr);
         if (offset == geometry::SGeometryLayout::UNSET)
         {

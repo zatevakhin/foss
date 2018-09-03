@@ -11,11 +11,6 @@
 
 namespace fs = boost::filesystem;
 
-enum class eTextureType
-{
-    Texture2D,
-    TextureCubeMap
-};
 
 class CResourceLoader : private boost::noncopyable
 {
@@ -32,6 +27,7 @@ public:
     TSurfacePtr loadImage(const fs::path& path, bool & hasAlpha);
     CTextureSharedPtr loadTexture(const fs::path& path);
 
+// TODO: --v
 //private:
 //    CTextureCache mTextureCache;
 

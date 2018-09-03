@@ -4,7 +4,7 @@
 #include "CEngine.hpp"
 
 
-CEngineListener::CEngineListener(CEngine& engine)
+CEngineListener::CEngineListener(CEngine & engine)
     : mEngine(engine)
 {
     mAcceptable = {
@@ -17,7 +17,7 @@ bool CEngineListener::isAcceptable(int type)
     return mAcceptable.count(type) != 0;
 }
 
-void CEngineListener::accept(const CInputEvent& event)
+void CEngineListener::accept(const CInputEvent & event)
 {
     switch (event.event().type)
     {
@@ -29,7 +29,7 @@ void CEngineListener::accept(const CInputEvent& event)
     }
 }
 
-void CEngineListener::onQuit(const CInputEvent& event)
+void CEngineListener::onQuit(const CInputEvent & event)
 {
     mEngine.stop();
 }

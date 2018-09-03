@@ -111,9 +111,9 @@ namespace
 
         geometry::CGeometrySharedPtr makeGeometry() const
         {
-            auto pGeometry = std::make_shared<geometry::CGeometry>();
-            pGeometry->copy(mGeometry);
-            return pGeometry;
+            auto geometry = std::make_shared<geometry::CGeometry>();
+            geometry->copy(mGeometry);
+            return geometry;
         }
 
     private:

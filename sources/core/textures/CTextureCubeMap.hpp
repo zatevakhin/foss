@@ -13,6 +13,9 @@
 
 namespace fs = boost::filesystem;
 
+using namespace textures;
+
+
 class CResourceLoader;
 
 
@@ -28,7 +31,7 @@ public:
     static void unbind();
 
     void genMipMap();
-    void setWrapMode(textures::eTextureWrapMode s, textures::eTextureWrapMode t, textures::eTextureWrapMode r);
+    void setWrapMode(ETextureWrapMode s, ETextureWrapMode t, ETextureWrapMode r);
 
 private:
     unsigned int mTextureId;

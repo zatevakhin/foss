@@ -1,7 +1,10 @@
 
-#include <map>
 #include "CShaderProgram.hpp"
 #include "CVertexAttribute.hpp"
+#include "core/auxiliary/opengl.hpp"
+
+#include <map>
+
 
 namespace
 {
@@ -9,7 +12,7 @@ namespace
 class CShaderRaii
 {
 public:
-    explicit CShaderRaii(eShaderType type)
+    explicit CShaderRaii(EShaderType type)
     {
         mId = glCreateShader(CShaderRaii::mapShaderType(type));
     }
@@ -39,12 +42,12 @@ private:
 
 private:
 
-    static GLenum mapShaderType(eShaderType type)
+    static GLenum mapShaderType(EShaderType type)
     {
-        static const std::map<eShaderType, GLenum> typeMap = {
-            {eShaderType::Vertex,   GL_VERTEX_SHADER},
-            {eShaderType::Fragment, GL_FRAGMENT_SHADER},
-            {eShaderType::Geometry, GL_GEOMETRY_SHADER},
+        static const std::map<EShaderType, GLenum> typeMap = {
+            {EShaderType::eVertex,   GL_VERTEX_SHADER},
+            {EShaderType::eFragment, GL_FRAGMENT_SHADER},
+            {EShaderType::eGeometry, GL_GEOMETRY_SHADER},
             // other shader types
         };
 
@@ -91,7 +94,7 @@ CShaderProgram::~CShaderProgram()
 }
 
 
-void CShaderProgram::compile(const std::string& source, eShaderType type)
+void CShaderProgram::compile(const std::string& source, EShaderType type)
 {
     const GLchar *shaderSource[] = { source.c_str() };
     const GLint sourceLength[] = { GLint(source.size()) };

@@ -23,6 +23,7 @@ namespace
 
 }
 
+
 #define trc_warning(M, ...) fprintf(stdout, "[\e[1;33mW\e[0m] %s :: " M "\n", timestamp().c_str(), ##__VA_ARGS__)
 #define trc_error(M, ...)   fprintf(stdout, "[\e[1;31mE\e[0m] %s :: " M "\n", timestamp().c_str(), ##__VA_ARGS__)
 #define trc_log(M, ...)     fprintf(stdout, "[\e[1;32mL\e[0m] %s :: " M "\n", timestamp().c_str(), ##__VA_ARGS__)

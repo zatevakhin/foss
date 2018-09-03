@@ -2,8 +2,6 @@
 #ifndef FOSS_CSHADERPROGRAM_HPP
 #define FOSS_CSHADERPROGRAM_HPP
 
-#include "core/auxiliary/opengl.hpp"
-
 #include "CUniform.hpp"
 #include "IShaderProgram.hpp"
 
@@ -19,11 +17,11 @@ using CShaderProgramSharedPtr = std::shared_ptr<CShaderProgram>;
 using CShaderProgramWeakPtr = std::weak_ptr<CShaderProgram>;
 
 
-enum class eShaderType
+enum class EShaderType
 {
-    Vertex,
-    Fragment,
-    Geometry
+    eVertex,
+    eFragment,
+    eGeometry
 };
 
 
@@ -35,7 +33,7 @@ public:
     CShaderProgram();
     ~CShaderProgram();
 
-    void compile(const std::string& source, eShaderType type);
+    void compile(const std::string& source, EShaderType type);
 
     void link();
 
@@ -47,8 +45,8 @@ public:
     std::string validate();
 
 private:
-    GLuint mProgramId;
-    std::vector<GLuint> mShaders;
+    unsigned int mProgramId;
+    std::vector<unsigned int> mShaders;
 };
 
 #endif //FOSS_CSHADERPROGRAM_HPP

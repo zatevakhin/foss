@@ -13,5 +13,4 @@ public:
     CWindowPtr mWindow;
 };
 
-
 #endif //FOSS_COMPONENTS_CWINDOWCOMPONENT_HPP

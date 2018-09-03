@@ -60,7 +60,6 @@ void checkOpenGLErrors()
     }
 }
 
-
 void GLAPIENTRY DebugOutputCallback(
     GLenum /*source*/,
     GLenum type,
@@ -103,7 +102,6 @@ CEngine::CEngine()
 {
 }
 
-
 CEngine::~CEngine()
 {
     delete m2dRenderSystem;
@@ -111,7 +109,6 @@ CEngine::~CEngine()
     delete mChronometer;
     delete mMainWindow;
 }
-
 
 void CEngine::initialize()
 {
@@ -132,7 +129,6 @@ void CEngine::initialize()
 
     CRegistry::set("settings", &mSettings);
 }
-
 
 void CEngine::initializeVideo()
 {
@@ -162,7 +158,6 @@ void CEngine::initializeVideo()
     mMainWindow->createGlContext();
 }
 
-
 void CEngine::initializeInput()
 {
     trc_debug(" - input");
@@ -171,7 +166,6 @@ void CEngine::initializeInput()
     mInputManager->addListener(new CEngineListener(*this));
     mInputManager->addListener(new CCameraListener(&mCamera));
 }
-
 
 void CEngine::run()
 {
@@ -184,17 +178,15 @@ void CEngine::run()
     delete vao;
 }
 
-
 void CEngine::stop()
 {
     mIsRunning = false;
 }
 
-
 void CEngine::prepare()
 {
     trc_debug("prepare: ");
-    auto skyboxTexture = mResourceLoader->getCubeMap("resources/skybox/purple-nebula", 2048);
+    auto skyboxTexture = mResourceLoader->getCubeMap("resources/skybox/purple-nebula", 4096);
 
     CRegistry::set("camera", &mCamera);
 
@@ -291,7 +283,6 @@ void CEngine::prepare()
     mWorld.refresh();
 }
 
-
 void CEngine::loop()
 {
     mIsRunning = true;
@@ -325,35 +316,30 @@ void CEngine::loop()
         mMainWindow->swapBuffers();
 
         // WAIT
-        mChronometer->wait();
+        mChronometer->wait(16UL /* 1000 / 16 ≈ 60 FPS */);
     }
 }
-
 
 void CEngine::finalize()
 {
     ImGui_ImplSdlGL3_Shutdown();
 }
 
-
 void CEngine::onEvent()
 {
     mInputManager->handle();
 }
-
 
 void CEngine::onUpdate(double delta)
 {
     mCamera.update(delta);
 }
 
-
 void CEngine::onClear()
 {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
-
 
 void CEngine::onDraw()
 {
@@ -366,5 +352,3 @@ void CEngine::onDraw()
     m2dRenderSystem->render(view, projection);
     ImGui::Render();
 }
-
-

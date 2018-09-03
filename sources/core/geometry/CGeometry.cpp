@@ -6,8 +6,8 @@ namespace geometry
 {
 
 CGeometry::CGeometry()
-    : mVerticies(eBufferType::Attributes)
-    , mIndexes(eBufferType::Indexes)
+    : mVerticies(EBufferType::eAttributes)
+    , mIndexes(EBufferType::eIndexes)
 {
 }
 

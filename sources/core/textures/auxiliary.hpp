@@ -8,11 +8,11 @@
 namespace textures
 {
 
-enum class eTextureWrapMode
+enum class ETextureWrapMode
 {
-    Repeat,
-    MirroredRepeat,
-    ClampToEdge
+    eRepeat,
+    eMirroredRepeat,
+    eClampToEdge
 };
 
 enum class ETextureType
@@ -21,7 +21,7 @@ enum class ETextureType
     eTextureCubeMap
 };
 
-unsigned int mapTextureWrapMode(eTextureWrapMode mode);
+unsigned int mapTextureWrapMode(ETextureWrapMode mode);
 
 void tryBindTexture(const CTextureSharedPtr & texture, const unsigned int textureId, const ETextureType type);
 

@@ -7,22 +7,22 @@
 namespace
 {
 
-inline GLenum mapType(eBufferType type)
+inline GLenum mapType(EBufferType type)
 {
-    static const std::map<eBufferType, GLenum> bufferTypeMap = {
-        { eBufferType::Attributes, GL_ARRAY_BUFFER },
-        { eBufferType::Indexes,   GL_ELEMENT_ARRAY_BUFFER },
+    static const std::map<EBufferType, GLenum> bufferTypeMap = {
+        { EBufferType::eAttributes, GL_ARRAY_BUFFER },
+        { EBufferType::eIndexes,   GL_ELEMENT_ARRAY_BUFFER },
     };
 
     return bufferTypeMap.at(type);
 }
 
-inline GLenum mapType(eBufferUsage type)
+inline GLenum mapType(EBufferUsage type)
 {
-    static const std::map<eBufferUsage, GLenum> bufferUsageMap = {
-        { eBufferUsage::StaticDraw,  GL_STATIC_DRAW },
-        { eBufferUsage::DynamicDraw, GL_DYNAMIC_DRAW },
-        { eBufferUsage::StreamDraw,  GL_STREAM_DRAW },
+    static const std::map<EBufferUsage, GLenum> bufferUsageMap = {
+        { EBufferUsage::eStaticDraw,  GL_STATIC_DRAW },
+        { EBufferUsage::eDynamicDraw, GL_DYNAMIC_DRAW },
+        { EBufferUsage::eStreamDraw,  GL_STREAM_DRAW },
     };
 
     return bufferUsageMap.at(type);
@@ -31,7 +31,7 @@ inline GLenum mapType(eBufferUsage type)
 }
 
 
-CBufferObject::CBufferObject(eBufferType type, eBufferUsage usage)
+CBufferObject::CBufferObject(EBufferType type, EBufferUsage usage)
     : mType(type)
     , mUsage(usage)
 {
@@ -45,7 +45,7 @@ CBufferObject::~CBufferObject()
 }
 
 
-void CBufferObject::unbind(eBufferType type)
+void CBufferObject::unbind(EBufferType type)
 {
     glBindBuffer(mapType(type), 0);
 }
