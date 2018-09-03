@@ -1,0 +1,18 @@
+
+DOXYFILE_ENCODING = UTF-8
+
+OUTPUT_LANGUAGE   = English
+
+PROJECT_NAME      = "F.O.S.S."
+
+OUTPUT_DIRECTORY  = docs
+
+EXTRACT_PRIVATE   = YES
+
+GENERATE_LATEX    = NO
+
+RECURSIVE         = YES
+
+INPUT             = sources
+
+EXCLUDE_PATTERNS  = */external/*
