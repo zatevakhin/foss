@@ -2,6 +2,7 @@
 #define FOSS_CORE_RENDERERS_AUXILIARY_HPP
 
 #include "core/textures/ITexture.hpp"
+#include "core/geometry/SGeometryLayout.hpp"
 
 
 namespace geometry

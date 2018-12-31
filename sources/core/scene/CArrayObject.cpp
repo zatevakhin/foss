@@ -21,4 +21,3 @@ void CArrayObject::unbind()
 {
     glBindVertexArray(0U);
 }
- 

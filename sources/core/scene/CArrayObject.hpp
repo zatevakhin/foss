@@ -2,7 +2,7 @@
 #ifndef FOSS_CARRAYOBJECT_HPP
 #define FOSS_CARRAYOBJECT_HPP
 
-#include "auxiliary/opengl.hpp"
+#include "core/auxiliary/opengl.hpp"
 
 class CArrayObject
 {

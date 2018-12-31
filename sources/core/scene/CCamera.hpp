@@ -6,7 +6,6 @@
 #include "core/auxiliary/sdl.hpp"
 #include "core/auxiliary/glm.hpp"
 
-#include <boost/noncopyable.hpp>
 #include <anax/Component.hpp>
 #include <set>
 
@@ -20,12 +19,15 @@ enum class ECameraMoveDirection
     eNone
 };
 
-class CCamera : private boost::noncopyable, public anax::Component
+class CCamera
 {
 public:
     CCamera();
 
     ~CCamera() = default;
+
+    CCamera( const CCamera& ) = delete;
+    CCamera& operator=( const CCamera& ) = delete;
 
     void update(double delta);
 
@@ -35,18 +37,29 @@ public:
 
     double getMoveSpeed() const;
     void setMoveSpeed(double speed);
+
+    void setNearAndFar(const glm::dvec2 nf);
+    glm::dvec2 getNearAndFar() const;
+
+    void setFov(const double fov);
+    double getFov();
+
     void addMoveDirection(const ECameraMoveDirection& direction);
     void removeMoveDirection(const ECameraMoveDirection& direction);
     void mouseMove(const glm::ivec2& delta);
 
+
 private:
     bool mIsActive;
     double mSpeed;
+    double mFov;
 
     std::set<ECameraMoveDirection> mDirections;
     glm::vec3 mPosition;
     glm::vec3 mForward;
     glm::vec3 mUp;
+
+    glm::dvec2 mNearAndFar;
 };
 
 #endif //FOSS_CCAMERA_HPP

@@ -33,6 +33,7 @@ void CCubeMapRenderer::draw(SStaticModel3D & model)
         bindAttributes(mesh.mLayout);
         renderers::drawRangeElements(mesh.mLayout);
     }
+    model.mGeometry->unbind();
 }
 
 void CCubeMapRenderer::bindAttributes(const geometry::SGeometryLayout & layout) const

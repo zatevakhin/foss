@@ -14,6 +14,7 @@ public:
 
     virtual CUniform uniform(const char *name) = 0;
     virtual CVertexAttribute attribute(const char *name) = 0;
+    virtual unsigned int attributeId(const char *name) = 0;
 };
 
 

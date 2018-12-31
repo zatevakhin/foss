@@ -2,7 +2,7 @@
 #define FOSS_CORE_RENDERERS_C3DRENDERERBASE_HPP
 
 #include <glm/mat4x4.hpp>
-
+#include "core/geometry/SGeometryData.hpp"
 
 class IShaderProgram;
 class SStaticModel3D;

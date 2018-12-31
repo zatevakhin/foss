@@ -21,6 +21,8 @@
 
 #include "core/auxiliary/trace.hpp"
 
+#include "core/geometry/CSimpleGeometry.hpp"
+
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -91,23 +93,18 @@ void setupOpenGlDebug()
 
 
 CEngine::CEngine()
-    : mMainWindow(nullptr)
-    , mChronometer(nullptr)
+    : mResourceLoader(nullptr)
+    , mMainWindow(nullptr)
     , mInputManager(nullptr)
+    , m2dRenderSystem(nullptr)
+    , m3dRenderSystem(nullptr)
     , mIsRunning(false)
     , mIsDebugMode(false)
-    , m2dRenderSystem()
-    , m3dRenderSystem()
-    , mCamera()
 {
 }
 
 CEngine::~CEngine()
 {
-    delete m2dRenderSystem;
-    delete m3dRenderSystem;
-    delete mChronometer;
-    delete mMainWindow;
 }
 
 void CEngine::initialize()
@@ -121,7 +118,7 @@ void CEngine::initialize()
     mSettings.mDepthMask = false;
     mSettings.mDepthTest = true;
     mSettings.mPolygonOffsetFill = false;
-    
+
     mSettings.mPolygonMode.mIndex = 2;
     mSettings.mPolygonMode.mItems = {GL_POINT, GL_LINE, GL_FILL};
     mSettings.mPolygonMode.mItemsNames = {"GL_POINT", "GL_LINE", "GL_FILL"};
@@ -133,35 +130,33 @@ void CEngine::initialize()
 void CEngine::initializeVideo()
 {
     trc_debug(" - video");
-    mMainWindow = new CMainWindow(
-        "F.O.S.S. (0.1.2)",
-        {1366, 768},
-        SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN
-    );
 
-    CMainWindow::setGlAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-    CMainWindow::setGlAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+    mMainWindow.reset(new CMainWindow);
 
-    CMainWindow::setGlAttribute(
-        SDL_GL_CONTEXT_PROFILE_MASK,
-        SDL_GL_CONTEXT_PROFILE_CORE
-    );
+    mMainWindow->setSize({1920, 1080});
+    mMainWindow->setTitle("F.O.S.S (0.3.5)");
+    mMainWindow->setFlags(SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN);
 
-    CMainWindow::setGlAttribute(SDL_GL_DOUBLEBUFFER, 1);
-    CMainWindow::setGlAttribute(SDL_GL_DOUBLEBUFFER, 1);
-    CMainWindow::setGlAttribute(SDL_GL_STENCIL_SIZE, 8);
-    CMainWindow::setGlAttribute(SDL_GL_DEPTH_SIZE, 24);
+    std::map<SDL_GLattr, int> attributes = {
+        {SDL_GL_CONTEXT_MAJOR_VERSION, 3},
+        {SDL_GL_CONTEXT_MINOR_VERSION, 3},
+        {SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE},
+        {SDL_GL_DOUBLEBUFFER, 1},
+        {SDL_GL_DOUBLEBUFFER, 1},
+        {SDL_GL_STENCIL_SIZE, 8},
+        {SDL_GL_DEPTH_SIZE, 24},
+        {SDL_GL_MULTISAMPLEBUFFERS, 1},
+        {SDL_GL_MULTISAMPLESAMPLES, 4}
+    };
 
-    CMainWindow::setGlAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-    CMainWindow::setGlAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
-
-    mMainWindow->createGlContext();
+    mMainWindow->setAttributes(attributes);
+    mMainWindow->create();
 }
 
 void CEngine::initializeInput()
 {
     trc_debug(" - input");
-    mInputManager = new CInputEventManager;
+    mInputManager.reset(new CInputEventManager);
 
     mInputManager->addListener(new CEngineListener(*this));
     mInputManager->addListener(new CCameraListener(&mCamera));
@@ -169,13 +164,11 @@ void CEngine::initializeInput()
 
 void CEngine::run()
 {
-    auto * vao = new CArrayObject();
-    vao->bind();
+    initialize();
     prepare();
     loop();
     finalize();
-    vao->unbind();
-    delete vao;
+
 }
 
 void CEngine::stop()
@@ -186,12 +179,10 @@ void CEngine::stop()
 void CEngine::prepare()
 {
     trc_debug("prepare: ");
-    auto skyboxTexture = mResourceLoader->getCubeMap("resources/skybox/purple-nebula", 4096);
+    auto skyboxTexture = mResourceLoader->getCubeMap("resources/skybox/purple-nebula", 1024);
 
     CRegistry::set("camera", &mCamera);
-
-    CRegistry::set("texture/purple-nebula/4096", skyboxTexture);
-    CRegistry::set("texture/skybox", skyboxTexture);    
+    CRegistry::set("texture/skybox", skyboxTexture);
 
     ImGui_ImplSdlGL3_Init(SDL_GetWindowFromID(mMainWindow->getId()));
 
@@ -199,21 +190,22 @@ void CEngine::prepare()
     style.WindowRounding = 0;
     style.Colors[ImGuiCol_WindowBg] = ImVec4(0.00f, 0.00f, 0.00f, 0.30f);
 
-    m2dRenderSystem = new C2DRenderSystem();
-    m3dRenderSystem = new C3DRenderSystem();
+    m2dRenderSystem.reset(new C2DRenderSystem);
+    m3dRenderSystem.reset(new C3DRenderSystem);
 
     mWorld.addSystem(*m2dRenderSystem);
     mWorld.addSystem(*m3dRenderSystem);
 
     CStaticModelLoader modelLoader(*mResourceLoader);
     auto rockModel = modelLoader.load("resources/models/rock/rock.obj");
+    auto cubeModel = modelLoader.load("resources/models/cube/cube.obj");;
+    auto sphereModel = modelLoader.load("resources/models/sphere/sphere.obj");;
 
     anax::Entity sbx = mWorld.createEntity();
     auto &mc1 = sbx.addComponent<CMeshComponent>();
     auto &tc1 = sbx.addComponent<CTransform3DComponent>();
     mc1.mCategory = CMeshComponent::ECategory::eEnvironment;
-    mc1.mModel = modelLoader.load("resources/models/cube/cube.obj");
-
+    mc1.mModel = cubeModel;
     sbx.activate();
 
     anax::Entity rock = mWorld.createEntity();
@@ -221,7 +213,7 @@ void CEngine::prepare()
     auto &tc2 = rock.addComponent<CTransform3DComponent>();
 
     tc2.mScale = glm::vec3(0.1f);
-    tc2.mPosition = glm::vec3(1.f, 1.f, 1.f);
+    tc2.mPosition = glm::vec3(1.f, 1.f, 10.f);
     tc2.mOrientation = glm::quat(glm::vec3(0.f, 0.f, 0.f));
 
     mc2.mCategory = CMeshComponent::ECategory::eForeground;
@@ -236,7 +228,7 @@ void CEngine::prepare()
 
     anax::Entity settingsWindow = mWorld.createEntity();
     auto & sw = settingsWindow.addComponent<CWindowComponent>();
-    sw.mWindow = std::make_shared<CEngineSettingsWindow>(mSettings);
+    sw.mWindow = std::make_shared<CEngineSettingsWindow>(mSettings, mCamera);
     settingsWindow.activate();
 
 
@@ -246,7 +238,7 @@ void CEngine::prepare()
 
     modelMatrices = new glm::mat4[amount];
 
-    srand(SDL_GetTicks()); 
+    srand(SDL_GetTicks());
 
     float radius = 30.0;
     float offset = 20.f;
@@ -270,7 +262,7 @@ void CEngine::prepare()
 
 
         t.mPosition = glm::vec3(x, y, z);
-        
+
         float scale = (rand() % 8) / 100.0f + 0.005;
         t.mScale = glm::vec3(scale);
 
@@ -293,15 +285,13 @@ void CEngine::loop()
         setupOpenGlDebug();
     }
 
-    mChronometer = new CChronometer;
-
     while (mIsRunning)
     {
         // EVENTS
-         onEvent();
+        onEvent();
 
         // UPDATE
-        onUpdate(mChronometer->getDelta());
+        onUpdate(mChronometer.getDelta());
 
         // CLEAR
         onClear();
@@ -313,11 +303,16 @@ void CEngine::loop()
         checkOpenGLErrors();
 
         // SWAP BUFFERS
-        mMainWindow->swapBuffers();
+        onSwapBuffers();
 
         // WAIT
-        mChronometer->wait(16UL /* 1000 / 16 ≈ 60 FPS */);
+        mChronometer.wait(16UL /* 1000 / 16 ≈ 60 FPS */);
     }
+}
+
+void CEngine::onSwapBuffers()
+{
+    mMainWindow->swapBuffers();
 }
 
 void CEngine::finalize()

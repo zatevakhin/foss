@@ -1,34 +1,29 @@
 
-#include "CGeometry.hpp"
+#include "CSimpleGeometry.hpp"
 
 
 namespace geometry
 {
 
-CGeometry::CGeometry()
+CSimpleGeometry::CSimpleGeometry()
     : mVerticies(EBufferType::eAttributes)
     , mIndexes(EBufferType::eIndexes)
     , mVao()
 {
 }
 
-const CBoundingBox & CGeometry::getBoundingBox() const
-{
-    return mBBox;
-}
-
-void CGeometry::bind()
+void CSimpleGeometry::bind()
 {
     mVao.bind();
+
     mVerticies.bind();
     mIndexes.bind();
 }
 
 
-void CGeometry::unbind()
+void CSimpleGeometry::unbind()
 {
     mVao.unbind();
 }
-
 
 } // geometry

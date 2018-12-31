@@ -8,14 +8,14 @@
 namespace
 {
 
-constexpr glm::vec3 CAMERA_EYE = glm::vec3(0, 0, 1);
-constexpr glm::vec3 CAMERA_AT  = glm::vec3(0, 0, 0);
-constexpr glm::vec3 CAMERA_UP  = glm::vec3(0, 1, 0);
+glm::vec3 CAMERA_EYE = glm::vec3(0, 0, 1);
+glm::vec3 CAMERA_AT  = glm::vec3(0, 0, 0);
+glm::vec3 CAMERA_UP  = glm::vec3(0, 1, 0);
 
-constexpr glm::ivec2 CAMERA_SIZE  = glm::ivec2(1366, 768);
+glm::ivec2 VIEW_PORT  = glm::ivec2(1920, 1080);
 
 constexpr double CAMERA_DEFAULT_SPEED  = 1.0;
-constexpr double CAMERA_FOV    = 90.0;
+constexpr double CAMERA_FOV    = 70.0;
 
 constexpr double CAMERA_NEAR   = 0.1;
 constexpr double CAMERA_FAR    = 1000.0;
@@ -63,6 +63,8 @@ CCamera::CCamera()
     , mSpeed(CAMERA_DEFAULT_SPEED)
     , mIsActive(true)
     , mDirections()
+    , mFov(CAMERA_FOV)
+    , mNearAndFar(CAMERA_NEAR, CAMERA_FAR)
 {
     const glm::vec3 right = glm::normalize(glm::cross(CAMERA_UP, mForward));
     mUp = glm::normalize(glm::cross(mForward, right));
@@ -86,9 +88,9 @@ glm::mat4 CCamera::getView() const
 
 glm::mat4 CCamera::getProjection() const
 {
-    const double fov = glm::radians(CAMERA_FOV);
-    const double ratio = double(CAMERA_SIZE.x) / double(CAMERA_SIZE.y);
-    return glm::perspective(fov, ratio, CAMERA_NEAR, CAMERA_FAR);
+    const double fov = glm::radians(mFov);
+    const double ratio = static_cast<double>(VIEW_PORT.x) / static_cast<double>(VIEW_PORT.y);
+    return glm::perspective(fov, ratio, mNearAndFar.x, mNearAndFar.y);
 }
 
 
@@ -109,6 +111,26 @@ void CCamera::setMoveSpeed(double speed)
     mSpeed = speed;
 }
 
+
+void CCamera::setNearAndFar(const glm::dvec2 nf)
+{
+    mNearAndFar = nf;
+}
+
+glm::dvec2 CCamera::getNearAndFar() const
+{
+    return mNearAndFar;
+}
+
+void CCamera::setFov(const double fov)
+{
+    mFov = fov;
+}
+
+double CCamera::getFov()
+{
+    return mFov;
+}
 
 void CCamera::addMoveDirection(const ECameraMoveDirection& direction)
 {

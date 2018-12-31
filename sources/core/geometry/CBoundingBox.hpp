@@ -17,6 +17,12 @@ public:
     void unite(const CBoundingBox & other);
     void unite(const glm::vec3 & lowerBounds, const glm::vec3 & upperBounds);
 
+    template<typename T>
+    inline const CValueRange<T> & getBounds() const
+    {
+        return mBounds;
+    }
+
 private:
     CValueRange<glm::vec3> mBounds;
 };

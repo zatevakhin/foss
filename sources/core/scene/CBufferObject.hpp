@@ -42,7 +42,7 @@ public:
     inline void copy(const std::vector<T> &array)
     {
         const size_t size = sizeof(T) * array.size();
-        this->copy(array.data(), size);
+        copy(array.data(), size);
     }
 
     size_t getSize() const;

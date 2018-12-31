@@ -1,5 +1,6 @@
 
 #include "CBufferObject.hpp"
+#include "core/auxiliary/trace.hpp"
 
 #include <map>
 
@@ -36,11 +37,13 @@ CBufferObject::CBufferObject(EBufferType type, EBufferUsage usage)
     , mUsage(usage)
 {
     glGenBuffers(1, &mId);
+    trc_debug("ctor: CBufferObject(%u)", mId);
 }
 
 
 CBufferObject::~CBufferObject()
 {
+    trc_debug("dtor: CBufferObject(%u)", mId);
     glDeleteBuffers(1, &mId);
 }
 

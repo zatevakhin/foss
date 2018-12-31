@@ -7,7 +7,7 @@
 #include <anax/Component.hpp>
 
 
-class CTransform3DComponent 
+class CTransform3DComponent
     : public anax::Component
     , public CTransform3D
 {

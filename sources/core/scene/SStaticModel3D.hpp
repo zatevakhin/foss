@@ -3,6 +3,7 @@
 #define FOSS_SSTATICMODEL3D_HPP
 
 #include "core/geometry/CGeometry.hpp"
+#include "core/geometry/SGeometryLayout.hpp"
 #include "core/resources/SPhongMaterial.hpp"
 #include "core/auxiliary/glm.hpp"
 
@@ -22,6 +23,10 @@ public:
 
 struct SStaticModel3D
 {
+    SStaticModel3D()
+    {
+    }
+
     std::vector<SPhongMaterial>  mMaterials;
     std::vector<CStaticMesh3D>   mMeshes;
     geometry::CGeometrySharedPtr mGeometry;

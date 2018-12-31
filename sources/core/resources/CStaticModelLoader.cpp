@@ -3,6 +3,7 @@
 #include "CStaticModelLoader.hpp"
 #include "core/geometry/auxiliary.hpp"
 #include "core/resources/auxiliary.hpp"
+#include "core/auxiliary/trace.hpp"
 
 #include <assimp/scene.h>
 #include <assimp/types.h>
@@ -87,7 +88,7 @@ namespace
             const auto meshNo = unsigned(mMeshes.size());
             CStaticMesh3D mesh3d;
             mesh3d.mMaterialIndex = mesh.mMaterialIndex;
-            
+
             try
             {
                 mesh3d.mLocal = mMeshTransforms.at(meshNo);
@@ -120,8 +121,8 @@ namespace
 
         static geometry::CBoundingBox getNodeBBox(const aiScene & scene, const aiNode & node)
         {
-            glm::vec3 lowerBound(+1e10f);
-            glm::vec3 upperBound(-1e10f);
+            glm::vec3 lowerBound(0);
+            glm::vec3 upperBound(0);
 
             for (unsigned mi = 0; mi < node.mNumMeshes; ++mi)
             {
@@ -130,7 +131,7 @@ namespace
                 for (unsigned vi = 0; vi < mesh->mNumVertices; ++vi)
                 {
                     const aiVector3D aiVertex = mesh->mVertices[vi];
-                    const glm::vec3 vertex = glm::make_vec3(&aiVertex.x);
+                    const glm::vec3 vertex = glm::vec3(aiVertex.x, aiVertex.y, aiVertex.z);
                     lowerBound = glm::min(lowerBound, vertex);
                     upperBound = glm::max(upperBound, vertex);
                 }
@@ -275,6 +276,7 @@ SStaticModel3DPtr CStaticModelLoader::load(const boost::filesystem::path &path)
     auto model = std::make_shared<SStaticModel3D>();
     model->mMeshes = accumulator.takeMeshes();
     model->mGeometry = accumulator.makeGeometry();
+
     resources::loadMaterials(
         absPath.parent_path(),
         mResourceLoader,

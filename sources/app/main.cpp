@@ -9,7 +9,6 @@ int main()
     try
     {
         CEngine engine;
-        engine.initialize();
         engine.run();
     }
     catch (const std::exception& e)

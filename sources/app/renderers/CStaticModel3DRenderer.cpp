@@ -14,16 +14,41 @@
 #include "core/auxiliary/glm.hpp"
 #include "core/auxiliary/trace.hpp"
 
+#include "app/shading/C3DModelProgram.hpp"
+#include "core/geometry/CSimpleGeometry.hpp"
+
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <stdexcept>
 #include <iostream>
 
 
+namespace
+{
+
+    void attributeAction(const char * attr, size_t offset, unsigned int numComponents, bool needClamp, size_t layoutOffset, size_t stride, IShaderProgram& program)
+    {
+        CVertexAttribute attrVar = program.attribute(attr);
+        if (offset == geometry::SGeometryLayout::UNSET)
+        {
+            attrVar.disablePointer();
+        }
+        else
+        {
+            const auto bytesOffset = size_t(layoutOffset + unsigned(offset));
+            const auto bytesStride = size_t(stride);
+            attrVar.enablePointer();
+            attrVar.setFloatsOffset(bytesOffset, bytesStride, numComponents, needClamp);
+        }
+    };
+
+}
+
+
 void CStaticModel3DRenderer::use(IShaderProgram & program)
 {
     C3DRendererBase::use(program);
-    
+
     mProgram->uniform("diffuseMap")  = 0; // GL_TEXTURE0
     mProgram->uniform("specularMap") = 1; // GL_TEXTURE1
     mProgram->uniform("emissiveMap") = 2; // GL_TEXTURE2
@@ -53,10 +78,11 @@ void CStaticModel3DRenderer::draw(SStaticModel3D & model)
         bindAttributes(mesh.mLayout);
         renderers::drawRangeElements(mesh.mLayout);
     }
+    model.mGeometry->unbind();
 }
 
 void CStaticModel3DRenderer::applyModelView(const glm::mat4 & local)
-{   
+{
     const glm::mat4 worldMatrix = mView * mTransform * local;
     const glm::mat4 normalMatrix = glm::transpose(glm::inverse(worldMatrix));
 
@@ -65,7 +91,7 @@ void CStaticModel3DRenderer::applyModelView(const glm::mat4 & local)
 }
 
 void CStaticModel3DRenderer::applyMaterial(const SPhongMaterial & material) const
-{   
+{
     mProgram->uniform("material.shininess") = material.mShininess;
     mProgram->uniform("material.diffuse") = material.mDiffuseColor;
     mProgram->uniform("material.specular") = material.mSpecularColor;
@@ -80,22 +106,7 @@ void CStaticModel3DRenderer::applyMaterial(const SPhongMaterial & material) cons
 
 void CStaticModel3DRenderer::bindAttributes(const geometry::SGeometryLayout &layout) const
 {
-    auto bind = [&](const char * attr, size_t offset, unsigned int numComponents, bool needClamp) {
-        CVertexAttribute attrVar = mProgram->attribute(attr);
-        if (offset == geometry::SGeometryLayout::UNSET)
-        {
-            attrVar.disablePointer();
-        }
-        else
-        {
-            const auto bytesOffset = size_t(layout.mBaseVertexOffset + unsigned(offset));
-            const auto bytesStride = size_t(layout.mVertexSize);
-            attrVar.enablePointer();
-            attrVar.setFloatsOffset(bytesOffset, bytesStride, numComponents, needClamp);
-        }
-    };
-
-    bind("vertex", layout.mPosition3D, 3, false);
-    bind("normal", layout.mNormal, 3, false);
-    bind("textureUV", layout.mTexCoord2D, 2, false);
+    attributeAction("vertex", layout.mPosition3D, 3, false, layout.mBaseVertexOffset, layout.mVertexSize, *mProgram);
+    attributeAction("normal", layout.mNormal, 3, false, layout.mBaseVertexOffset, layout.mVertexSize, *mProgram);
+    attributeAction("textureUV", layout.mTexCoord2D, 2, false, layout.mBaseVertexOffset, layout.mVertexSize, *mProgram);
 }

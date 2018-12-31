@@ -12,6 +12,7 @@
 #include "SEngineSettings.hpp"
 
 #include <anax/anax.hpp>
+#include <memory>
 #include <vector>
 
 class CResourceLoader;
@@ -23,37 +24,14 @@ public:
     CEngine();
     ~CEngine();
 
-    void initialize();
-
-    void initializeVideo();
-
-    void initializeInput();
-
     void run();
     void stop();
 
 private:
-    CMainWindow * mMainWindow;
+    void initialize();
+    void initializeVideo();
+    void initializeInput();
 
-    CChronometer * mChronometer;
-
-    CInputEventManager * mInputManager;
-
-    CResourceLoader * mResourceLoader;
-
-    CCamera mCamera;
-
-    anax::World mWorld;
-
-    C2DRenderSystem * m2dRenderSystem;
-    C3DRenderSystem * m3dRenderSystem;
-
-    SEngineSettings mSettings;
-
-    bool mIsRunning;
-    bool mIsDebugMode;
-
-private:
     void prepare();
 
     void loop();
@@ -67,7 +45,26 @@ private:
     void onClear();
 
     void onDraw();
+    void onSwapBuffers();
 
+private:
+    CChronometer mChronometer;
+
+    CCamera mCamera;
+
+    anax::World mWorld;
+
+    SEngineSettings mSettings;
+
+    std::unique_ptr<CMainWindow> mMainWindow;
+    std::unique_ptr<CInputEventManager> mInputManager;
+    std::unique_ptr<CResourceLoader> mResourceLoader;
+    std::unique_ptr<C2DRenderSystem> m2dRenderSystem;
+    std::unique_ptr<C3DRenderSystem> m3dRenderSystem;
+
+
+    bool mIsRunning;
+    bool mIsDebugMode;
 };
 
 #endif //FOSS_CENGINE_HPP

@@ -12,12 +12,12 @@ using CTextureWeakPtr = std::weak_ptr<ITexture>;
 class ITexture
 {
 public:
-    
+
     virtual ~ITexture() = default;
 
     /**
-     * @brief 
-     * 
+     * @brief
+     *
      */
     virtual void bind() const = 0;
 };

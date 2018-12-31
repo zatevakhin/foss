@@ -41,6 +41,7 @@ public:
 
     CUniform uniform(const char *name) override;
     CVertexAttribute attribute(const char *name) override;
+    unsigned int attributeId(const char *name) override;
 
     std::string validate();
 

@@ -14,6 +14,7 @@
 #include "core/auxiliary/sdl.hpp"
 
 #include <memory>
+#include <map>
 
 
 /*!
@@ -29,18 +30,20 @@ public:
      * @param size - Window size
      * @param flags - Window flags which is specify window type
      * */
-    CMainWindow(const std::string& title,
-                const glm::ivec2& size,const Uint32& flags);
+    CMainWindow();
 
     /*!
      * @brief Destructor closes SDL2 OpenGL context and delete SDL2 window
      * */
     ~CMainWindow();
 
-    /*!
-     * @brief Recreates or create new OpenGL context using setted OpenGL attributes
-     * */
-    void createGlContext();
+    void setTitle(const std::string & value);
+
+    void setSize(const glm::ivec2 & value);
+
+    void setFlags(const Uint32 & value);
+
+    void create();
 
     /*!
      * @brief Swap OpenGL window buffers
@@ -53,12 +56,14 @@ public:
      * */
     Uint32 getId() const;
 
+    const glm::ivec2 & getSize() const;
+
     /*!
      * @brief Set SDL2 window attribute value
      * @param attribute - SDL2 attribute
      * @param value - value of attribute
      * */
-    static void setGlAttribute(const SDL_GLattr& attribute, const int& value);
+    void setAttributes(std::map<SDL_GLattr, int> & attributes);
 
 private:
     /*!
@@ -70,6 +75,14 @@ private:
      * @brief An handle used for access to the OpenGL
      * */
     SDL_GLContext mGlContext;
+
+    std::map<SDL_GLattr, int> mAttributes;
+
+    std::string mTitle;
+
+    glm::ivec2 mSize;
+
+    Uint32 mFlags;
 };
 
 #endif //FOSS_CORE_WINDOW_CMAINWINDOW_HPP

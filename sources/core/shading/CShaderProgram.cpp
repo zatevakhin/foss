@@ -164,3 +164,8 @@ CVertexAttribute CShaderProgram::attribute(const char *name)
 {
     return CVertexAttribute(glGetAttribLocation(mProgramId, name));
 }
+
+unsigned int CShaderProgram::attributeId(const char *name)
+{
+    return glGetAttribLocation(mProgramId, name);
+}

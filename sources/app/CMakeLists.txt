@@ -17,14 +17,14 @@ target_link_libraries(foss.app
         core_resources
         core_textures
         core_renderers
-        core_geometry 
+        core_geometry
         core_input
         core_scene
-        core_gears 
+        core_gears
         core_window
 
         anax
-        imgui 
+        imgui
 
         GL
         SDL2
