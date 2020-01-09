@@ -98,6 +98,8 @@ CEngine::CEngine()
     , mInputManager(nullptr)
     , m2dRenderSystem(nullptr)
     , m3dRenderSystem(nullptr)
+    , mRotationUpdateSystem(nullptr)
+    , mCullingSystem(nullptr)
     , mIsRunning(false)
     , mIsDebugMode(false)
 {
@@ -179,7 +181,7 @@ void CEngine::stop()
 void CEngine::prepare()
 {
     trc_debug("prepare: ");
-    auto skyboxTexture = mResourceLoader->getCubeMap("resources/skybox/purple-nebula", 1024);
+    auto skyboxTexture = mResourceLoader->getCubeMap("resources/skybox/purple-nebula", 1024*4);
 
     CRegistry::set("camera", &mCamera);
     CRegistry::set("texture/skybox", skyboxTexture);
@@ -192,9 +194,13 @@ void CEngine::prepare()
 
     m2dRenderSystem.reset(new C2DRenderSystem);
     m3dRenderSystem.reset(new C3DRenderSystem);
+    mRotationUpdateSystem.reset(new CRotationUpdateSystem);
+    mCullingSystem.reset(new CCullingSystem);
 
     mWorld.addSystem(*m2dRenderSystem);
     mWorld.addSystem(*m3dRenderSystem);
+    mWorld.addSystem(*mRotationUpdateSystem);
+    mWorld.addSystem(*mCullingSystem);
 
     CStaticModelLoader modelLoader(*mResourceLoader);
     auto rockModel = modelLoader.load("resources/models/rock/rock.obj");
@@ -203,13 +209,17 @@ void CEngine::prepare()
 
     anax::Entity sbx = mWorld.createEntity();
     auto &mc1 = sbx.addComponent<CMeshComponent>();
+    auto &dc1 = sbx.addComponent<CDrawableComponent>();
     auto &tc1 = sbx.addComponent<CTransform3DComponent>();
+
     mc1.mCategory = CMeshComponent::ECategory::eEnvironment;
     mc1.mModel = cubeModel;
+    dc1.isInCameraView = true;
     sbx.activate();
 
     anax::Entity rock = mWorld.createEntity();
     auto &mc2 = rock.addComponent<CMeshComponent>();
+    auto &dc2 = rock.addComponent<CDrawableComponent>();
     auto &tc2 = rock.addComponent<CTransform3DComponent>();
 
     tc2.mScale = glm::vec3(0.1f);
@@ -218,6 +228,7 @@ void CEngine::prepare()
 
     mc2.mCategory = CMeshComponent::ECategory::eForeground;
     mc2.mModel = rockModel;
+    dc2.isInCameraView = true;
     rock.activate();
 
 
@@ -240,15 +251,17 @@ void CEngine::prepare()
 
     srand(SDL_GetTicks());
 
-    float radius = 30.0;
-    float offset = 20.f;
+    float radius = 50.0;
+    float offset = 10.f;
 
     for (unsigned int i = 0; i < amount; i++)  {
         anax::Entity entity = mWorld.createEntity();
 
         auto &m = entity.addComponent<CMeshComponent>();
+        auto &dc = entity.addComponent<CDrawableComponent>();
         m.mCategory = CMeshComponent::ECategory::eForeground;
         m.mModel = rockModel;
+        dc.isInCameraView = true;
 
         auto &t = entity.addComponent<CTransform3DComponent>();
 
@@ -256,7 +269,7 @@ void CEngine::prepare()
         float displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
         float x = sin(angle) * radius + displacement;
         displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
-        float y = displacement * 0.4f; 
+        float y = displacement * 0.4f;
         displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
         float z = cos(angle) * radius + displacement;
 
@@ -266,8 +279,9 @@ void CEngine::prepare()
         float scale = (rand() % 8) / 100.0f + 0.005;
         t.mScale = glm::vec3(scale);
 
-        float rotAngle = (rand() % 360);
-        t.mOrientation = glm::angleAxis(rotAngle, glm::vec3(0, 1, 0));
+        t.mOrientation = glm::angleAxis(static_cast<float>(rand() % 360), glm::vec3(0, 1, 0));
+        t.mOrientation = glm::rotate(t.mOrientation, static_cast<float>(rand() % 360), glm::vec3(1, 0, 0));
+        t.mOrientation = glm::rotate(t.mOrientation, static_cast<float>(rand() % 360), glm::vec3(0, 0, 1));
 
         entity.activate();
     }
@@ -327,6 +341,11 @@ void CEngine::onEvent()
 
 void CEngine::onUpdate(double delta)
 {
+    mCullingSystem->setProjectionMatrix(mCamera.getProjection());
+    mCullingSystem->setViewMatrix(mCamera.getView());
+
+    mCullingSystem->update(delta);
+    mRotationUpdateSystem->update(delta);
     mCamera.update(delta);
 }
 

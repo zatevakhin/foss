@@ -5,8 +5,10 @@
 #include "core/window/CMainWindow.hpp"
 #include "core/input/CInputEventManager.hpp"
 
+#include "app/systems/CRotationUpdateSystem.hpp"
 #include "app/systems/C3DRenderSystem.hpp"
 #include "app/systems/C2DRenderSystem.hpp"
+#include "app/systems/CCullingSystem.hpp"
 #include "core/scene/CCamera.hpp"
 
 #include "SEngineSettings.hpp"
@@ -61,6 +63,9 @@ private:
     std::unique_ptr<CResourceLoader> mResourceLoader;
     std::unique_ptr<C2DRenderSystem> m2dRenderSystem;
     std::unique_ptr<C3DRenderSystem> m3dRenderSystem;
+
+    std::unique_ptr<CRotationUpdateSystem> mRotationUpdateSystem;
+    std::unique_ptr<CCullingSystem> mCullingSystem;
 
 
     bool mIsRunning;

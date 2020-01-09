@@ -54,8 +54,8 @@ CBoundingBox3DRenderer::CBoundingBox3DRenderer()
 void CBoundingBox3DRenderer::draw(SStaticModel3D & model)
 {
     const auto & bounds = model.mGeometry->getBoundingBox().getBounds<glm::vec3>();
-    glm::vec3 size = glm::vec3(bounds.mMax.x-bounds.mMin.x, bounds.mMax.y-bounds.mMin.y, bounds.mMax.z-bounds.mMin.z);
-    glm::vec3 center = glm::vec3((bounds.mMin.x+bounds.mMax.x)/2, (bounds.mMin.y+bounds.mMax.y)/2, (bounds.mMin.z+bounds.mMax.z)/2);
+    glm::vec3 size = glm::vec3(bounds.mMax.x - bounds.mMin.x, bounds.mMax.y - bounds.mMin.y, bounds.mMax.z - bounds.mMin.z);
+    glm::vec3 center = glm::vec3((bounds.mMin.x + bounds.mMax.x) / 2, (bounds.mMin.y + bounds.mMax.y)/2, (bounds.mMin.z + bounds.mMax.z) / 2);
     glm::mat4 transform = glm::translate(glm::mat4(1), center) * glm::scale(glm::mat4(1), size);
 
     mProgram->uniform("projection") = mProjection;

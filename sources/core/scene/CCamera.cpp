@@ -15,7 +15,7 @@ glm::vec3 CAMERA_UP  = glm::vec3(0, 1, 0);
 glm::ivec2 VIEW_PORT  = glm::ivec2(1920, 1080);
 
 constexpr double CAMERA_DEFAULT_SPEED  = 1.0;
-constexpr double CAMERA_FOV    = 70.0;
+constexpr double CAMERA_FOV    = 90.0;
 
 constexpr double CAMERA_NEAR   = 0.1;
 constexpr double CAMERA_FAR    = 1000.0;
