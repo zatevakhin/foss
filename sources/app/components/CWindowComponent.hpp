@@ -3,11 +3,10 @@
 #define FOSS_COMPONENTS_CWINDOWCOMPONENT_HPP
 
 #include "app/entities/windows/IWindow.hpp"
+#include "ecs/Component.hpp"
 
-#include <anax/Component.hpp>
 
-
-class CWindowComponent: public anax::Component
+class CWindowComponent: public ecs::Component<CWindowComponent>
 {
 public:
     CWindowPtr mWindow;

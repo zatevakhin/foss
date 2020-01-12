@@ -2,12 +2,21 @@
 #include "C2DRenderSystem.hpp"
 #include "base/auxiliary/trace.hpp"
 
+#include "components/CWindowComponent.hpp"
+
+
+C2DRenderSystem::C2DRenderSystem(ecs::EntityManager &entityManager)
+    : mEntityManager(entityManager)
+{
+}
+
 
 void C2DRenderSystem::render(const glm::mat4 & view, const glm::mat4 & projection)
 {
-    for (const auto & entity : getEntities())
+    for (auto [entity, components] : mEntityManager.getEntitySet<CWindowComponent>())
     {
-        const auto & component = entity.getComponent<CWindowComponent>();
-        component.mWindow->draw();
+        auto [window] = components;
+
+        window.mWindow->draw();
     }
 }

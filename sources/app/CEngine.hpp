@@ -13,7 +13,7 @@
 
 #include "SEngineSettings.hpp"
 
-#include <anax/anax.hpp>
+#include "ecs/EntityManager.hpp"
 #include <memory>
 #include <vector>
 
@@ -51,22 +51,21 @@ private:
 
 private:
     CChronometer mChronometer;
-
     CCamera mCamera;
 
-    anax::World mWorld;
+    ecs::EntityManager mEntityManager;
 
     SEngineSettings mSettings;
 
     std::unique_ptr<CMainWindow> mMainWindow;
     std::unique_ptr<CInputEventManager> mInputManager;
     std::unique_ptr<CResourceLoader> mResourceLoader;
+
     std::unique_ptr<C2DRenderSystem> m2dRenderSystem;
     std::unique_ptr<C3DRenderSystem> m3dRenderSystem;
 
     std::unique_ptr<CRotationUpdateSystem> mRotationUpdateSystem;
     std::unique_ptr<CCullingSystem> mCullingSystem;
-
 
     bool mIsRunning;
     bool mIsDebugMode;

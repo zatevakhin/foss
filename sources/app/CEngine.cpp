@@ -11,6 +11,10 @@
 #include "base/resources/CResourceLoader.hpp"
 
 #include "components/CMeshComponent.hpp"
+#include "components/CWindowComponent.hpp"
+#include "components/CSkyboxComponent.hpp"
+#include "components/C3dObjectComponent.hpp"
+#include "components/CTransform3DComponent.hpp"
 
 #include "base/resources/CStaticModelLoader.hpp"
 
@@ -18,6 +22,7 @@
 
 #include "entities/windows/CEngineDebugWindow.hpp"
 #include "entities/windows/CEngineSettingsWindow.hpp"
+#include "entities/3d_objects/CInstancedAsteroidField.hpp"
 
 #include "base/auxiliary/trace.hpp"
 
@@ -181,10 +186,13 @@ void CEngine::stop()
 void CEngine::prepare()
 {
     trc_debug("prepare: ");
-    auto skyboxTexture = mResourceLoader->getCubeMap("resources/skybox/purple-nebula", 1024*4);
+    auto skyboxTexture = mResourceLoader->getCubeMap("resources/skybox/purple-nebula", 1024 * 4);
 
     CRegistry::set("camera", &mCamera);
     CRegistry::set("texture/skybox", skyboxTexture);
+
+    constexpr auto nbEntities = std::size_t(10000);
+    mEntityManager.reserve(nbEntities);
 
     ImGui_ImplSdlGL3_Init(SDL_GetWindowFromID(mMainWindow->getId()));
 
@@ -192,78 +200,65 @@ void CEngine::prepare()
     style.WindowRounding = 0;
     style.Colors[ImGuiCol_WindowBg] = ImVec4(0.00f, 0.00f, 0.00f, 0.30f);
 
-    m2dRenderSystem.reset(new C2DRenderSystem);
-    m3dRenderSystem.reset(new C3DRenderSystem);
-    mRotationUpdateSystem.reset(new CRotationUpdateSystem);
-    mCullingSystem.reset(new CCullingSystem);
+    m2dRenderSystem.reset(new C2DRenderSystem(mEntityManager));
+    m3dRenderSystem.reset(new C3DRenderSystem(mEntityManager));
+    mCullingSystem.reset(new CCullingSystem(mEntityManager));
+    mRotationUpdateSystem.reset(new CRotationUpdateSystem(mEntityManager));
 
-    mWorld.addSystem(*m2dRenderSystem);
-    mWorld.addSystem(*m3dRenderSystem);
-    mWorld.addSystem(*mRotationUpdateSystem);
-    mWorld.addSystem(*mCullingSystem);
 
     CStaticModelLoader modelLoader(*mResourceLoader);
     auto rockModel = modelLoader.load("resources/models/rock/rock.obj");
     auto cubeModel = modelLoader.load("resources/models/cube/cube.obj");;
-    auto sphereModel = modelLoader.load("resources/models/sphere/sphere.obj");;
 
-    anax::Entity sbx = mWorld.createEntity();
-    auto &mc1 = sbx.addComponent<CMeshComponent>();
-    auto &dc1 = sbx.addComponent<CDrawableComponent>();
-    auto &tc1 = sbx.addComponent<CTransform3DComponent>();
 
-    mc1.mCategory = CMeshComponent::ECategory::eEnvironment;
+    auto skybox = mEntityManager.createEntity();
+    auto &mc1 = mEntityManager.addComponent<CMeshComponent>(skybox);
+    mEntityManager.addComponent<CSkyboxComponent>(skybox);
+
     mc1.mModel = cubeModel;
-    dc1.isInCameraView = true;
-    sbx.activate();
 
-    anax::Entity rock = mWorld.createEntity();
-    auto &mc2 = rock.addComponent<CMeshComponent>();
-    auto &dc2 = rock.addComponent<CDrawableComponent>();
-    auto &tc2 = rock.addComponent<CTransform3DComponent>();
+    auto rock = mEntityManager.createEntity();
+    auto &mc2 = mEntityManager.addComponent<CMeshComponent>(rock);
+    auto &dc2 = mEntityManager.addComponent<C3dObjectComponent>(rock);
+    auto &tc2 = mEntityManager.addComponent<CTransform3DComponent>(rock);
 
     tc2.mScale = glm::vec3(0.1f);
     tc2.mPosition = glm::vec3(1.f, 1.f, 10.f);
     tc2.mOrientation = glm::quat(glm::vec3(0.f, 0.f, 0.f));
 
-    mc2.mCategory = CMeshComponent::ECategory::eForeground;
     mc2.mModel = rockModel;
     dc2.isInCameraView = true;
-    rock.activate();
 
+    auto debugWindow = mEntityManager.createEntity();
+    auto &window1 = mEntityManager.addComponent<CWindowComponent>(debugWindow);
+    window1.mWindow = std::make_shared<CEngineDebugWindow>(mCamera);
 
-    anax::Entity debugWindow = mWorld.createEntity();
-    auto & dw = debugWindow.addComponent<CWindowComponent>();
-    dw.mWindow = std::make_shared<CEngineDebugWindow>(mCamera);
-    debugWindow.activate();
+    auto settingsWindow = mEntityManager.createEntity();
+    auto &window2 = mEntityManager.addComponent<CWindowComponent>(settingsWindow);
+    window2.mWindow = std::make_shared<CEngineSettingsWindow>(mSettings, mCamera);
 
-    anax::Entity settingsWindow = mWorld.createEntity();
-    auto & sw = settingsWindow.addComponent<CWindowComponent>();
-    sw.mWindow = std::make_shared<CEngineSettingsWindow>(mSettings, mCamera);
-    settingsWindow.activate();
+    auto asteroids = new CInstancedAsteroidField(mEntityManager);
+    asteroids->setupModel(rockModel);
+    asteroids->setupTransform(glm::vec3(1.f, 1.f, 10.f), glm::vec3(1.f), glm::quat(glm::vec3(0.f, 0.f, 0.f)));
 
-
-    unsigned int amount = 1000;
-
-    glm::mat4* modelMatrices;
-
-    modelMatrices = new glm::mat4[amount];
 
     srand(SDL_GetTicks());
 
+    unsigned int amount = 1000;
     float radius = 50.0;
     float offset = 10.f;
+    
+    glm::mat4* modelMatrices = new glm::mat4[amount];
 
     for (unsigned int i = 0; i < amount; i++)  {
-        anax::Entity entity = mWorld.createEntity();
+        auto entity = mEntityManager.createEntity();
 
-        auto &m = entity.addComponent<CMeshComponent>();
-        auto &dc = entity.addComponent<CDrawableComponent>();
-        m.mCategory = CMeshComponent::ECategory::eForeground;
-        m.mModel = rockModel;
-        dc.isInCameraView = true;
+        auto &mesh = mEntityManager.addComponent<CMeshComponent>(entity);
+        auto &object = mEntityManager.addComponent<C3dObjectComponent>(entity);
+        auto &transform = mEntityManager.addComponent<CTransform3DComponent>(entity);
 
-        auto &t = entity.addComponent<CTransform3DComponent>();
+        mesh.mModel = rockModel;
+        object.isInCameraView = true;
 
         float angle = (float)i / (float)amount * 360.0f;
         float displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
@@ -273,20 +268,15 @@ void CEngine::prepare()
         displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
         float z = cos(angle) * radius + displacement;
 
-
-        t.mPosition = glm::vec3(x, y, z);
+        transform.mPosition = glm::vec3(x, y, z);
 
         float scale = (rand() % 8) / 100.0f + 0.005;
-        t.mScale = glm::vec3(scale);
+        transform.mScale = glm::vec3(scale);
 
-        t.mOrientation = glm::angleAxis(static_cast<float>(rand() % 360), glm::vec3(0, 1, 0));
-        t.mOrientation = glm::rotate(t.mOrientation, static_cast<float>(rand() % 360), glm::vec3(1, 0, 0));
-        t.mOrientation = glm::rotate(t.mOrientation, static_cast<float>(rand() % 360), glm::vec3(0, 0, 1));
-
-        entity.activate();
+        transform.mOrientation = glm::angleAxis(static_cast<float>(rand() % 360), glm::vec3(0, 1, 0));
+        transform.mOrientation = glm::rotate(transform.mOrientation, static_cast<float>(rand() % 360), glm::vec3(1, 0, 0));
+        transform.mOrientation = glm::rotate(transform.mOrientation, static_cast<float>(rand() % 360), glm::vec3(0, 0, 1));
     }
-
-    mWorld.refresh();
 }
 
 void CEngine::loop()
@@ -345,6 +335,7 @@ void CEngine::onUpdate(double delta)
     mCullingSystem->setViewMatrix(mCamera.getView());
 
     mCullingSystem->update(delta);
+
     mRotationUpdateSystem->update(delta);
     mCamera.update(delta);
 }

@@ -6,7 +6,6 @@
 #include "app/base/auxiliary/sdl.hpp"
 #include "app/base/auxiliary/glm.hpp"
 
-#include <anax/Component.hpp>
 #include <set>
 
 

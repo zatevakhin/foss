@@ -3,16 +3,16 @@
 #define FOSS_CCULLINGSYSTEM_HPP
 
 
-#include "app/components/CDrawableComponent.hpp"
-#include <anax/System.hpp>
+#include "app/components/C3dObjectComponent.hpp"
+#include "ecs/EntityManager.hpp"
+
 #include <glm/glm.hpp>
 
 
 class CCullingSystem
-    : public anax::System<anax::Requires<CDrawableComponent>>
 {
 public:
-    CCullingSystem() = default;
+    CCullingSystem(ecs::EntityManager &entityManager);
 
     inline void setViewMatrix(const glm::mat4 & view)
     {
@@ -29,6 +29,8 @@ public:
 private:
     glm::mat4 mProjection = glm::mat4(1);
     glm::mat4 mView = glm::mat4(1);
+
+    ecs::EntityManager &mEntityManager;
 };
 
 #endif //FOSS_CCULLINGSYSTEM_HPP

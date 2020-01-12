@@ -2,18 +2,20 @@
 #ifndef FOSS_C2DRENDERSYSTEM_HPP
 #define FOSS_C2DRENDERSYSTEM_HPP
 
-#include "components/CWindowComponent.hpp"
 #include "base/auxiliary/glm.hpp"
 
-#include <anax/System.hpp>
+
+#include "ecs/EntityManager.hpp"
 
 
 class C2DRenderSystem
-    : public anax::System<anax::Requires<CWindowComponent>>
 {
-    public:
-        C2DRenderSystem() = default;
+public:
+        C2DRenderSystem(ecs::EntityManager &entityManager);
         void render(const glm::mat4 & view, const glm::mat4 & projection);
+private:
+    ecs::EntityManager &mEntityManager;
+
 };
 
 #endif //FOSS_C2DRENDERSYSTEM_HPP

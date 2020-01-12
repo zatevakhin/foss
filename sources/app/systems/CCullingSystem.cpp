@@ -1,31 +1,29 @@
 
 #include "CCullingSystem.hpp"
-#include "app/components/CDrawableComponent.hpp"
+#include "app/components/C3dObjectComponent.hpp"
 #include "app/components/CTransform3DComponent.hpp"
 #include "app/components/CMeshComponent.hpp"
 #include <glm/gtc/matrix_access.hpp>
 #include <glm/gtx/transform.hpp>
 
+CCullingSystem::CCullingSystem(ecs::EntityManager &entityManager)
+    : mEntityManager(entityManager)
+{
+}
+
 void CCullingSystem::update(double& delta)
 {
     std::array<glm::vec4, 6> planes;
 
-    for (const auto & entity : getEntities())
+    for (auto [entity, components] : mEntityManager.getEntitySet<CMeshComponent, C3dObjectComponent, CTransform3DComponent>())
     {
-        auto & c = entity.getComponent<CDrawableComponent>();
-        const auto &mesh = entity.getComponent<CMeshComponent>();
+        auto [mesh, object, transform] = components;
 
-        if (CMeshComponent::ECategory::eForeground != mesh.mCategory)
-        {
-            continue;
-        }
-
-        const auto & transform = entity.getComponent<CTransform3DComponent>();
         const auto & aabb = mesh.mModel->mGeometry->getBoundingBox();
         const auto & bounds = aabb.getBounds<glm::vec3>();
 
         glm::vec3 center = glm::vec3((bounds.mMin.x + bounds.mMax.x) / 2, (bounds.mMin.y + bounds.mMax.y) / 2, (bounds.mMin.z + bounds.mMax.z) / 2);
-        glm::vec3 extent = bounds.mMin;
+        glm::vec3 extent = bounds.mMax;
 
         glm::mat4 matrix = mProjection * mView * transform.toMat4();
 
@@ -41,17 +39,21 @@ void CCullingSystem::update(double& delta)
         planes[4] = (rowW + rowZ);
         planes[5] = (rowW - rowZ);
 
-        bool inFrustum = false;
-        for (const auto &plane : planes)
-        {
-            if (glm::dot(glm::vec3(plane), center) + glm::dot(glm::abs(glm::vec3(plane)), extent) < -plane.w)
-            {
-                inFrustum = true;
-                break;
-            }
-        }
 
-        c.isInCameraView = inFrustum;
+        object.isInCameraView =  ([&]{
+            bool result = true;
+
+            for (const auto &plane : planes)
+            {
+                if (glm::dot(glm::vec3(plane), center) + glm::dot(glm::abs(glm::vec3(plane)), extent) < -plane.w)
+                {
+                    result = false;
+                    break;
+                }
+            }
+
+            return result;
+        })();
     }
 
 }

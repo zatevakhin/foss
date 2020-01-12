@@ -2,21 +2,14 @@
 #ifndef FOSS_COMPONENTS_CMESHCOMPONENT_HPP
 #define FOSS_COMPONENTS_CMESHCOMPONENT_HPP
 
-#include "base/scene/SStaticModel3D.hpp"
+#include "app/base/scene/SStaticModel3D.hpp"
 
-#include <anax/Component.hpp>
+#include "ecs/Component.hpp"
 
 
-class CMeshComponent: public anax::Component
+class CMeshComponent: public ecs::Component<CMeshComponent>
 {
 public:
-    enum class ECategory
-    {
-        eEnvironment,
-        eForeground,
-    };
-
-    ECategory mCategory;
     SStaticModel3DPtr mModel;
 };
 

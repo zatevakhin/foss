@@ -2,18 +2,17 @@
 #ifndef FOSS_CROTATIONUPDATESYSTEM_HPP
 #define FOSS_CROTATIONUPDATESYSTEM_HPP
 
-#include "app/components/CTransform3DComponent.hpp"
-#include <anax/System.hpp>
-
-class CBoundingBox3DRenderer;
+#include "ecs/EntityManager.hpp"
 
 
 class CRotationUpdateSystem
-    : public anax::System<anax::Requires<CTransform3DComponent>>
 {
 public:
-    CRotationUpdateSystem();
+    CRotationUpdateSystem(ecs::EntityManager &entityManager);
     void update(double& delta);
+
+private:
+    ecs::EntityManager &mEntityManager;
 };
 
 #endif //FOSS_CROTATIONUPDATESYSTEM_HPP
