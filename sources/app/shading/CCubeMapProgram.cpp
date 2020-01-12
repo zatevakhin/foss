@@ -1,6 +1,6 @@
 
 #include "CCubeMapProgram.hpp"
-#include "core/resources/CResourceLoader.hpp"
+#include "base/resources/CResourceLoader.hpp"
 
 
 CCubeMapProgram::CCubeMapProgram()

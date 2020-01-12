@@ -8,5 +8,5 @@ set(CMAKE_CXX_STANDARD 11)
 add_subdirectory(external/anax)
 add_subdirectory(external/imgui)
 
-add_subdirectory(sources/core)
+# add_subdirectory(sources/core)
 add_subdirectory(sources/app)

@@ -1,12 +1,12 @@
 
 #include "CCubeMapRenderer.hpp"
-#include "core/scene/SStaticModel3D.hpp"
-#include "core/shading/CVertexAttribute.hpp"
-#include "core/shading/CUniform.hpp"
-#include "core/textures/CTextureCubeMap.hpp"
-#include "core/resources/CRegistry.hpp"
-#include "core/shading/IShaderProgram.hpp"
-#include "core/renderers/auxiliary.hpp"
+#include "base/scene/SStaticModel3D.hpp"
+#include "base/shading/CVertexAttribute.hpp"
+#include "base/shading/CUniform.hpp"
+#include "base/textures/CTextureCubeMap.hpp"
+#include "base/resources/CRegistry.hpp"
+#include "base/shading/IShaderProgram.hpp"
+#include "base/renderers/auxiliary.hpp"
 
 #include <stdexcept>
 

@@ -1,15 +1,15 @@
 
 #include "C3DRenderSystem.hpp"
-#include "app/renderers/CStaticModel3DRenderer.hpp"
-#include "app/renderers/CBoundingBox3DRenderer.hpp"
-#include "app/renderers/CCubeMapRenderer.hpp"
-#include "core/resources/CRegistry.hpp"
-#include "core/scene/CCamera.hpp"
+#include "renderers/CStaticModel3DRenderer.hpp"
+#include "renderers/CBoundingBox3DRenderer.hpp"
+#include "renderers/CCubeMapRenderer.hpp"
+#include "base/resources/CRegistry.hpp"
+#include "base/scene/CCamera.hpp"
 #include "SEngineSettings.hpp"
-#include "core/geometry/CBoundingBox.hpp"
+#include "base/geometry/CBoundingBox.hpp"
 
-#include "core/auxiliary/trace.hpp"
-#include "core/auxiliary/glm.hpp"
+#include "base/auxiliary/trace.hpp"
+#include "base/auxiliary/glm.hpp"
 
 #include <glm/gtc/matrix_access.hpp>
 #include <glm/gtx/transform.hpp>

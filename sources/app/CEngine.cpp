@@ -1,27 +1,27 @@
 
 #include "CEngine.hpp"
 
-#include "core/auxiliary/imgui.hpp"
-#include "core/resources/CRegistry.hpp"
+#include "base/auxiliary/imgui.hpp"
+#include "base/resources/CRegistry.hpp"
 
-#include "core/shading/CShaderProgram.hpp"
+#include "base/shading/CShaderProgram.hpp"
 
 #include "app/input/CCameraListener.hpp"
 #include "app/input/CEngineListener.hpp"
-#include "core/resources/CResourceLoader.hpp"
+#include "base/resources/CResourceLoader.hpp"
 
 #include "components/CMeshComponent.hpp"
 
-#include "core/resources/CStaticModelLoader.hpp"
+#include "base/resources/CStaticModelLoader.hpp"
 
-#include "core/scene/CArrayObject.hpp"
+#include "base/scene/CArrayObject.hpp"
 
 #include "entities/windows/CEngineDebugWindow.hpp"
 #include "entities/windows/CEngineSettingsWindow.hpp"
 
-#include "core/auxiliary/trace.hpp"
+#include "base/auxiliary/trace.hpp"
 
-#include "core/geometry/CSimpleGeometry.hpp"
+#include "base/geometry/CSimpleGeometry.hpp"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>

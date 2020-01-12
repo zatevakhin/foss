@@ -1,7 +1,7 @@
 
 #include "CEngineDebugWindow.hpp"
-#include "core/scene/CCamera.hpp"
-#include "core/auxiliary/imgui.hpp"
+#include "app/base/scene/CCamera.hpp"
+#include "app/base/auxiliary/imgui.hpp"
 
 
 CEngineDebugWindow::CEngineDebugWindow(const CCamera & camera)

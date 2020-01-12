@@ -2,7 +2,7 @@
 #ifndef FOSS_CCUBEMAPPROGRAM_HPP
 #define FOSS_CCUBEMAPPROGRAM_HPP
 
-#include "core/shading/CShaderProgram.hpp"
+#include "base/shading/CShaderProgram.hpp"
 
 
 class CCubeMapProgram : public CShaderProgram

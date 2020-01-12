@@ -2,14 +2,14 @@
 #ifndef FOSS_CENGINE_HPP
 #define FOSS_CENGINE_HPP
 
-#include "core/window/CMainWindow.hpp"
-#include "core/input/CInputEventManager.hpp"
+#include "base/window/CMainWindow.hpp"
+#include "base/input/CInputEventManager.hpp"
 
 #include "app/systems/CRotationUpdateSystem.hpp"
 #include "app/systems/C3DRenderSystem.hpp"
 #include "app/systems/C2DRenderSystem.hpp"
 #include "app/systems/CCullingSystem.hpp"
-#include "core/scene/CCamera.hpp"
+#include "base/scene/CCamera.hpp"
 
 #include "SEngineSettings.hpp"
 

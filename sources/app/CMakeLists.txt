@@ -1,4 +1,5 @@
 
+add_subdirectory(base)
 add_subdirectory(entities)
 add_subdirectory(input)
 add_subdirectory(renderers)
@@ -13,15 +14,15 @@ target_link_libraries(foss.app
         app_shading
         app_entities_windows
 
-        core_shading
-        core_resources
-        core_textures
-        core_renderers
-        core_geometry
-        core_input
-        core_scene
-        core_gears
-        core_window
+        base_shading
+        base_resources
+        base_textures
+        base_renderers
+        base_geometry
+        base_input
+        base_scene
+        base_gears
+        base_window
 
         anax
         imgui

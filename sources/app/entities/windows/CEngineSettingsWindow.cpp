@@ -1,8 +1,8 @@
 
 #include "CEngineSettingsWindow.hpp"
 #include "app/SEngineSettings.hpp"
-#include "core/auxiliary/imgui.hpp"
-#include "core/scene/CCamera.hpp"
+#include "app/base/auxiliary/imgui.hpp"
+#include "app/base/scene/CCamera.hpp"
 
 
 CEngineSettingsWindow::CEngineSettingsWindow(SEngineSettings & settings, CCamera & camera)

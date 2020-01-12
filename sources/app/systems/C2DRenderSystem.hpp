@@ -2,8 +2,8 @@
 #ifndef FOSS_C2DRENDERSYSTEM_HPP
 #define FOSS_C2DRENDERSYSTEM_HPP
 
-#include "app/components/CWindowComponent.hpp"
-#include "core/auxiliary/glm.hpp"
+#include "components/CWindowComponent.hpp"
+#include "base/auxiliary/glm.hpp"
 
 #include <anax/System.hpp>
 

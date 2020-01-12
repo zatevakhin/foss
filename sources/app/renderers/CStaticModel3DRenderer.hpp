@@ -2,7 +2,7 @@
 #ifndef FOSS_CSTATICMODEL3DRENDERER_HPP
 #define FOSS_CSTATICMODEL3DRENDERER_HPP
 
-#include "core/renderers/C3DRendererBase.hpp"
+#include "base/renderers/C3DRendererBase.hpp"
 
 struct SPhongMaterial;
 

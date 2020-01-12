@@ -2,9 +2,9 @@
 #ifndef FOSS_CBOUNDINGBOX3DRENDERER_HPP
 #define FOSS_CBOUNDINGBOX3DRENDERER_HPP
 
-#include "core/renderers/C3DRendererBase.hpp"
-#include "core/scene/CBufferObject.hpp"
-#include "core/scene/CArrayObject.hpp"
+#include "base/renderers/C3DRendererBase.hpp"
+#include "base/scene/CBufferObject.hpp"
+#include "base/scene/CArrayObject.hpp"
 
 
 struct SPhongMaterial;

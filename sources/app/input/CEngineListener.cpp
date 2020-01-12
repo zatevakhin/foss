@@ -1,6 +1,6 @@
 
 #include "CEngineListener.hpp"
-#include "core/input/CInputEvent.hpp"
+#include "base/input/CInputEvent.hpp"
 #include "CEngine.hpp"
 
 
