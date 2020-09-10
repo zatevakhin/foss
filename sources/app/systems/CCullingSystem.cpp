@@ -40,7 +40,7 @@ void CCullingSystem::update(double& delta)
         planes[5] = (rowW - rowZ);
 
 
-        object.isInCameraView =  ([&]{
+        object.isInCameraView = ([&]{
             bool result = true;
 
             for (const auto &plane : planes)

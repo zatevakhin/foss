@@ -2,11 +2,11 @@
 #include "CCameraListener.hpp"
 #include "base/input/CInputEvent.hpp"
 #include "base/scene/CCamera.hpp"
-
+#include "base/resources/CRegistry.hpp"
 namespace
 {
 
-inline ECameraMoveDirection getDirecton(const CInputEvent& event)
+inline ECameraMoveDirection getDirection(const CInputEvent& event)
 {
     ECameraMoveDirection direction;
     switch (event.event().key.keysym.sym)
@@ -66,16 +66,22 @@ void CCameraListener::accept(const CInputEvent& event)
 
 void CCameraListener::onMouseMotion(const CInputEvent& event)
 {
+    const auto& motion = event.event().motion;
+
+    glm::ivec2 mouse;
+    SDL_GetMouseState(&mouse.x, &mouse.y);
+
+    CRegistry::set("mouse/position", mouse);
+
     if (event.isKeyPressed(SDL_BUTTON_RIGHT))
     {
-        const auto& motion = event.event().motion;
         mCamera->mouseMove(glm::ivec2(motion.xrel, motion.yrel));
     }
 }
 
 void CCameraListener::onKeyDown(const CInputEvent& event)
 {
-    ECameraMoveDirection direction = getDirecton(event);
+    ECameraMoveDirection direction = getDirection(event);
 
     if (ECameraMoveDirection::eNone != direction)
     {
@@ -85,7 +91,7 @@ void CCameraListener::onKeyDown(const CInputEvent& event)
 
 void CCameraListener::onKeyUp(const CInputEvent& event)
 {
-    ECameraMoveDirection direction = getDirecton(event);
+    ECameraMoveDirection direction = getDirection(event);
 
     if (ECameraMoveDirection::eNone != direction)
     {

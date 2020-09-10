@@ -46,6 +46,8 @@ void C3DRenderSystem::render(const glm::mat4 & view, const glm::mat4 & projectio
     renderForeground(view, projection);
     
     renderBoundingBoxes(view, projection);
+
+    // renderMinMax(view, projection);
     
     renderInstanced(view, projection);
 
@@ -97,11 +99,12 @@ void C3DRenderSystem::renderBoundingBoxes(const glm::mat4 &view, const glm::mat4
 
     for (auto [entity, components] : mEntityManager.getEntitySet<CMeshComponent, C3dObjectComponent, CTransform3DComponent>())
     {
-        auto [mesh, drawable, transform] = components;
+        auto [mesh, object, transform] = components;
 
-        if (drawable.isInCameraView)
+        if (object.isInCameraView)
         {
             mBBoxRenderer.setTransformMatrix(transform.toMat4());
+            mBBoxRenderer.setIsPicked(object.isPicked);
             mBBoxRenderer.draw(*mesh.mModel);
         }
     }

@@ -9,7 +9,6 @@
 
 struct SPhongMaterial;
 
-
 class CBoundingBox3DRenderer : public C3DRendererBase
 {
 public:

@@ -14,6 +14,7 @@
 #include "app/base/auxiliary/sdl.hpp"
 
 #include <memory>
+#include <string>
 #include <map>
 
 

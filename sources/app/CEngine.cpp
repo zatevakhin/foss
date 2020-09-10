@@ -105,6 +105,7 @@ CEngine::CEngine()
     , m3dRenderSystem(nullptr)
     , mRotationUpdateSystem(nullptr)
     , mCullingSystem(nullptr)
+    , mPickingSystem(nullptr)
     , mIsRunning(false)
     , mIsDebugMode(false)
 {
@@ -132,6 +133,7 @@ void CEngine::initialize()
 
 
     CRegistry::set("settings", &mSettings);
+    CRegistry::set("mouse/position", glm::ivec2(1920 / 2, 1080 / 2));
 }
 
 void CEngine::initializeVideo()
@@ -145,10 +147,9 @@ void CEngine::initializeVideo()
     mMainWindow->setFlags(SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN);
 
     std::map<SDL_GLattr, int> attributes = {
-        {SDL_GL_CONTEXT_MAJOR_VERSION, 3},
-        {SDL_GL_CONTEXT_MINOR_VERSION, 3},
+        {SDL_GL_CONTEXT_MAJOR_VERSION, 4},
+        {SDL_GL_CONTEXT_MINOR_VERSION, 5},
         {SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE},
-        {SDL_GL_DOUBLEBUFFER, 1},
         {SDL_GL_DOUBLEBUFFER, 1},
         {SDL_GL_STENCIL_SIZE, 8},
         {SDL_GL_DEPTH_SIZE, 24},
@@ -175,7 +176,6 @@ void CEngine::run()
     prepare();
     loop();
     finalize();
-
 }
 
 void CEngine::stop()
@@ -203,6 +203,7 @@ void CEngine::prepare()
     m2dRenderSystem.reset(new C2DRenderSystem(mEntityManager));
     m3dRenderSystem.reset(new C3DRenderSystem(mEntityManager));
     mCullingSystem.reset(new CCullingSystem(mEntityManager));
+    mPickingSystem.reset(new CPickingSystem(mEntityManager));
     mRotationUpdateSystem.reset(new CRotationUpdateSystem(mEntityManager));
 
 
@@ -222,12 +223,27 @@ void CEngine::prepare()
     auto &dc2 = mEntityManager.addComponent<C3dObjectComponent>(rock);
     auto &tc2 = mEntityManager.addComponent<CTransform3DComponent>(rock);
 
-    tc2.mScale = glm::vec3(0.1f);
-    tc2.mPosition = glm::vec3(1.f, 1.f, 10.f);
-    tc2.mOrientation = glm::quat(glm::vec3(0.f, 0.f, 0.f));
+    tc2.mScale = glm::vec3(0.1);
+    tc2.mPosition = glm::vec3(0.f, 0.f, 0.f);
+    // tc2.mOrientation = glm::quat(glm::vec3(1.f, 2.f, 3.f));
+    
 
     mc2.mModel = rockModel;
     dc2.isInCameraView = true;
+
+    auto rock2 = mEntityManager.createEntity();
+    auto &mc3 = mEntityManager.addComponent<CMeshComponent>(rock2);
+    auto &dc3 = mEntityManager.addComponent<C3dObjectComponent>(rock2);
+    auto &tc3 = mEntityManager.addComponent<CTransform3DComponent>(rock2);
+
+    tc3.mScale = glm::vec3(0.1);
+    tc3.mPosition = glm::vec3(3.f, 0.f, 0.f);
+    tc3.mOrientation = glm::quat(glm::vec3(90.f, 0.f, 0.f));
+    
+
+    mc3.mModel = rockModel;
+    dc3.isInCameraView = true;
+
 
     auto debugWindow = mEntityManager.createEntity();
     auto &window1 = mEntityManager.addComponent<CWindowComponent>(debugWindow);
@@ -237,16 +253,16 @@ void CEngine::prepare()
     auto &window2 = mEntityManager.addComponent<CWindowComponent>(settingsWindow);
     window2.mWindow = std::make_shared<CEngineSettingsWindow>(mSettings, mCamera);
 
-    auto asteroids = new CInstancedAsteroidField(mEntityManager);
-    asteroids->setupModel(rockModel);
-    asteroids->setupTransform(glm::vec3(1.f, 1.f, 10.f), glm::vec3(1.f), glm::quat(glm::vec3(0.f, 0.f, 0.f)));
+    // auto asteroids = new CInstancedAsteroidField(mEntityManager);
+    // asteroids->setupModel(rockModel);
+    // asteroids->setupTransform(glm::vec3(1.f, 1.f, 10.f), glm::vec3(1.f), glm::quat(glm::vec3(0.f, 0.f, 0.f)));
 
 
     srand(SDL_GetTicks());
 
-    unsigned int amount = 1000;
-    float radius = 50.0;
-    float offset = 10.f;
+    unsigned int amount = 1000 /* * 2 */;
+    float radius = 200.0;
+    float offset = 50.f;
     
     glm::mat4* modelMatrices = new glm::mat4[amount];
 
@@ -331,12 +347,18 @@ void CEngine::onEvent()
 
 void CEngine::onUpdate(double delta)
 {
-    mCullingSystem->setProjectionMatrix(mCamera.getProjection());
-    mCullingSystem->setViewMatrix(mCamera.getView());
+    const auto &projection = mCamera.getProjection();
+    const auto &view = mCamera.getView();
+
+    mCullingSystem->setProjectionMatrix(projection);
+    mCullingSystem->setViewMatrix(view);
 
     mCullingSystem->update(delta);
+    mPickingSystem->update(delta);
 
+    // add ignore rotation on invisible objects
     mRotationUpdateSystem->update(delta);
+
     mCamera.update(delta);
 }
 

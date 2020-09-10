@@ -1,6 +1,6 @@
 
-#ifndef FOSS_CSTATICMODEL3DRENDERER_HPP
-#define FOSS_CSTATICMODEL3DRENDERER_HPP
+#ifndef FOSS_STATIC_MODEL_3D_RENDERER_HPP
+#define FOSS_STATIC_MODEL_3D_RENDERER_HPP
 
 #include "base/renderers/C3DRendererBase.hpp"
 
@@ -22,4 +22,4 @@ private:
     void bindAttributes(const geometry::SGeometryLayout & layout) const;
 };
 
-#endif //FOSS_CSTATICMODEL3DRENDERER_HPP
+#endif // FOSS_STATIC_MODEL_3D_RENDERER_HPP

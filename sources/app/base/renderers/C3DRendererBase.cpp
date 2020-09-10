@@ -3,6 +3,11 @@
 #include "app/base/shading/IShaderProgram.hpp"
 
 
+void C3DRendererBase::setIsPicked(const bool value)
+{
+    mIsPicked = value;
+}
+
 void C3DRendererBase::setViewMatrix(const glm::mat4 & value)
 {
     mView = value;

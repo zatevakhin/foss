@@ -17,6 +17,8 @@
 #include "base/geometry/CSimpleGeometry.hpp"
 #include "CBoundingBox3DRenderer.hpp"
 
+#include "app/components/CMeshComponent.hpp"
+
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <stdexcept>
@@ -54,14 +56,15 @@ CBoundingBox3DRenderer::CBoundingBox3DRenderer()
 void CBoundingBox3DRenderer::draw(SStaticModel3D & model)
 {
     const auto & bounds = model.mGeometry->getBoundingBox().getBounds<glm::vec3>();
+
     glm::vec3 size = glm::vec3(bounds.mMax.x - bounds.mMin.x, bounds.mMax.y - bounds.mMin.y, bounds.mMax.z - bounds.mMin.z);
-    glm::vec3 center = glm::vec3((bounds.mMin.x + bounds.mMax.x) / 2, (bounds.mMin.y + bounds.mMax.y)/2, (bounds.mMin.z + bounds.mMax.z) / 2);
+    glm::vec3 center = glm::vec3((bounds.mMin.x + bounds.mMax.x) / 2, (bounds.mMin.y + bounds.mMax.y) / 2, (bounds.mMin.z + bounds.mMax.z) / 2);
     glm::mat4 transform = glm::translate(glm::mat4(1), center) * glm::scale(glm::mat4(1), size);
 
     mProgram->uniform("projection") = mProjection;
     mProgram->uniform("view") = mView * (mTransform * transform);
 
-    mProgram->uniform("background") = glm::vec4(0.f, 1.f, 0.f, 1.f);
+    mProgram->uniform("background") = mIsPicked ? glm::vec4(1.f, 0.f, 0.f, 1.f) : glm::vec4(0.f, 1.f, 0.f, 1.f);
     mVao.bind();
 
     GLuint vertexAttrib = mProgram->attributeId("vertex");

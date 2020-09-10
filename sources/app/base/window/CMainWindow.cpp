@@ -58,16 +58,33 @@ void CMainWindow::create()
     }
 
     SDL_Init(SDL_INIT_VIDEO);
+    // if (SDL_Init(SDL_INIT_EVENTS | SDL_INIT_VIDEO) < 0)
+    // {
+    //     trc_error("sdl init error: %s", SDL_GetError());
+    //     return;
+    // }
 
     for (const auto & item : mAttributes)
     {
         SDL_GL_SetAttribute(item.first, item.second);
     }
 
-    mWindow = SDL_CreateWindow(mTitle.c_str(), 1366, 0, mSize.x, mSize.y, mFlags);
+    mWindow = SDL_CreateWindow(mTitle.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, mSize.x, mSize.y, mFlags);
+
+    // if (nullptr == mWindow)
+    // {
+    //     trc_error("Failed to create window!");
+    // }
 
     // TODO: if window was resized, create new gl context.
     mGlContext = SDL_GL_CreateContext(mWindow);
+
+    // if (nullptr == mGlContext)
+    // {
+    //     trc_error("Failed to create gl context!");
+    // }
+
+    printf ("glGetString (GL_VERSION) returns %s\n", glGetString (GL_VERSION));
 }
 
 void CMainWindow::swapBuffers()

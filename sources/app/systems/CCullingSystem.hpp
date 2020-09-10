@@ -7,6 +7,7 @@
 #include "ecs/EntityManager.hpp"
 
 #include <glm/glm.hpp>
+#include <limits>
 
 
 class CCullingSystem

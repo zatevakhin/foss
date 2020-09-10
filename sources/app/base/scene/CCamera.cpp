@@ -20,7 +20,7 @@ constexpr double CAMERA_FOV    = 90.0;
 constexpr double CAMERA_NEAR   = 0.1;
 constexpr double CAMERA_FAR    = 1000.0;
 
-constexpr double CAMERA_RADIANS_IN_PIXEL = 1.0 / 200.0;
+constexpr double CAMERA_RADIANS_IN_PIXEL = 1.0 / 3000.0;
 
 
 glm::vec3 getMoveDirection(const std::set<ECameraMoveDirection> & directions)
@@ -148,13 +148,13 @@ void CCamera::mouseMove(const glm::ivec2& delta)
     if (mIsActive)
     {
         const double deltaYaw  = -delta.x * CAMERA_RADIANS_IN_PIXEL;
-        const double deltaRoll = delta.y * CAMERA_RADIANS_IN_PIXEL;
+        const double deltaRoll = -delta.y * CAMERA_RADIANS_IN_PIXEL;
 
         mForward = glm::normalize(glm::rotate(mForward, float(deltaYaw), mUp));
 
-        const glm::vec3 right = glm::normalize(glm::cross(mUp, mForward));
+        const glm::vec3 right = glm::normalize(glm::cross(mForward, mUp));
         mUp = glm::normalize(glm::rotate(mUp, float(deltaRoll), right));
-        mForward = -glm::normalize(glm::cross(mUp, right));
+        mForward = glm::normalize(glm::cross(mUp, right));
     }
 }
 

@@ -24,6 +24,7 @@ target_link_libraries(foss.app
         base_scene
         base_gears
         base_window
+        base_math
 
         imgui
 
