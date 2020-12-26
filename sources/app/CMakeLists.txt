@@ -19,7 +19,6 @@ target_link_libraries(foss.app
         base_resources
         base_textures
         base_geometry
-        base_input
         base_scene
         base_gears
         base_window

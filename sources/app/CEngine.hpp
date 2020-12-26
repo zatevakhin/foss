@@ -3,7 +3,7 @@
 #define FOSS_CENGINE_HPP
 
 #include "base/window/CMainWindow.hpp"
-#include "base/input/CInputEventManager.hpp"
+#include "app/input/CInputEventManager.hpp"
 
 #include "app/systems/CRotationUpdateSystem.hpp"
 #include "app/systems/C3DRenderSystem.hpp"

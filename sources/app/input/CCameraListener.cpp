@@ -1,6 +1,6 @@
 
 #include "CCameraListener.hpp"
-#include "base/input/CInputEvent.hpp"
+#include "CInputEvent.hpp"
 #include "base/scene/CCamera.hpp"
 #include "base/resources/CRegistry.hpp"
 namespace

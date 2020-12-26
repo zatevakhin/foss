@@ -2,7 +2,7 @@
 #ifndef FOSS_APP_INPUT_CCAMERALISTENER_HPP
 #define FOSS_APP_INPUT_CCAMERALISTENER_HPP
 
-#include "base/input/IEventListener.hpp"
+#include "IEventListener.hpp"
 
 #include <set>
 
