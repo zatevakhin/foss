@@ -1,11 +1,11 @@
 
 #include "app/renderers/CCubeMapRenderer.hpp"
 #include "base/scene/SStaticModel3D.hpp"
-#include "base/shading/CVertexAttribute.hpp"
-#include "base/shading/CUniform.hpp"
+#include "app/shading/CVertexAttribute.hpp"
+#include "app/shading/CUniform.hpp"
 #include "base/textures/CTextureCubeMap.hpp"
 #include "base/resources/CRegistry.hpp"
-#include "base/shading/IShaderProgram.hpp"
+#include "app/shading/IShaderProgram.hpp"
 #include "app/renderers/auxiliary.hpp"
 
 #include <stdexcept>

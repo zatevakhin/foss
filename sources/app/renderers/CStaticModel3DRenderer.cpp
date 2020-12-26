@@ -1,9 +1,9 @@
 
 #include "app/renderers/CStaticModel3DRenderer.hpp"
-#include "base/shading/IShaderProgram.hpp"
-#include "base/shading/CVertexAttribute.hpp"
+#include "app/shading/IShaderProgram.hpp"
+#include "app/shading/CVertexAttribute.hpp"
 #include "base/scene/SStaticModel3D.hpp"
-#include "base/shading/CUniform.hpp"
+#include "app/shading/CUniform.hpp"
 #include "base/textures/CTextureCubeMap.hpp"
 #include "base/resources/CRegistry.hpp"
 #include "base/geometry/auxiliary.hpp"

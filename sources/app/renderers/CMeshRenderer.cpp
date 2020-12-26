@@ -1,6 +1,6 @@
 
 #include "base/scene/SStaticModel3D.hpp"
-#include "base/shading/CUniform.hpp"
+#include "app/shading/CUniform.hpp"
 #include "base/textures/CTextureCubeMap.hpp"
 #include "base/resources/CRegistry.hpp"
 #include "base/geometry/auxiliary.hpp"
@@ -9,7 +9,7 @@
 #include "base/auxiliary/glm.hpp"
 #include "base/auxiliary/trace.hpp"
 
-#include "base/shading/CShaderProgram.hpp"
+#include "app/shading/CShaderProgram.hpp"
 #include "base/geometry/CSimpleGeometry.hpp"
 #include "app/renderers/CMeshRenderer.hpp"
 

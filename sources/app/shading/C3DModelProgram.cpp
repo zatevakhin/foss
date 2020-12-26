@@ -1,6 +1,6 @@
 
 #include "C3DModelProgram.hpp"
-#include "base/shading/CShaderProgram.hpp"
+#include "CShaderProgram.hpp"
 #include "base/resources/CResourceLoader.hpp"
 
 

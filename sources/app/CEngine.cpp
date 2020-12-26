@@ -4,7 +4,7 @@
 #include "base/auxiliary/imgui.hpp"
 #include "base/resources/CRegistry.hpp"
 
-#include "base/shading/CShaderProgram.hpp"
+#include "app/shading/CShaderProgram.hpp"
 
 #include "app/input/CCameraListener.hpp"
 #include "app/input/CEngineListener.hpp"

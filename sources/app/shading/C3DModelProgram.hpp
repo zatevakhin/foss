@@ -2,7 +2,7 @@
 #ifndef FOSS_C3DMODELPROGRAM_HPP
 #define FOSS_C3DMODELPROGRAM_HPP
 
-#include "base/shading/CShaderProgram.hpp"
+#include "CShaderProgram.hpp"
 
 
 class C3DModelProgram : public CShaderProgram

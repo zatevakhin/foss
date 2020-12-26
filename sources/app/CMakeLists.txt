@@ -15,7 +15,6 @@ target_link_libraries(foss.app
         app_entities_windows
         app_entities_3d_objects
 
-        base_shading
         base_resources
         base_textures
         base_geometry

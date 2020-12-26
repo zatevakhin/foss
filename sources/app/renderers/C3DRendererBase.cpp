@@ -1,6 +1,6 @@
 
 #include "C3DRendererBase.hpp"
-#include "app/base/shading/IShaderProgram.hpp"
+#include "app/shading/IShaderProgram.hpp"
 
 
 void C3DRendererBase::setIsPicked(const bool value)

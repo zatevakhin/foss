@@ -2,7 +2,7 @@
 #ifndef FOSS_CPHONGPROGRAM_HPP
 #define FOSS_CPHONGPROGRAM_HPP
 
-#include "base/shading/CShaderProgram.hpp"
+#include "CShaderProgram.hpp"
 
 
 class CPhongProgram : public CShaderProgram
