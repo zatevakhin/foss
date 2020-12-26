@@ -1,5 +1,5 @@
 
-#include "CStaticModel3DRenderer.hpp"
+#include "app/renderers/CStaticModel3DRenderer.hpp"
 #include "base/shading/IShaderProgram.hpp"
 #include "base/shading/CVertexAttribute.hpp"
 #include "base/scene/SStaticModel3D.hpp"
@@ -8,7 +8,7 @@
 #include "base/resources/CRegistry.hpp"
 #include "base/geometry/auxiliary.hpp"
 #include "base/textures/auxiliary.hpp"
-#include "base/renderers/auxiliary.hpp"
+#include "app/renderers/auxiliary.hpp"
 #include "base/resources/SPhongMaterial.hpp"
 #include "base/scene/CCamera.hpp"
 #include "base/auxiliary/glm.hpp"
@@ -16,8 +16,6 @@
 
 #include "app/shading/C3DModelProgram.hpp"
 #include "base/geometry/CSimpleGeometry.hpp"
-
-// #include "app/components/C3DModelComponent.hpp"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>

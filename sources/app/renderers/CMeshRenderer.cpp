@@ -11,7 +11,7 @@
 
 #include "base/shading/CShaderProgram.hpp"
 #include "base/geometry/CSimpleGeometry.hpp"
-#include "CMeshRenderer.hpp"
+#include "app/renderers/CMeshRenderer.hpp"
 
 #include "app/base/geometry/CTerrainFace.hpp"
 #include "app/base/geometry/CCubeSphere.hpp"

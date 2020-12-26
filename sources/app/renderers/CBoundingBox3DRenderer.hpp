@@ -2,7 +2,7 @@
 #ifndef FOSS_CBOUNDINGBOX3DRENDERER_HPP
 #define FOSS_CBOUNDINGBOX3DRENDERER_HPP
 
-#include "base/renderers/C3DRendererBase.hpp"
+#include "app/renderers/C3DRendererBase.hpp"
 #include "base/scene/CBufferObject.hpp"
 #include "base/scene/CArrayObject.hpp"
 

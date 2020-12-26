@@ -18,7 +18,6 @@ target_link_libraries(foss.app
         base_shading
         base_resources
         base_textures
-        base_renderers
         base_geometry
         base_input
         base_scene

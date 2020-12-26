@@ -2,7 +2,7 @@
 #ifndef FOSS_APP_RENDERERS_CCUBEMAPRENDERER_HPP
 #define FOSS_APP_RENDERERS_CCUBEMAPRENDERER_HPP
 
-#include "base/renderers/C3DRendererBase.hpp"
+#include "app/renderers/C3DRendererBase.hpp"
 
 
 class CCubeMapRenderer : public C3DRendererBase

@@ -1,7 +1,7 @@
 #pragma once
 
 
-#include "base/renderers/C3DRendererBase.hpp"
+#include "app/renderers/C3DRendererBase.hpp"
 #include "app/base/geometry/CCubeSphere.hpp"
 
 
