@@ -17,7 +17,7 @@
 #include "base/geometry/CSimpleGeometry.hpp"
 #include "CBoundingBox3DRenderer.hpp"
 
-#include "app/components/CMeshComponent.hpp"
+// #include "app/components/CMeshComponent.hpp"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>

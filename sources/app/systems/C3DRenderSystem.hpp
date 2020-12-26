@@ -6,13 +6,12 @@
 #include "app/shading/CCubeMapProgram.hpp"
 #include "app/shading/CPhongProgram.hpp"
 
+#include "app/renderers/CMeshRenderer.hpp"
 #include "app/renderers/CCubeMapRenderer.hpp"
 #include "app/renderers/CStaticModel3DRenderer.hpp"
 #include "app/renderers/CBoundingBox3DRenderer.hpp"
 
 #include "ecs/EntityManager.hpp"
-
-class CBoundingBox3DRenderer;
 
 
 class C3DRenderSystem
@@ -31,6 +30,7 @@ private:
     CPhongProgram mForegroundPhongProgram;
     C3DModelProgram m3DModelProgram;
 
+    CMeshRenderer mMeshRenderer;
     CCubeMapRenderer mCubeMapRenderer;
     CStaticModel3DRenderer mStaticModelRenderer;
     CBoundingBox3DRenderer mBBoxRenderer;

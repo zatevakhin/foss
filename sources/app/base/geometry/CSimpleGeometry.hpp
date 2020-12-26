@@ -29,8 +29,8 @@ public:
         mVao.unbind();
     }
 
-    void bind();
-    void unbind();
+    void bind() const;
+    void unbind() const;
 
 private:
     CBufferObject mVerticies;

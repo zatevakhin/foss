@@ -10,8 +10,8 @@ public:
     CArrayObject();
     ~CArrayObject();
 
-    void bind();
-    void unbind();
+    void bind() const;
+    void unbind() const;
 
 private:
     GLuint mId;

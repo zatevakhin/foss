@@ -10,19 +10,21 @@
 #include "app/input/CEngineListener.hpp"
 #include "base/resources/CResourceLoader.hpp"
 
-#include "components/CMeshComponent.hpp"
+#include "components/C3DModelComponent.hpp"
 #include "components/CWindowComponent.hpp"
 #include "components/CSkyboxComponent.hpp"
 #include "components/C3dObjectComponent.hpp"
 #include "components/CTransform3DComponent.hpp"
+#include "components/CMeshObjectComponent.hpp"
 
+#include "app/base/geometry/CCubeSphere.hpp"
 #include "base/resources/CStaticModelLoader.hpp"
 
 #include "base/scene/CArrayObject.hpp"
 
 #include "entities/windows/CEngineDebugWindow.hpp"
 #include "entities/windows/CEngineSettingsWindow.hpp"
-#include "entities/3d_objects/CInstancedAsteroidField.hpp"
+// #include "entities/3d_objects/CInstancedAsteroidField.hpp"
 
 #include "base/auxiliary/trace.hpp"
 
@@ -213,17 +215,17 @@ void CEngine::prepare()
 
 
     auto skybox = mEntityManager.createEntity();
-    auto &mc1 = mEntityManager.addComponent<CMeshComponent>(skybox);
+    auto &mc1 = mEntityManager.addComponent<C3DModelComponent>(skybox);
     mEntityManager.addComponent<CSkyboxComponent>(skybox);
 
     mc1.mModel = cubeModel;
 
     auto rock = mEntityManager.createEntity();
-    auto &mc2 = mEntityManager.addComponent<CMeshComponent>(rock);
+    auto &mc2 = mEntityManager.addComponent<C3DModelComponent>(rock);
     auto &dc2 = mEntityManager.addComponent<C3dObjectComponent>(rock);
     auto &tc2 = mEntityManager.addComponent<CTransform3DComponent>(rock);
 
-    tc2.mScale = glm::vec3(0.1);
+    tc2.mScale = glm::vec3(2);
     tc2.mPosition = glm::vec3(0.f, 0.f, 0.f);
     // tc2.mOrientation = glm::quat(glm::vec3(1.f, 2.f, 3.f));
     
@@ -231,18 +233,21 @@ void CEngine::prepare()
     mc2.mModel = rockModel;
     dc2.isInCameraView = true;
 
-    auto rock2 = mEntityManager.createEntity();
-    auto &mc3 = mEntityManager.addComponent<CMeshComponent>(rock2);
-    auto &dc3 = mEntityManager.addComponent<C3dObjectComponent>(rock2);
-    auto &tc3 = mEntityManager.addComponent<CTransform3DComponent>(rock2);
+    auto meshObject = mEntityManager.createEntity();
+    auto &mc3 = mEntityManager.addComponent<CMeshObjectComponent>(meshObject);
+    auto &dc3 = mEntityManager.addComponent<C3dObjectComponent>(meshObject);
+    auto &tc3 = mEntityManager.addComponent<CTransform3DComponent>(meshObject);
 
-    tc3.mScale = glm::vec3(0.1);
-    tc3.mPosition = glm::vec3(3.f, 0.f, 0.f);
+    tc3.mScale = glm::vec3(5);
+    tc3.mPosition = glm::vec3(10.f, 0.f, 0.f);
     tc3.mOrientation = glm::quat(glm::vec3(90.f, 0.f, 0.f));
     
+    auto sphere = new CCubeSphere(10);
+    sphere->buildMeshes();
 
-    mc3.mModel = rockModel;
+    mc3.mMeshObject.reset(sphere);
     dc3.isInCameraView = true;
+
 
 
     auto debugWindow = mEntityManager.createEntity();
@@ -258,41 +263,41 @@ void CEngine::prepare()
     // asteroids->setupTransform(glm::vec3(1.f, 1.f, 10.f), glm::vec3(1.f), glm::quat(glm::vec3(0.f, 0.f, 0.f)));
 
 
-    srand(SDL_GetTicks());
+    // srand(SDL_GetTicks());
 
-    unsigned int amount = 1000 /* * 2 */;
-    float radius = 200.0;
-    float offset = 50.f;
+    // unsigned int amount = 1000 /* * 2 */;
+    // float radius = 200.0;
+    // float offset = 50.f;
     
-    glm::mat4* modelMatrices = new glm::mat4[amount];
+    // glm::mat4* modelMatrices = new glm::mat4[amount];
 
-    for (unsigned int i = 0; i < amount; i++)  {
-        auto entity = mEntityManager.createEntity();
+    // for (unsigned int i = 0; i < amount; i++)  {
+    //     auto entity = mEntityManager.createEntity();
 
-        auto &mesh = mEntityManager.addComponent<CMeshComponent>(entity);
-        auto &object = mEntityManager.addComponent<C3dObjectComponent>(entity);
-        auto &transform = mEntityManager.addComponent<CTransform3DComponent>(entity);
+    //     auto &mesh = mEntityManager.addComponent<CMeshComponent>(entity);
+    //     auto &object = mEntityManager.addComponent<C3dObjectComponent>(entity);
+    //     auto &transform = mEntityManager.addComponent<CTransform3DComponent>(entity);
 
-        mesh.mModel = rockModel;
-        object.isInCameraView = true;
+    //     mesh.mModel = rockModel;
+    //     object.isInCameraView = true;
 
-        float angle = (float)i / (float)amount * 360.0f;
-        float displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
-        float x = sin(angle) * radius + displacement;
-        displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
-        float y = displacement * 0.4f;
-        displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
-        float z = cos(angle) * radius + displacement;
+    //     float angle = (float)i / (float)amount * 360.0f;
+    //     float displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
+    //     float x = sin(angle) * radius + displacement;
+    //     displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
+    //     float y = displacement * 0.4f;
+    //     displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
+    //     float z = cos(angle) * radius + displacement;
 
-        transform.mPosition = glm::vec3(x, y, z);
+    //     transform.mPosition = glm::vec3(x, y, z);
 
-        float scale = (rand() % 8) / 100.0f + 0.005;
-        transform.mScale = glm::vec3(scale);
+    //     float scale = (rand() % 8) / 100.0f + 0.005;
+    //     transform.mScale = glm::vec3(scale);
 
-        transform.mOrientation = glm::angleAxis(static_cast<float>(rand() % 360), glm::vec3(0, 1, 0));
-        transform.mOrientation = glm::rotate(transform.mOrientation, static_cast<float>(rand() % 360), glm::vec3(1, 0, 0));
-        transform.mOrientation = glm::rotate(transform.mOrientation, static_cast<float>(rand() % 360), glm::vec3(0, 0, 1));
-    }
+    //     transform.mOrientation = glm::angleAxis(static_cast<float>(rand() % 360), glm::vec3(0, 1, 0));
+    //     transform.mOrientation = glm::rotate(transform.mOrientation, static_cast<float>(rand() % 360), glm::vec3(1, 0, 0));
+    //     transform.mOrientation = glm::rotate(transform.mOrientation, static_cast<float>(rand() % 360), glm::vec3(0, 0, 1));
+    // }
 }
 
 void CEngine::loop()

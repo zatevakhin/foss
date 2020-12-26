@@ -17,7 +17,7 @@
 #include "app/shading/C3DModelProgram.hpp"
 #include "base/geometry/CSimpleGeometry.hpp"
 
-#include "app/components/CMeshComponent.hpp"
+// #include "app/components/C3DModelComponent.hpp"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>

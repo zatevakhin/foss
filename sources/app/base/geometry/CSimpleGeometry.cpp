@@ -12,17 +12,18 @@ CSimpleGeometry::CSimpleGeometry()
 {
 }
 
-void CSimpleGeometry::bind()
+void CSimpleGeometry::bind() const
 {
     mVao.bind();
-
     mVerticies.bind();
     mIndexes.bind();
 }
 
 
-void CSimpleGeometry::unbind()
+void CSimpleGeometry::unbind() const
 {
+    mIndexes.unbind();
+    mVerticies.unbind();
     mVao.unbind();
 }
 

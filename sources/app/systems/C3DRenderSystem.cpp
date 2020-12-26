@@ -9,7 +9,8 @@
 #include "base/geometry/CBoundingBox.hpp"
 
 #include "app/components/CTransform3DComponent.hpp"
-#include "app/components/CMeshComponent.hpp"
+#include "app/components/CMeshObjectComponent.hpp"
+#include "app/components/C3DModelComponent.hpp"
 #include "app/components/C3dObjectComponent.hpp"
 #include "app/components/CSkyboxComponent.hpp"
 #include "app/components/CInstanced3dObjectComponent.hpp"
@@ -26,6 +27,7 @@
 
 C3DRenderSystem::C3DRenderSystem(ecs::EntityManager &entityManager)
     : mEntityManager(entityManager)
+    , mMeshRenderer()
     , mBBoxRenderer()
     , mCubeMapRenderer()
     , mStaticModelRenderer()
@@ -64,7 +66,7 @@ void C3DRenderSystem::renderEnvironment(const glm::mat4 & view, const glm::mat4 
     mCubeMapRenderer.setViewMatrix(glm::mat4(glm::mat3(view)));
     mCubeMapRenderer.setProjectionMatrix(projection);
 
-    for (auto [entity, components] : mEntityManager.getEntitySet<CMeshComponent, CSkyboxComponent>())
+    for (auto [entity, components] : mEntityManager.getEntitySet<C3DModelComponent, CSkyboxComponent>())
     {
         auto [mesh, skybox] = components;
 
@@ -79,14 +81,28 @@ void C3DRenderSystem::renderForeground(const glm::mat4 &view, const glm::mat4 &p
     mStaticModelRenderer.setViewMatrix(view);
     mStaticModelRenderer.setProjectionMatrix(projection);
 
-    for (auto [entity, components] : mEntityManager.getEntitySet<CMeshComponent, C3dObjectComponent, CTransform3DComponent>())
+    for (auto [entity, components] : mEntityManager.getEntitySet<C3DModelComponent, C3dObjectComponent, CTransform3DComponent>())
+    {
+        auto [model, drawable, transform] = components;
+
+        if (drawable.isInCameraView)
+        {
+            mStaticModelRenderer.setTransformMatrix(transform.toMat4());
+            mStaticModelRenderer.draw(*model.mModel);
+        }
+    }
+
+    mMeshRenderer.use(m3DModelProgram);
+    mMeshRenderer.setViewMatrix(view);
+    mMeshRenderer.setProjectionMatrix(projection);
+    for (auto [entity, components] : mEntityManager.getEntitySet<CMeshObjectComponent, C3dObjectComponent, CTransform3DComponent>())
     {
         auto [mesh, drawable, transform] = components;
 
         if (drawable.isInCameraView)
         {
-            mStaticModelRenderer.setTransformMatrix(transform.toMat4());
-            mStaticModelRenderer.draw(*mesh.mModel);
+            mMeshRenderer.setTransformMatrix(transform.toMat4());
+            mMeshRenderer.draw(*mesh.mMeshObject);
         }
     }
 }
@@ -97,24 +113,24 @@ void C3DRenderSystem::renderBoundingBoxes(const glm::mat4 &view, const glm::mat4
     mBBoxRenderer.setViewMatrix(view);
     mBBoxRenderer.setProjectionMatrix(projection);
 
-    for (auto [entity, components] : mEntityManager.getEntitySet<CMeshComponent, C3dObjectComponent, CTransform3DComponent>())
+    for (auto [entity, components] : mEntityManager.getEntitySet<C3DModelComponent, C3dObjectComponent, CTransform3DComponent>())
     {
-        auto [mesh, object, transform] = components;
+        auto [model, object, transform] = components;
 
         if (object.isInCameraView)
         {
             mBBoxRenderer.setTransformMatrix(transform.toMat4());
             mBBoxRenderer.setIsPicked(object.isPicked);
-            mBBoxRenderer.draw(*mesh.mModel);
+            mBBoxRenderer.draw(*model.mModel);
         }
     }
 }
 
 void C3DRenderSystem::renderInstanced(const glm::mat4 &view, const glm::mat4 &projection)
 {
-    for (auto [entity, components] : mEntityManager.getEntitySet<CMeshComponent, CInstanced3dObjectComponent, CTransform3DComponent>())
+    for (auto [entity, components] : mEntityManager.getEntitySet<C3DModelComponent, CInstanced3dObjectComponent, CTransform3DComponent>())
     {
-        auto [mesh, object, transform] = components;
+        auto [model, object, transform] = components;
 
         // trc_log("instanced entity = %ld", entity);`
     }

@@ -12,12 +12,12 @@ CArrayObject::~CArrayObject()
     glDeleteVertexArrays(1, &mId);
 }
 
-void CArrayObject::bind()
+void CArrayObject::bind() const
 {
     glBindVertexArray(mId);
 }
 
-void CArrayObject::unbind()
+void CArrayObject::unbind() const
 {
     glBindVertexArray(0U);
 }

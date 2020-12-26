@@ -2,7 +2,7 @@
 #include "CCullingSystem.hpp"
 #include "app/components/C3dObjectComponent.hpp"
 #include "app/components/CTransform3DComponent.hpp"
-#include "app/components/CMeshComponent.hpp"
+#include "app/components/C3DModelComponent.hpp"
 #include <glm/gtc/matrix_access.hpp>
 #include <glm/gtx/transform.hpp>
 
@@ -15,7 +15,7 @@ void CCullingSystem::update(double& delta)
 {
     std::array<glm::vec4, 6> planes;
 
-    for (auto [entity, components] : mEntityManager.getEntitySet<CMeshComponent, C3dObjectComponent, CTransform3DComponent>())
+    for (auto [entity, components] : mEntityManager.getEntitySet<C3DModelComponent, C3dObjectComponent, CTransform3DComponent>())
     {
         auto [mesh, object, transform] = components;
 

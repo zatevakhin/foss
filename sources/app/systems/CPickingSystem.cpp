@@ -2,7 +2,7 @@
 #include "CPickingSystem.hpp"
 #include "app/components/C3dObjectComponent.hpp"
 #include "app/components/CTransform3DComponent.hpp"
-#include "app/components/CMeshComponent.hpp"
+#include "app/components/C3DModelComponent.hpp"
 #include <glm/gtc/matrix_access.hpp>
 #include <glm/gtx/transform.hpp>
 #include <glm/gtx/intersect.hpp> 
@@ -115,7 +115,7 @@ void CPickingSystem::update(double& delta)
     // ScreenPosToWorldRay(mouse.x, mouse.y, screen_w, screen_h, view, projection, ray_origin, ray_direction);
     ScreenPosToWorldRay(screen_w / 2, screen_h / 2, screen_w, screen_h, view, projection, ray_origin, ray_direction);
 
-    for (auto [entity, components] : mEntityManager.getEntitySet<CMeshComponent, C3dObjectComponent, CTransform3DComponent>())
+    for (auto [entity, components] : mEntityManager.getEntitySet<C3DModelComponent, C3dObjectComponent, CTransform3DComponent>())
     {
         auto [mesh, object, transform] = components;
 

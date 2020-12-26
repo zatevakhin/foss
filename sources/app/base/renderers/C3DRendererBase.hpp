@@ -3,6 +3,7 @@
 
 
 #include "app/base/geometry/SGeometryData.hpp"
+#include "app/base/geometry/CMeshObject.hpp"
 
 #include <glm/mat4x4.hpp>
 
@@ -27,6 +28,7 @@ public:
 
     virtual void use(IShaderProgram &program);
     virtual void draw(SStaticModel3D &model) = 0;
+    virtual void draw(const CMeshObject &mesh) {}
 
 protected:
     bool mIsPicked;
