@@ -1,6 +1,4 @@
-
-#ifndef FOSS_SENGINESETTINGS_HPP
-#define FOSS_SENGINESETTINGS_HPP
+#pragma once
 
 #include <vector>
 
@@ -24,5 +22,3 @@ struct SEngineSettings
     // Combo
     SComboBoxData mPolygonMode;
 };
-
-#endif //FOSS_SENGINESETTINGS_HPP

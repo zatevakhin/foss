@@ -1,6 +1,4 @@
-
-#ifndef FOSS_TEXTURES_HPP
-#define FOSS_TEXTURES_HPP
+#pragma once
 
 #include "ITexture.hpp"
 
@@ -25,7 +23,4 @@ unsigned int mapTextureWrapMode(ETextureWrapMode mode);
 
 void tryBindTexture(const CTextureSharedPtr & texture, const unsigned int textureId, const ETextureType type);
 
-
 }
-
-#endif //FOSS_TEXTURES_HPP

@@ -1,9 +1,6 @@
-
-#ifndef FOSS_CORE_RESOURCES_SPHONGMATERIAL_HPP
-#define FOSS_CORE_RESOURCES_SPHONGMATERIAL_HPP
+#pragma once
 
 #include "app/textures/ITexture.hpp"
-
 #include <glm/mat4x4.hpp>
 
 
@@ -19,6 +16,3 @@ struct SPhongMaterial
    CTextureSharedPtr mSpecular;
    CTextureSharedPtr mEmissive;
 };
-
-#endif // FOSS_CORE_RESOURCES_SPHONGMATERIAL_HPP
-

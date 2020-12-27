@@ -1,6 +1,4 @@
-
-#ifndef FOSS_CPHONGPROGRAM_HPP
-#define FOSS_CPHONGPROGRAM_HPP
+#pragma once
 
 #include "CShaderProgram.hpp"
 
@@ -11,6 +9,3 @@ public:
     CPhongProgram();
     ~CPhongProgram() override = default;
 };
-
-
-#endif //FOSS_CPHONGPROGRAM_HPP

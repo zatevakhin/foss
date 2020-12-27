@@ -1,15 +1,12 @@
+#pragma once
 
 /*!
  * @file
  * @brief File which is contains chronometer implementation.
  * */
 
-#ifndef FOSS_CORE_GEARS_CCHRONOMETER_HPP
-#define FOSS_CORE_GEARS_CCHRONOMETER_HPP
-
 #include <chrono>
 #include <thread>
-
 
 /*!
  * @brief Class which is implements chronometer
@@ -48,5 +45,3 @@ private:
     std::chrono::system_clock::time_point mLastTimePoint;
 
 };
-
-#endif //FOSS_CORE_GEARS_CCHRONOMETER_HPP

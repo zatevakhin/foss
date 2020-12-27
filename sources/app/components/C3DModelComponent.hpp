@@ -9,4 +9,3 @@ class C3DModelComponent: public ecs::Component<C3DModelComponent>
 public:
     SStaticModel3DPtr mModel;
 };
-

@@ -1,7 +1,4 @@
-
-#ifndef FOSS_CCULLINGSYSTEM_HPP
-#define FOSS_CCULLINGSYSTEM_HPP
-
+#pragma once
 
 #include "app/components/C3dObjectComponent.hpp"
 #include "ecs/EntityManager.hpp"
@@ -33,5 +30,3 @@ private:
 
     ecs::EntityManager &mEntityManager;
 };
-
-#endif //FOSS_CCULLINGSYSTEM_HPP

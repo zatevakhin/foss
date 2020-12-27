@@ -1,7 +1,4 @@
-
-#ifndef FOSS_CRESOURCELOADER_HPP
-#define FOSS_CRESOURCELOADER_HPP
-
+#pragma once
 
 #include "app/auxiliary/sdl.hpp"
 #include "app/textures/ITexture.hpp"
@@ -35,5 +32,3 @@ private:
     CTextureSharedPtr loadCubeMap(const fs::path& path, unsigned int size);
 
 };
-
-#endif //FOSS_CRESOURCELOADER_HPP

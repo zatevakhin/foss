@@ -1,11 +1,9 @@
+#pragma once
 
 /*!
  * @file
  * @brief File, with the class implementing the \b registry to store various data in the format key-value.
  * */
-
-#ifndef FOSS_CORE_CREGISTRY_HPP
-#define FOSS_CORE_CREGISTRY_HPP
 
 #include <boost/noncopyable.hpp>
 #include <boost/any.hpp>
@@ -53,5 +51,3 @@ private:
      * */
     static std::map<std::string, boost::any> registry;
 };
-
-#endif //FOSS_CORE_CREGISTRY_HPP

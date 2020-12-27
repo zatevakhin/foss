@@ -9,4 +9,3 @@ class CMeshObjectComponent: public ecs::Component<CMeshObjectComponent>
 public:
     CMeshObjectPtr mMeshObject;
 };
-

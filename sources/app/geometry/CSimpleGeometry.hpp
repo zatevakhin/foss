@@ -1,6 +1,4 @@
-
-#ifndef FOSS_CSIMPLEGEOMETRY_HPP
-#define FOSS_CSIMPLEGEOMETRY_HPP
+#pragma once
 
 #include "app/scene/CBufferObject.hpp"
 #include "app/scene/CArrayObject.hpp"
@@ -41,5 +39,3 @@ private:
 using CSimpleGeometrySharedPtr = std::shared_ptr<CSimpleGeometry>;
 
 } // geometry
-
-#endif //FOSS_CSIMPLEGEOMETRY_HPP

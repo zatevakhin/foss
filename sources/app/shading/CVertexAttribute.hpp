@@ -1,7 +1,4 @@
-
-#ifndef FOSS_CVERTEXATTRIBUTE_HPP
-#define FOSS_CVERTEXATTRIBUTE_HPP
-
+#pragma once
 
 #include <glm/fwd.hpp>
 #include <cstdlib>
@@ -28,6 +25,3 @@ public:
 private:
     int mLocation = -1;
 };
-
-
-#endif //FOSS_CVERTEXATTRIBUTE_HPP

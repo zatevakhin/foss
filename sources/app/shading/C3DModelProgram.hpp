@@ -1,6 +1,4 @@
-
-#ifndef FOSS_C3DMODELPROGRAM_HPP
-#define FOSS_C3DMODELPROGRAM_HPP
+#pragma once
 
 #include "CShaderProgram.hpp"
 
@@ -11,6 +9,3 @@ public:
     C3DModelProgram();
     ~C3DModelProgram() override = default;
 };
-
-
-#endif //FOSS_C3DMODELPROGRAM_HPP

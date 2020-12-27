@@ -1,11 +1,9 @@
+#pragma once
 
 /*!
  * @file
  * @brief The file which is contains a \b main window implementation.
  * */
-
-#ifndef FOSS_CORE_WINDOW_CMAINWINDOW_HPP
-#define FOSS_CORE_WINDOW_CMAINWINDOW_HPP
 
 #include "app/gears/CChronometer.hpp"
 
@@ -85,5 +83,3 @@ private:
 
     Uint32 mFlags;
 };
-
-#endif //FOSS_CORE_WINDOW_CMAINWINDOW_HPP

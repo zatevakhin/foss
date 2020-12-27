@@ -1,7 +1,4 @@
-
-#ifndef FOSS_ENTITIES_INSTANCED_ASTEROID_FIELD_HPP
-#define FOSS_ENTITIES_INSTANCED_ASTEROID_FIELD_HPP
-
+#pragma once
 
 // #include "app/components/CMeshComponent.hpp"
 // #include "ecs/EntityManager.hpp"
@@ -22,6 +19,3 @@
 //     ecs::EntityManager &mEntityManager;
 //     ecs::Entity mEntity;
 // };
-
-
-#endif //FOSS_ENTITIES_INSTANCED_ASTEROID_FIELD_HPP

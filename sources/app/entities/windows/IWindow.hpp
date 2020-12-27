@@ -1,6 +1,4 @@
-
-#ifndef FOSS_APP_ENTITIES_IWINDOW_HPP
-#define FOSS_APP_ENTITIES_IWINDOW_HPP
+#pragma once
 
 #include <memory>
 
@@ -12,6 +10,3 @@ public:
 };
 
 using CWindowPtr = std::shared_ptr<IWindow>;
-
-
-#endif //FOSS_APP_ENTITIES_IWINDOW_HPP

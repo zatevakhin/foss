@@ -1,6 +1,4 @@
-
-#ifndef FOSS_CENGINE_HPP
-#define FOSS_CENGINE_HPP
+#pragma once
 
 #include "app/window/CMainWindow.hpp"
 #include "app/input/CInputEventManager.hpp"
@@ -72,5 +70,3 @@ private:
     bool mIsRunning;
     bool mIsDebugMode;
 };
-
-#endif //FOSS_CENGINE_HPP

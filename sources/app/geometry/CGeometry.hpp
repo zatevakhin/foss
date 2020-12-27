@@ -1,6 +1,4 @@
-
-#ifndef FOSS_CGEOMETRYOBJECT_HPP
-#define FOSS_CGEOMETRYOBJECT_HPP
+#pragma once
 
 #include "app/scene/CBufferObject.hpp"
 #include "app/scene/CArrayObject.hpp"
@@ -50,5 +48,3 @@ private:
 using CGeometrySharedPtr = std::shared_ptr<CGeometry>;
 
 } // geometry
-
-#endif //FOSS_CGEOMETRYOBJECT_HPP

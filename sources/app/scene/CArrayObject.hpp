@@ -1,6 +1,4 @@
-
-#ifndef FOSS_CARRAYOBJECT_HPP
-#define FOSS_CARRAYOBJECT_HPP
+#pragma once
 
 #include "app/auxiliary/opengl.hpp"
 
@@ -16,5 +14,3 @@ public:
 private:
     GLuint mId;
 };
-
-#endif //FOSS_CARRAYOBJECT_HPP

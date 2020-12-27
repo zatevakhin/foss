@@ -1,6 +1,4 @@
-
-#ifndef FOSS_CCUBEMAPPROGRAM_HPP
-#define FOSS_CCUBEMAPPROGRAM_HPP
+#pragma once
 
 #include "CShaderProgram.hpp"
 
@@ -11,5 +9,3 @@ public:
     CCubeMapProgram();
     ~CCubeMapProgram() override = default;
 };
-
-#endif //FOSS_CCUBEMAPPROGRAM_HPP

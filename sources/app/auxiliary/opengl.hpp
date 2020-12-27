@@ -1,8 +1,4 @@
-
-#ifndef FOSS_AUXILIARY_OPENGL_HPP
-#define FOSS_AUXILIARY_OPENGL_HPP
+#pragma once
 
 #define GL_GLEXT_PROTOTYPES 1
 #include <SDL2/SDL_opengl.h>
-
-#endif //FOSS_AUXILIARY_OPENGL_HPP

@@ -1,8 +1,7 @@
-
-#ifndef FOSS_ITEXTURE_HPP
-#define FOSS_ITEXTURE_HPP
+#pragma once
 
 #include <memory>
+
 
 class ITexture;
 
@@ -21,5 +20,3 @@ public:
      */
     virtual void bind() const = 0;
 };
-
-#endif //FOSS_ITEXTURE_HPP

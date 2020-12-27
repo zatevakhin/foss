@@ -1,10 +1,6 @@
-
-#ifndef FOSS_C2DRENDERSYSTEM_HPP
-#define FOSS_C2DRENDERSYSTEM_HPP
+#pragma once
 
 #include "app/auxiliary/glm.hpp"
-
-
 #include "ecs/EntityManager.hpp"
 
 
@@ -17,5 +13,3 @@ private:
     ecs::EntityManager &mEntityManager;
 
 };
-
-#endif //FOSS_C2DRENDERSYSTEM_HPP

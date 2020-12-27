@@ -1,7 +1,4 @@
-
-#ifndef FOSS_COMPONENTS_DRAWABLE_COMPONENT_HPP
-#define FOSS_COMPONENTS_DRAWABLE_COMPONENT_HPP
-
+#pragma once
 
 #include "ecs/Component.hpp"
 
@@ -16,5 +13,3 @@ public:
     
     float intersection = 0.f;
 };
-
-#endif //FOSS_COMPONENTS_DRAWABLE_COMPONENT_HPP

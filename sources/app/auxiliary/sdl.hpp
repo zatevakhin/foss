@@ -1,6 +1,4 @@
-
-#ifndef FOSS_AUXILIARY_SDL_HPP
-#define FOSS_AUXILIARY_SDL_HPP
+#pragma once
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
@@ -22,5 +20,3 @@ struct SDLSurfaceDeleter
 }
 
 using TSurfacePtr = std::unique_ptr<SDL_Surface, SDLSurfaceDeleter>;
-
-#endif //FOSS_AUXILIARY_SDL_HPP

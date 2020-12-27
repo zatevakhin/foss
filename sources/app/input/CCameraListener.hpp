@@ -1,6 +1,4 @@
-
-#ifndef FOSS_APP_INPUT_CCAMERALISTENER_HPP
-#define FOSS_APP_INPUT_CCAMERALISTENER_HPP
+#pragma once
 
 #include "IEventListener.hpp"
 
@@ -28,5 +26,3 @@ private:
     void onMouseButtonDown(const CInputEvent& event);
     void onMouseButtonUp(const CInputEvent& event);
 };
-
-#endif //FOSS_APP_INPUT_CCAMERALISTENER_HPP

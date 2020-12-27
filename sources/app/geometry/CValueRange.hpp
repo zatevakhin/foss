@@ -1,6 +1,4 @@
-
-#ifndef FOSS_CVALUERANGE_HPP
-#define FOSS_CVALUERANGE_HPP
+#pragma once
 
 #include "app/auxiliary/glm.hpp"
 
@@ -49,6 +47,3 @@ public:
         mMin = glm::min(mMin, mMax);
     }
 };
-
-
-#endif //FOSS_CVALUERANGE_HPP

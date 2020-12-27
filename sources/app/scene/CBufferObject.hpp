@@ -1,9 +1,6 @@
-
-#ifndef FOSS_CBUFFEROBJECT_HPP
-#define FOSS_CBUFFEROBJECT_HPP
+#pragma once
 
 #include "app/auxiliary/opengl.hpp"
-
 
 #include <boost/noncopyable.hpp>
 #include <vector>
@@ -54,5 +51,3 @@ private:
     EBufferUsage mUsage;
 
 };
-
-#endif //FOSS_CBUFFEROBJECT_HPP

@@ -1,6 +1,4 @@
-
-#ifndef FOSS_C3DRENDERSYSTEM_HPP
-#define FOSS_C3DRENDERSYSTEM_HPP
+#pragma once
 
 #include "app/shading/C3DModelProgram.hpp"
 #include "app/shading/CCubeMapProgram.hpp"
@@ -37,5 +35,3 @@ private:
 
     ecs::EntityManager &mEntityManager;
 };
-
-#endif //FOSS_C3DRENDERSYSTEM_HPP

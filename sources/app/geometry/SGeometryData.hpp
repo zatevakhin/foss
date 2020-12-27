@@ -1,10 +1,9 @@
-
-#ifndef FOSS_SGEOMETRYDATA_HPP
-#define FOSS_SGEOMETRYDATA_HPP
+#pragma once
 
 #include "CBoundingBox.hpp"
 
 #include <vector>
+
 
 namespace geometry
 {
@@ -25,5 +24,3 @@ struct SGeometryData
 };
 
 }
-
-#endif //FOSS_SGEOMETRYDATA_HPP

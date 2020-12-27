@@ -1,6 +1,4 @@
-
-#ifndef FOSS_CCAMERA_HPP
-#define FOSS_CCAMERA_HPP
+#pragma once
 
 #include "app/auxiliary/opengl.hpp"
 #include "app/auxiliary/sdl.hpp"
@@ -60,5 +58,3 @@ private:
 
     glm::dvec2 mNearAndFar;
 };
-
-#endif //FOSS_CCAMERA_HPP

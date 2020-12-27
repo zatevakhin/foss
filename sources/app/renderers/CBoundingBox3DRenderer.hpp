@@ -1,6 +1,4 @@
-
-#ifndef FOSS_CBOUNDINGBOX3DRENDERER_HPP
-#define FOSS_CBOUNDINGBOX3DRENDERER_HPP
+#pragma once
 
 #include "app/renderers/C3DRendererBase.hpp"
 #include "app/scene/CBufferObject.hpp"
@@ -22,5 +20,3 @@ private:
     CBufferObject mIndexes;
     CArrayObject mVao;
 };
-
-#endif //FOSS_CBOUNDINGBOX3DRENDERER_HPP

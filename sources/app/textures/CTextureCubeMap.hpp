@@ -1,6 +1,4 @@
-
-#ifndef FOSS_CTEXTURECUBEMAP_HPP
-#define FOSS_CTEXTURECUBEMAP_HPP
+#pragma once
 
 #include "ITexture.hpp"
 #include "CTextureCache.hpp"
@@ -38,5 +36,3 @@ private:
     glm::ivec2 mSize;
     bool mHasAlpha;
 };
-
-#endif //FOSS_CTEXTURECUBEMAP_HPP

@@ -1,6 +1,5 @@
+#pragma once
 
-#ifndef FOSS_APP_INPUT_CENGINELISTENER_HPP
-#define FOSS_APP_INPUT_CENGINELISTENER_HPP
 
 #include "IEventListener.hpp"
 
@@ -24,5 +23,3 @@ private:
 private:
     void onQuit(const CInputEvent & event);
 };
-
-#endif //FOSS_APP_INPUT_CENGINELISTENER_HPP

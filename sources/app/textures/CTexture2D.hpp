@@ -1,6 +1,4 @@
-
-#ifndef FOSS_CTEXTURE2D_HPP
-#define FOSS_CTEXTURE2D_HPP
+#pragma once
 
 #include "ITexture.hpp"
 #include "auxiliary.hpp"
@@ -41,5 +39,3 @@ private:
     glm::ivec2 mSize;
     bool mHasAlpha;
 };
-
-#endif //FOSS_CTEXTURE2D_HPP

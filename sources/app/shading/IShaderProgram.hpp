@@ -1,6 +1,4 @@
-
-#ifndef FOSS_CORE_GRAPHICS_ISHADERPROGRAM_HPP
-#define FOSS_CORE_GRAPHICS_ISHADERPROGRAM_HPP
+#pragma once
 
 class CVertexAttribute;
 class CShaderProgram;
@@ -16,6 +14,3 @@ public:
     virtual CVertexAttribute attribute(const char *name) = 0;
     virtual unsigned int attributeId(const char *name) = 0;
 };
-
-
-#endif //FOSS_CORE_GRAPHICS_ISHADERPROGRAM_HPP

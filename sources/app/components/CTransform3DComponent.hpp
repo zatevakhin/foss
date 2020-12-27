@@ -1,6 +1,4 @@
-
-#ifndef FOSS_COMPONENTS_CTRANSFORM3DCOMPONENT_HPP
-#define FOSS_COMPONENTS_CTRANSFORM3DCOMPONENT_HPP
+#pragma once
 
 #include "app/scene/CTransform3D.hpp"
 
@@ -12,5 +10,3 @@ class CTransform3DComponent
     , public CTransform3D
 {
 };
-
-#endif //FOSS_COMPONENTS_CTRANSFORM3DCOMPONENT_HPP

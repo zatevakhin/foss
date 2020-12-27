@@ -1,6 +1,4 @@
-
-#ifndef FOSS_AUXILIARY_GLM_HPP
-#define FOSS_AUXILIARY_GLM_HPP
+#pragma once
 
 #define GLM_ENABLE_EXPERIMENTAL
 #define GLM_FORCE_RADIANS
@@ -13,6 +11,3 @@
 #include <glm/matrix.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtc/type_ptr.hpp>
-
-
-#endif //FOSS_AUXILIARY_GLM_HPP

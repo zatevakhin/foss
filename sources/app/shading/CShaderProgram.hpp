@@ -1,6 +1,4 @@
-
-#ifndef FOSS_CSHADERPROGRAM_HPP
-#define FOSS_CSHADERPROGRAM_HPP
+#pragma once
 
 #include "CUniform.hpp"
 #include "IShaderProgram.hpp"
@@ -9,6 +7,7 @@
 #include <memory>
 #include <iostream>
 #include <vector>
+
 
 class CShaderProgram;
 class CVertexAttribute;
@@ -49,5 +48,3 @@ private:
     unsigned int mProgramId;
     std::vector<unsigned int> mShaders;
 };
-
-#endif //FOSS_CSHADERPROGRAM_HPP

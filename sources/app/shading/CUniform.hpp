@@ -1,9 +1,8 @@
-
-#ifndef FOSS_CUNIFORM_HPP
-#define FOSS_CUNIFORM_HPP
+#pragma once
 
 #include <glm/fwd.hpp>
 #include <vector>
+
 
 class CUniform
 {
@@ -30,5 +29,3 @@ public:
 private:
     int mLocation;
 };
-
-#endif //FOSS_CUNIFORM_HPP

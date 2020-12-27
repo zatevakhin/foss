@@ -1,6 +1,4 @@
-
-#ifndef FOSS_SGEOMETRYLAYOUT_HPP
-#define FOSS_SGEOMETRYLAYOUT_HPP
+#pragma once
 
 #include "auxiliary.hpp"
 
@@ -33,5 +31,3 @@ struct SGeometryLayout
 };
 
 }
-
-#endif //FOSS_SGEOMETRYLAYOUT_HPP

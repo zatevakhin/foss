@@ -1,8 +1,7 @@
-
-#ifndef FOSS_STATIC_MODEL_3D_RENDERER_HPP
-#define FOSS_STATIC_MODEL_3D_RENDERER_HPP
+#pragma once
 
 #include "app/renderers/C3DRendererBase.hpp"
+
 
 struct SPhongMaterial;
 
@@ -21,5 +20,3 @@ private:
     void applyMaterial(const SPhongMaterial & material) const;
     void bindAttributes(const geometry::SGeometryLayout & layout) const;
 };
-
-#endif // FOSS_STATIC_MODEL_3D_RENDERER_HPP

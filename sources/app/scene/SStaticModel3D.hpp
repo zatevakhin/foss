@@ -1,6 +1,4 @@
-
-#ifndef FOSS_SSTATICMODEL3D_HPP
-#define FOSS_SSTATICMODEL3D_HPP
+#pragma once
 
 #include "app/geometry/CGeometry.hpp"
 #include "app/geometry/SGeometryLayout.hpp"
@@ -31,5 +29,3 @@ struct SStaticModel3D
     std::vector<CStaticMesh3D>   mMeshes;
     geometry::CGeometrySharedPtr mGeometry;
 };
-
-#endif //FOSS_SSTATICMODEL3D_HPP

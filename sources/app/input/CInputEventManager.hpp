@@ -1,6 +1,4 @@
-
-#ifndef FOSS_CINPUTEVENTMANAGER_HPP
-#define FOSS_CINPUTEVENTMANAGER_HPP
+#pragma once
 
 #include "IEventListener.hpp"
 
@@ -23,5 +21,3 @@ private:
 
     std::map<int, bool> mKeyStateMap;
 };
-
-#endif //FOSS_CINPUTEVENTMANAGER_HPP

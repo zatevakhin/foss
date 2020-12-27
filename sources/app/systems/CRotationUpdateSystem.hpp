@@ -1,6 +1,4 @@
-
-#ifndef FOSS_CROTATIONUPDATESYSTEM_HPP
-#define FOSS_CROTATIONUPDATESYSTEM_HPP
+#pragma once
 
 #include "ecs/EntityManager.hpp"
 
@@ -14,5 +12,3 @@ public:
 private:
     ecs::EntityManager &mEntityManager;
 };
-
-#endif //FOSS_CROTATIONUPDATESYSTEM_HPP

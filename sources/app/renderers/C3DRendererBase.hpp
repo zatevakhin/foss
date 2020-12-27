@@ -1,6 +1,4 @@
-#ifndef FOSS_CORE_RENDERERS_C3DRENDERERBASE_HPP
-#define FOSS_CORE_RENDERERS_C3DRENDERERBASE_HPP
-
+#pragma once
 
 #include "app/geometry/SGeometryData.hpp"
 #include "app/geometry/CMeshObject.hpp"
@@ -38,5 +36,3 @@ protected:
 
     IShaderProgram *mProgram = nullptr;
 };
-
-#endif //FOSS_CORE_RENDERERS_C3DRENDERERBASE_HPP

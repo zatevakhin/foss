@@ -1,6 +1,4 @@
-
-#ifndef FOSS_APP_ENTITIES_WINDOWS_CENGINESETTINGSWINDOW_HPP
-#define FOSS_APP_ENTITIES_WINDOWS_CENGINESETTINGSWINDOW_HPP
+#pragma once
 
 #include "IWindow.hpp"
 
@@ -21,5 +19,3 @@ private:
     SEngineSettings & mSettings;
     CCamera & mCamera;
 };
-
-#endif //FOSS_APP_ENTITIES_WINDOWS_CENGINESETTINGSWINDOW_HPP

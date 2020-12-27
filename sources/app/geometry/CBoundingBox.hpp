@@ -1,8 +1,7 @@
-
-#ifndef FOSS_CBOUNDINGBOX_HPP
-#define FOSS_CBOUNDINGBOX_HPP
+#pragma once
 
 #include "CValueRange.hpp"
+
 
 namespace geometry
 {
@@ -28,5 +27,3 @@ private:
 };
 
 } // geometry
-
-#endif //FOSS_CBOUNDINGBOX_HPP

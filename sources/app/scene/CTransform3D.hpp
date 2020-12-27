@@ -1,5 +1,4 @@
-#ifndef FOSS_CORE_SCENE_CTRANSFORM3D_HPP
-#define FOSS_CORE_SCENE_CTRANSFORM3D_HPP
+#pragma once
 
 #include "app/auxiliary/glm.hpp"
 
@@ -15,5 +14,3 @@ public:
     glm::quat mOrientation;
     glm::vec3 mPosition;
 };
-
-#endif //FOSS_CORE_SCENE_CTRANSFORM3D_HPP

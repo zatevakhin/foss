@@ -1,6 +1,4 @@
-
-#ifndef FOSS_CSTATICMODELLOADER_H
-#define FOSS_CSTATICMODELLOADER_H
+#pragma once
 
 #include <assimp/scene.h>
 #include <assimp/Importer.hpp>
@@ -32,6 +30,3 @@ private:
             SceneImportQuality quality = SceneImportQuality::HighQuality
             );
 };
-
-
-#endif //FOSS_CSTATICMODELLOADER_H

@@ -6,6 +6,7 @@
 #include <vector>
 #include <array>
 
+
 class CCubeSphere : public CMeshObject
 {
     public:
@@ -21,4 +22,3 @@ class CCubeSphere : public CMeshObject
         std::array<geometry::CSimpleGeometry, 6> mGeometries;
         int mResolution;
 };
-

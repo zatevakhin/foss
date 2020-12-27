@@ -1,6 +1,4 @@
-
-#ifndef FOSS_APP_ENTITIES_WINDOWS_CENGINEDEBUGWINDOW_HPP
-#define FOSS_APP_ENTITIES_WINDOWS_CENGINEDEBUGWINDOW_HPP
+#pragma once
 
 #include "IWindow.hpp"
 
@@ -17,5 +15,3 @@ public:
 private:
     const CCamera & mCamera;
 };
-
-#endif //FOSS_APP_ENTITIES_WINDOWS_CENGINEDEBUGWINDOW_HPP

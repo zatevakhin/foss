@@ -1,7 +1,4 @@
-
-#ifndef FOSS_CINPUTEVENT_HPP
-#define FOSS_CINPUTEVENT_HPP
-
+#pragma once
 
 #include <SDL2/SDL_events.h>
 #include <map>
@@ -27,5 +24,3 @@ private:
     const SDL_Event & mEvent;
     const std::map<int, bool>& mKeyMap;
 };
-
-#endif //FOSS_CINPUTEVENT_HPP
