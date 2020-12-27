@@ -2,7 +2,7 @@
 #ifndef FOSS_COMPONENTS_CTRANSFORM3DCOMPONENT_HPP
 #define FOSS_COMPONENTS_CTRANSFORM3DCOMPONENT_HPP
 
-#include "app/base/scene/CTransform3D.hpp"
+#include "app/scene/CTransform3D.hpp"
 
 #include "ecs/Component.hpp"
 

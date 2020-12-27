@@ -1,14 +1,14 @@
 
 #include "CEngine.hpp"
 
-#include "base/auxiliary/imgui.hpp"
-#include "base/resources/CRegistry.hpp"
+#include "app/auxiliary/imgui.hpp"
+#include "resources/CRegistry.hpp"
 
 #include "app/shading/CShaderProgram.hpp"
 
 #include "app/input/CCameraListener.hpp"
 #include "app/input/CEngineListener.hpp"
-#include "base/resources/CResourceLoader.hpp"
+#include "resources/CResourceLoader.hpp"
 
 #include "components/C3DModelComponent.hpp"
 #include "components/CWindowComponent.hpp"
@@ -17,18 +17,18 @@
 #include "components/CTransform3DComponent.hpp"
 #include "components/CMeshObjectComponent.hpp"
 
-#include "app/base/geometry/CCubeSphere.hpp"
-#include "base/resources/CStaticModelLoader.hpp"
+#include "app/geometry/CCubeSphere.hpp"
+#include "resources/CStaticModelLoader.hpp"
 
-#include "base/scene/CArrayObject.hpp"
+#include "app/scene/CArrayObject.hpp"
 
 #include "entities/windows/CEngineDebugWindow.hpp"
 #include "entities/windows/CEngineSettingsWindow.hpp"
 // #include "entities/3d_objects/CInstancedAsteroidField.hpp"
 
-#include "base/auxiliary/trace.hpp"
+#include "app/auxiliary/trace.hpp"
 
-#include "base/geometry/CSimpleGeometry.hpp"
+#include "geometry/CSimpleGeometry.hpp"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>

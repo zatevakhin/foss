@@ -2,7 +2,7 @@
 
 
 #include "app/renderers/C3DRendererBase.hpp"
-#include "app/base/geometry/CCubeSphere.hpp"
+#include "app/geometry/CCubeSphere.hpp"
 
 
 

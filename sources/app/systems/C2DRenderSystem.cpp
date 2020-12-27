@@ -1,6 +1,6 @@
 
 #include "C2DRenderSystem.hpp"
-#include "base/auxiliary/trace.hpp"
+#include "app/auxiliary/trace.hpp"
 
 #include "components/CWindowComponent.hpp"
 

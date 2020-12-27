@@ -1,5 +1,5 @@
 
-#include "app/base/auxiliary/imgui.hpp"
+#include "app/auxiliary/imgui.hpp"
 
 #include "CInputEventManager.hpp"
 #include "CInputEvent.hpp"

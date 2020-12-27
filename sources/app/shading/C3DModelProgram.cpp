@@ -1,7 +1,7 @@
 
 #include "C3DModelProgram.hpp"
 #include "CShaderProgram.hpp"
-#include "base/resources/CResourceLoader.hpp"
+#include "app/resources/CResourceLoader.hpp"
 
 
 C3DModelProgram::C3DModelProgram()

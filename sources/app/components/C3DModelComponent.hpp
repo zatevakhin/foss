@@ -1,6 +1,6 @@
 #pragma once
 
-#include "app/base/scene/SStaticModel3D.hpp"
+#include "app/scene/SStaticModel3D.hpp"
 #include "ecs/Component.hpp"
 
 

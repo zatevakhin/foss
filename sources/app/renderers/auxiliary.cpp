@@ -1,7 +1,7 @@
 
 #include "auxiliary.hpp"
-#include "app/base/auxiliary/opengl.hpp"
-#include "app/base/geometry/CGeometry.hpp"
+#include "app/auxiliary/opengl.hpp"
+#include "app/geometry/CGeometry.hpp"
 
 
 namespace renderers

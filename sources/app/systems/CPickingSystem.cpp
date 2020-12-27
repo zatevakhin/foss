@@ -6,9 +6,9 @@
 #include <glm/gtc/matrix_access.hpp>
 #include <glm/gtx/transform.hpp>
 #include <glm/gtx/intersect.hpp> 
-#include "base/resources/CRegistry.hpp"
-#include "base/scene/CCamera.hpp"
-#include "app/base/auxiliary/trace.hpp"
+#include "app/resources/CRegistry.hpp"
+#include "app/scene/CCamera.hpp"
+#include "app/auxiliary/trace.hpp"
 #include <glm/gtx/quaternion.hpp>
 
 void ScreenPosToWorldRay(

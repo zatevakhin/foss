@@ -2,7 +2,7 @@
 #ifndef FOSS_CENGINE_HPP
 #define FOSS_CENGINE_HPP
 
-#include "base/window/CMainWindow.hpp"
+#include "app/window/CMainWindow.hpp"
 #include "app/input/CInputEventManager.hpp"
 
 #include "app/systems/CRotationUpdateSystem.hpp"
@@ -10,7 +10,7 @@
 #include "app/systems/C2DRenderSystem.hpp"
 #include "app/systems/CCullingSystem.hpp"
 #include "app/systems/CPickingSystem.hpp"
-#include "base/scene/CCamera.hpp"
+#include "app/scene/CCamera.hpp"
 
 #include "SEngineSettings.hpp"
 

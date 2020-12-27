@@ -2,8 +2,8 @@
 #define FOSS_CORE_RENDERERS_C3DRENDERERBASE_HPP
 
 
-#include "app/base/geometry/SGeometryData.hpp"
-#include "app/base/geometry/CMeshObject.hpp"
+#include "app/geometry/SGeometryData.hpp"
+#include "app/geometry/CMeshObject.hpp"
 
 #include <glm/mat4x4.hpp>
 

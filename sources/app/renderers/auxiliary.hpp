@@ -1,8 +1,8 @@
 #ifndef FOSS_CORE_RENDERERS_AUXILIARY_HPP
 #define FOSS_CORE_RENDERERS_AUXILIARY_HPP
 
-#include "app/base/textures/ITexture.hpp"
-#include "app/base/geometry/SGeometryLayout.hpp"
+#include "app/textures/ITexture.hpp"
+#include "app/geometry/SGeometryLayout.hpp"
 
 
 namespace geometry

@@ -3,10 +3,10 @@
 #include "renderers/CStaticModel3DRenderer.hpp"
 #include "renderers/CBoundingBox3DRenderer.hpp"
 #include "renderers/CCubeMapRenderer.hpp"
-#include "base/resources/CRegistry.hpp"
-#include "base/scene/CCamera.hpp"
+#include "app/resources/CRegistry.hpp"
+#include "app/scene/CCamera.hpp"
 #include "SEngineSettings.hpp"
-#include "base/geometry/CBoundingBox.hpp"
+#include "geometry/CBoundingBox.hpp"
 
 #include "app/components/CTransform3DComponent.hpp"
 #include "app/components/CMeshObjectComponent.hpp"
@@ -15,8 +15,8 @@
 #include "app/components/CSkyboxComponent.hpp"
 #include "app/components/CInstanced3dObjectComponent.hpp"
 
-#include "base/auxiliary/trace.hpp"
-#include "base/auxiliary/glm.hpp"
+#include "app/auxiliary/trace.hpp"
+#include "app/auxiliary/glm.hpp"
 
 #include <glm/gtc/matrix_access.hpp>
 #include <glm/gtx/transform.hpp>

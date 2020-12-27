@@ -1,6 +1,6 @@
 #pragma once
 
-#include "app/base/geometry/CMeshObject.hpp"
+#include "app/geometry/CMeshObject.hpp"
 #include "ecs/Component.hpp"
 
 

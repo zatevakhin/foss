@@ -2,7 +2,7 @@
 #ifndef FOSS_C2DRENDERSYSTEM_HPP
 #define FOSS_C2DRENDERSYSTEM_HPP
 
-#include "base/auxiliary/glm.hpp"
+#include "app/auxiliary/glm.hpp"
 
 
 #include "ecs/EntityManager.hpp"

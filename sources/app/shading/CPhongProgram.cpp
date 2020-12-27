@@ -1,7 +1,7 @@
 
 #include "CPhongProgram.hpp"
-#include "base/resources/CResourceLoader.hpp"
-#include "base/auxiliary/glm.hpp"
+#include "app/resources/CResourceLoader.hpp"
+#include "app/auxiliary/glm.hpp"
 
 
 CPhongProgram::CPhongProgram()

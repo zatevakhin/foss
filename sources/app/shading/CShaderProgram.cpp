@@ -1,7 +1,7 @@
 
 #include "CShaderProgram.hpp"
 #include "CVertexAttribute.hpp"
-#include "app/base/auxiliary/opengl.hpp"
+#include "app/auxiliary/opengl.hpp"
 
 #include <map>
 
