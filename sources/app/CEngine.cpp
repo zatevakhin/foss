@@ -20,15 +20,10 @@
 #include "app/geometry/CCubeSphere.hpp"
 #include "resources/CStaticModelLoader.hpp"
 
-#include "app/scene/CArrayObject.hpp"
-
 #include "entities/windows/CEngineDebugWindow.hpp"
 #include "entities/windows/CEngineSettingsWindow.hpp"
-// #include "entities/3d_objects/CInstancedAsteroidField.hpp"
 
 #include "app/auxiliary/trace.hpp"
-
-#include "geometry/CSimpleGeometry.hpp"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -228,10 +223,9 @@ void CEngine::prepare()
     tc2.mScale = glm::vec3(2);
     tc2.mPosition = glm::vec3(0.f, 0.f, 0.f);
     // tc2.mOrientation = glm::quat(glm::vec3(1.f, 2.f, 3.f));
-    
 
     mc2.mModel = rockModel;
-    dc2.isInCameraView = true;
+    dc2.isInCameraView = false;
 
     auto meshObject = mEntityManager.createEntity();
     auto &mc3 = mEntityManager.addComponent<CMeshObjectComponent>(meshObject);
@@ -239,10 +233,10 @@ void CEngine::prepare()
     auto &tc3 = mEntityManager.addComponent<CTransform3DComponent>(meshObject);
 
     tc3.mScale = glm::vec3(5);
-    tc3.mPosition = glm::vec3(10.f, 0.f, 0.f);
+    tc3.mPosition = glm::vec3(0.f, 0.f, -10.f);
     tc3.mOrientation = glm::quat(glm::vec3(90.f, 0.f, 0.f));
-    
-    auto sphere = new CCubeSphere(10);
+
+    auto sphere = new CCubeSphere(4);
     sphere->buildMeshes();
 
     mc3.mMeshObject.reset(sphere);
@@ -268,7 +262,7 @@ void CEngine::prepare()
     // unsigned int amount = 1000 /* * 2 */;
     // float radius = 200.0;
     // float offset = 50.f;
-    
+
     // glm::mat4* modelMatrices = new glm::mat4[amount];
 
     // for (unsigned int i = 0; i < amount; i++)  {

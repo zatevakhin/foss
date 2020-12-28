@@ -27,6 +27,7 @@ private:
     CCubeMapProgram mEnvironmentProgram;
     CPhongProgram mForegroundPhongProgram;
     C3DModelProgram m3DModelProgram;
+    C3DModelProgram mMeshProgram;
 
     CMeshRenderer mMeshRenderer;
     CCubeMapRenderer mCubeMapRenderer;

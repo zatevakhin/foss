@@ -33,11 +33,11 @@ void CCubeSphere::bindGeometry()
 {
     for (int i = 0; i < 6; ++i)
     {
-        mGeometries[i].copy(get(i).mVertices, get(i).mIndexes);
+        mGeometries[i].copy(get(i).getVertices(), get(i).getIndexes());
     }
 }
 
-void CCubeSphere::bind(int i) 
+void CCubeSphere::bind(int i)
 {
     mGeometries[i].bind();
 }

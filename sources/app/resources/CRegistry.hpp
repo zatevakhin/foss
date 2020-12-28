@@ -14,7 +14,7 @@
 /*!
  * @brief Class which is implementing \b registry with data in the format key-value.
  * */
-class CRegistry : public boost::noncopyable
+class CRegistry
 {
 
 public:
@@ -22,6 +22,11 @@ public:
      * @brief The deleted constructor forbidding the creation of objects of this class.
      * */
     CRegistry() = delete;
+
+    /*!
+     * @brief Delete the copy constructor forbidding the copying objects of this class.
+     * */
+    CRegistry(const CRegistry&) = delete;
 
     /*!
      * @brief Stores a value by key in the registry

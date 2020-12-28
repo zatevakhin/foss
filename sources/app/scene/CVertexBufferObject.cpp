@@ -1,5 +1,5 @@
 
-#include "CBufferObject.hpp"
+#include "CVertexBufferObject.hpp"
 #include "app/auxiliary/trace.hpp"
 
 #include <map>
@@ -32,41 +32,41 @@ inline GLenum mapType(EBufferUsage type)
 }
 
 
-CBufferObject::CBufferObject(EBufferType type, EBufferUsage usage)
+CVertexBufferObject::CVertexBufferObject(EBufferType type, EBufferUsage usage)
     : mType(type)
     , mUsage(usage)
 {
     glGenBuffers(1, &mId);
-    trc_debug("ctor: CBufferObject(%u)", mId);
+    trc_debug("ctor: CVertexBufferObject(%u)", mId);
 }
 
 
-CBufferObject::~CBufferObject()
+CVertexBufferObject::~CVertexBufferObject()
 {
-    trc_debug("dtor: CBufferObject(%u)", mId);
+    trc_debug("dtor: CVertexBufferObject(%u)", mId);
     glDeleteBuffers(1, &mId);
 }
 
 
-void CBufferObject::unbind(EBufferType type)
+void CVertexBufferObject::unbind(EBufferType type)
 {
     glBindBuffer(mapType(type), 0);
 }
 
 
-void CBufferObject::bind() const
+void CVertexBufferObject::bind() const
 {
     glBindBuffer(mapType(mType), mId);
 }
 
 
-void CBufferObject::unbind() const
+void CVertexBufferObject::unbind() const
 {
-    CBufferObject::unbind(mType);
+    CVertexBufferObject::unbind(mType);
 }
 
 
-void CBufferObject::copy(const void* data, size_t size)
+void CVertexBufferObject::copy(const void* data, size_t size)
 {
     const GLenum bufferType = mapType(mType);
     glBindBuffer(bufferType, mId);
@@ -74,7 +74,7 @@ void CBufferObject::copy(const void* data, size_t size)
 }
 
 
-size_t CBufferObject::getSize() const
+size_t CVertexBufferObject::getSize() const
 {
     GLint result = 0;
     glGetBufferParameteriv(mapType(mType), GL_BUFFER_SIZE, &result);

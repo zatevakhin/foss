@@ -6,19 +6,18 @@
 #include "app/auxiliary/glm.hpp"
 #include "app/auxiliary/sdl.hpp"
 
-#include <boost/noncopyable.hpp>
-
 
 using namespace textures;
 
 
 class CTexture2D :
-    private boost::noncopyable,
     public ITexture
 {
 public:
     CTexture2D();
     ~CTexture2D() override;
+
+    CTexture2D(const CTexture2D&) = delete;
 
     glm::ivec2 size() const;
     bool isAlpha() const;

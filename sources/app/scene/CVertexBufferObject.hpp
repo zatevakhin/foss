@@ -1,8 +1,6 @@
 #pragma once
 
 #include "app/auxiliary/opengl.hpp"
-
-#include <boost/noncopyable.hpp>
 #include <vector>
 
 
@@ -20,12 +18,14 @@ enum class EBufferUsage
 };
 
 
-
-class CBufferObject : private boost::noncopyable
+class CVertexBufferObject
 {
 public:
-    explicit CBufferObject(EBufferType type, EBufferUsage usage = EBufferUsage::eStaticDraw);
-    ~CBufferObject();
+    explicit CVertexBufferObject(EBufferType type, EBufferUsage usage = EBufferUsage::eStaticDraw);
+    ~CVertexBufferObject();
+
+    CVertexBufferObject(const CVertexBufferObject&) = delete;
+
 
     static void unbind(EBufferType type);
 

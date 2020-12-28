@@ -3,18 +3,20 @@
 #include "app/auxiliary/sdl.hpp"
 #include "app/textures/ITexture.hpp"
 
-#include <boost/noncopyable.hpp>
+
 #include <boost/filesystem.hpp>
 
 namespace fs = boost::filesystem;
 
 
-class CResourceLoader : private boost::noncopyable
+class CResourceLoader
 {
 
 public:
     CResourceLoader();
     ~CResourceLoader();
+
+    CResourceLoader(const CResourceLoader&) = delete;
 
     static std::string getFileAsString(const fs::path& path);
     static fs::path getAbsolute(const fs::path& path);

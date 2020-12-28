@@ -44,18 +44,18 @@ void C3DRenderSystem::render(const glm::mat4 & view, const glm::mat4 & projectio
     GL_SWITCH_OPTION(settings->mCullFace, GL_CULL_FACE);
 
     glFrontFace(GL_CCW);
-    
+
     renderForeground(view, projection);
-    
+
     renderBoundingBoxes(view, projection);
 
     // renderMinMax(view, projection);
-    
+
     renderInstanced(view, projection);
 
     glFrontFace(GL_CW);
     glDepthFunc(GL_LEQUAL);
-    
+
     renderEnvironment(view, projection);
 }
 
@@ -92,7 +92,7 @@ void C3DRenderSystem::renderForeground(const glm::mat4 &view, const glm::mat4 &p
         }
     }
 
-    mMeshRenderer.use(m3DModelProgram);
+    mMeshRenderer.use(mMeshProgram);
     mMeshRenderer.setViewMatrix(view);
     mMeshRenderer.setProjectionMatrix(projection);
     for (auto [entity, components] : mEntityManager.getEntitySet<CMeshObjectComponent, C3dObjectComponent, CTransform3DComponent>())
@@ -132,6 +132,6 @@ void C3DRenderSystem::renderInstanced(const glm::mat4 &view, const glm::mat4 &pr
     {
         auto [model, object, transform] = components;
 
-        // trc_log("instanced entity = %ld", entity);`
+        // trc_log("instanced entity = %ld", entity);
     }
 }

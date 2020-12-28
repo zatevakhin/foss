@@ -6,7 +6,6 @@
 #include "app/auxiliary/glm.hpp"
 
 #include <boost/filesystem/path.hpp>
-#include <boost/noncopyable.hpp>
 
 
 namespace fs = boost::filesystem;
@@ -18,12 +17,13 @@ class CResourceLoader;
 
 
 class CTextureCubeMap :
-    private boost::noncopyable,
     public ITexture
 {
 public:
     CTextureCubeMap();
     ~CTextureCubeMap() override;
+
+    CTextureCubeMap(const CTextureCubeMap&) = delete;
 
     void bind() const override;
     static void unbind();

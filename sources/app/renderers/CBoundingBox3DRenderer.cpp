@@ -26,14 +26,14 @@
 
 
 constexpr GLfloat vertices[] = {
-    -0.5, -0.5, -0.5, 1.0,
-    +0.5, -0.5, -0.5, 1.0,
-    +0.5, +0.5, -0.5, 1.0,
-    -0.5, +0.5, -0.5, 1.0,
-    -0.5, -0.5, +0.5, 1.0,
-    +0.5, -0.5, +0.5, 1.0,
-    +0.5, +0.5, +0.5, 1.0,
-    -0.5, +0.5, +0.5, 1.0,
+    -0.5, -0.5, -0.5,
+    +0.5, -0.5, -0.5,
+    +0.5, +0.5, -0.5,
+    -0.5, +0.5, -0.5,
+    -0.5, -0.5, +0.5,
+    +0.5, -0.5, +0.5,
+    +0.5, +0.5, +0.5,
+    -0.5, +0.5, +0.5,
 };
 
 constexpr GLushort indexes[] = {
@@ -73,7 +73,7 @@ void CBoundingBox3DRenderer::draw(SStaticModel3D & model)
     glEnableVertexAttribArray(vertexAttrib);
     glVertexAttribPointer(
         vertexAttrib, // attribute
-        4,            // number of elements per vertex, here (x,y,z,w)
+        3,            // number of elements per vertex, here (x,y,z,w)
         GL_FLOAT,     // the type of each element
         GL_FALSE,     // take our values as-is
         0,            // no extra data between each position

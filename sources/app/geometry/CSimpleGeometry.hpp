@@ -1,22 +1,23 @@
 #pragma once
 
-#include "app/scene/CBufferObject.hpp"
-#include "app/scene/CArrayObject.hpp"
+#include "app/scene/CVertexBufferObject.hpp"
+#include "app/scene/CVertexArrayObject.hpp"
 #include "auxiliary.hpp"
 #include "SGeometryData.hpp"
 
-#include <boost/noncopyable.hpp>
 #include <memory>
 
 
 namespace geometry
 {
 
-class CSimpleGeometry : private boost::noncopyable
+class CSimpleGeometry
 {
 public:
     CSimpleGeometry();
     ~CSimpleGeometry() = default;
+
+    CSimpleGeometry(const CSimpleGeometry&) = delete;
 
     template<class TV, class TI>
     void copy(const std::vector<TV> & data, const std::vector<TI> & indexes)
@@ -31,9 +32,9 @@ public:
     void unbind() const;
 
 private:
-    CBufferObject mVerticies;
-    CBufferObject mIndexes;
-    CArrayObject  mVao;
+    CVertexBufferObject mVerticies;
+    CVertexBufferObject mIndexes;
+    CVertexArrayObject mVao;
 };
 
 using CSimpleGeometrySharedPtr = std::shared_ptr<CSimpleGeometry>;

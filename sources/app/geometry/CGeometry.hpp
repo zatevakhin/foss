@@ -1,7 +1,7 @@
 #pragma once
 
-#include "app/scene/CBufferObject.hpp"
-#include "app/scene/CArrayObject.hpp"
+#include "app/scene/CVertexBufferObject.hpp"
+#include "app/scene/CVertexArrayObject.hpp"
 #include "auxiliary.hpp"
 
 #include "SGeometryData.hpp"
@@ -16,11 +16,13 @@
 namespace geometry
 {
 
-class CGeometry : private boost::noncopyable
+class CGeometry
 {
 public:
     CGeometry();
     ~CGeometry() = default;
+
+    CGeometry(const CGeometry&) = delete;
 
     template<class TV, class TI>
     void copy(const SGeometryData<TV, TI> & data)
@@ -38,10 +40,10 @@ public:
     void unbind();
 
 private:
-    CBufferObject mVerticies;
-    CBufferObject mIndexes;
+    CVertexBufferObject mVerticies;
+    CVertexBufferObject mIndexes;
     CBoundingBox  mBBox;
-    CArrayObject  mVao;
+    CVertexArrayObject mVao;
 
 };
 

@@ -25,12 +25,13 @@ enum class EShaderType
 
 
 class CShaderProgram :
-     public IShaderProgram,
-     private boost::noncopyable
+     public IShaderProgram
 {
 public:
     CShaderProgram();
     ~CShaderProgram();
+
+    CShaderProgram(const CShaderProgram&) = delete;
 
     void compile(const std::string& source, EShaderType type);
 

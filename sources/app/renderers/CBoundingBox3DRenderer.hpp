@@ -1,8 +1,8 @@
 #pragma once
 
 #include "app/renderers/C3DRendererBase.hpp"
-#include "app/scene/CBufferObject.hpp"
-#include "app/scene/CArrayObject.hpp"
+#include "app/scene/CVertexBufferObject.hpp"
+#include "app/scene/CVertexArrayObject.hpp"
 
 
 struct SPhongMaterial;
@@ -16,7 +16,7 @@ public:
     void draw(SStaticModel3D & model) override;
 
 private:
-    CBufferObject mVertices;
-    CBufferObject mIndexes;
-    CArrayObject mVao;
+    CVertexBufferObject mVertices;
+    CVertexBufferObject mIndexes;
+    CVertexArrayObject mVao;
 };
