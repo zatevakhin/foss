@@ -1,23 +1,23 @@
 
-#include "CArrayObject.hpp"
+#include "CVertexArrayObject.hpp"
 
 
-CArrayObject::CArrayObject()
+CVertexArrayObject::CVertexArrayObject()
 {
     glGenVertexArrays(1, &mId);
 }
 
-CArrayObject::~CArrayObject()
+CVertexArrayObject::~CVertexArrayObject()
 {
     glDeleteVertexArrays(1, &mId);
 }
 
-void CArrayObject::bind() const
+void CVertexArrayObject::bind() const
 {
     glBindVertexArray(mId);
 }
 
-void CArrayObject::unbind() const
+void CVertexArrayObject::unbind() const
 {
     glBindVertexArray(0U);
 }

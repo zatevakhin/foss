@@ -17,9 +17,9 @@ CTerrainFace::CTerrainFace(CMesh &mesh, int resolution, glm::vec3 localUp)
 void CTerrainFace::buildMesh()
 {
     glm::vec3 vertices[mResolution * mResolution];
-    int triangles[(mResolution - 1) * (mResolution - 1) * 6];
-    int triangleIndex = 0;
-
+    int indices[(mResolution - 1) * (mResolution - 1) * 6];
+    int index = 0;
+    trc_log("Face");
     for (int y = 0; y < mResolution; ++y)
     {
         for (int x = 0; x < mResolution; ++x)
@@ -28,24 +28,41 @@ void CTerrainFace::buildMesh()
             glm::vec2 percent = glm::vec2(x, y) / glm::vec2(mResolution - 1);
             glm::vec3 pointOnUnitCube = mLocalUp + (percent.x - .5f) * 2 * mAxisA + (percent.y - .5f) * 2 * mAxisB;
             glm::vec3 pointOnUnitSphere = glm::normalize(pointOnUnitCube);
-            vertices[i] = pointOnUnitSphere;    
+            vertices[i] = pointOnUnitSphere;
 
-            if (x < mResolution - 1 && y < mResolution - 1)
+            trc_log("v %0.6f %0.6f %0.6f", pointOnUnitSphere.x, pointOnUnitSphere.y, pointOnUnitSphere.z);
+
+            if ((x < mResolution - 1) && (y < mResolution - 1))
             {
+                int obj_i = i + 1;
+                trc_log("f %d %d %d", obj_i, obj_i + mResolution + 1, obj_i + mResolution);
+                indices[index + 3] = i;
+                indices[index + 4] = i + mResolution + 1;
+                indices[index + 5] = i + mResolution;
 
-                triangles[triangleIndex] = i;
-                triangles[triangleIndex + 1] = i + mResolution + 1;
-                triangles[triangleIndex + 2] = i + mResolution;
+                trc_log("f %d %d %d", obj_i, obj_i + 1, obj_i + mResolution + 1);
+                indices[index] = i;
+                indices[index + 1] = i + 1;
+                indices[index + 2] = i + mResolution + 1;
+                index += 6;
 
-                triangles[triangleIndex + 3] = i;
-                triangles[triangleIndex + 4] = i + 1;
-                triangles[triangleIndex + 5] = i + mResolution + 1;
-                triangleIndex += 6;
+                //                 int obj_i = i + 1;
+                // trc_log("f %d %d %d", obj_i, obj_i + mResolution + 1, obj_i + mResolution);
+                // indices[index] = i;
+                // indices[index + 1] = i + mResolution + 1;
+                // indices[index + 2] = i + mResolution;
+
+                // trc_log("f %d %d %d", obj_i, obj_i + 1, obj_i + mResolution + 1);
+                // indices[index + 3] = i;
+                // indices[index + 4] = i + 1;
+                // indices[index + 5] = i + mResolution + 1;
+                // index += 6;
             }
         }
     }
+
     mMesh.setVertices(vertices, mResolution * mResolution);
-    mMesh.setIndexes(triangles, triangleIndex);;
+    mMesh.setIndexes(indices, index);;
     mMesh.bindGeometry();
 }
 

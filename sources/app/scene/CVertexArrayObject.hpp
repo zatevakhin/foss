@@ -2,14 +2,19 @@
 
 #include "app/auxiliary/opengl.hpp"
 
-class CArrayObject
+
+class CVertexArrayObject
 {
 public:
-    CArrayObject();
-    ~CArrayObject();
+    CVertexArrayObject();
+    ~CVertexArrayObject();
+
+    CVertexArrayObject(const CVertexArrayObject&) = delete;
 
     void bind() const;
     void unbind() const;
+
+    GLuint getId() const;
 
 private:
     GLuint mId;

@@ -25,6 +25,10 @@ public:
         mVao.bind();
         mVerticies.copy(data);
         mIndexes.copy(indexes);
+
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+        glEnableVertexAttribArray(0);
+
         mVao.unbind();
     }
 

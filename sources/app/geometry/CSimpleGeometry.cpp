@@ -15,15 +15,15 @@ CSimpleGeometry::CSimpleGeometry()
 void CSimpleGeometry::bind() const
 {
     mVao.bind();
-    mVerticies.bind();
-    mIndexes.bind();
+    // mVerticies.bind();
+    // mIndexes.bind();
 }
 
 
 void CSimpleGeometry::unbind() const
 {
-    mIndexes.unbind();
-    mVerticies.unbind();
+    // mIndexes.unbind();
+    // mVerticies.unbind();
     mVao.unbind();
 }
 

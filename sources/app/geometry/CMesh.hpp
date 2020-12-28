@@ -12,7 +12,7 @@ enum class EMeshType {
 };
 
 
-class CMesh 
+class CMesh
 {
     public:
         CMesh();
@@ -20,8 +20,8 @@ class CMesh
         size_t getVerticesCount() const;
         size_t getIndexesCount() const;
 
-        const glm::vec3 * getVertices() const;
-        const int * getIndexes() const;
+        const std::vector<glm::vec3>& getVertices() const;
+        const std::vector<int>& getIndexes() const;
 
         void bindGeometry();
 
@@ -32,10 +32,9 @@ class CMesh
         void setVertices(const glm::vec3 *vertices, size_t size);
         void setIndexes(const int *vertices, size_t size);
 
-
+    private:
         std::vector<glm::vec3> mVertices;
         std::vector<int> mIndexes;
-    private:
 
         geometry::CSimpleGeometry mGeometry;
 };

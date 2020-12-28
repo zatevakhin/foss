@@ -10,22 +10,22 @@ CMesh::CMesh()
 
 size_t CMesh::getVerticesCount() const
 {
-    return mVertices.size() * sizeof(mVertices[0]);
+    return mVertices.size() /* * sizeof(mVertices[0]) */;
 }
 
 size_t CMesh::getIndexesCount() const
 {
-    return mIndexes.size() * sizeof(mIndexes[0]);
+    return mIndexes.size();
 }
 
-const glm::vec3 * CMesh::getVertices() const
+const std::vector<glm::vec3>& CMesh::getVertices() const
 {
-    return mVertices.data();
+    return mVertices;
 }
 
-const int * CMesh::getIndexes() const
+const std::vector<int>& CMesh::getIndexes() const
 {
-    return mIndexes.data();
+    return mIndexes;
 }
 
 void CMesh::bindGeometry()
@@ -53,6 +53,7 @@ void CMesh::setVertices(const glm::vec3 *vertices, size_t size)
 {
     mVertices.reserve(size);
     std::copy(vertices, vertices + size, std::back_inserter(mVertices));
+
     mVertices.shrink_to_fit();
 }
 

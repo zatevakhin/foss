@@ -7,7 +7,7 @@
 class CMeshRenderer : public C3DRendererBase
 {
 public:
-    CMeshRenderer();
+    CMeshRenderer() = default;
     ~CMeshRenderer() = default;
 
     void draw(SStaticModel3D & model) override;
