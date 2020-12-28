@@ -1,29 +1,6 @@
-//#version 330 core
-//
-//out vec4 color;
-//
-//uniform vec4 background;
-//
-//void main() {
-//    color = background;
-//}
-//
-
-// #version 330 core
-
-// in vec2 TexCoords;
-
-// out vec4 color;
-
-// uniform sampler2D textureDiffuse;
-// uniform vec4 background;
-
-// void main() {
-//     color = vec4(texture(textureDiffuse, TexCoords)) + background;
-// }
-
-
 #version 330 core
+
+uniform vec4 background;
 out vec4 color;
 
 float near = 0.1;
