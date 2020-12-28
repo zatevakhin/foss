@@ -1,11 +1,8 @@
 #pragma once
 
-#include "app/renderers/C3DRendererBase.hpp"
-#include "app/scene/CVertexBufferObject.hpp"
-#include "app/scene/CVertexArrayObject.hpp"
+#include "C3DRendererBase.hpp"
+#include "CBoundingBoxModel.hpp"
 
-
-struct SPhongMaterial;
 
 class CBoundingBox3DRenderer : public C3DRendererBase
 {
@@ -16,7 +13,5 @@ public:
     void draw(SStaticModel3D & model) override;
 
 private:
-    CVertexBufferObject mVertices;
-    CVertexBufferObject mIndexes;
-    CVertexArrayObject mVao;
+    CBoundingBoxModel mBoxModel;
 };

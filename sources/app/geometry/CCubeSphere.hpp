@@ -17,7 +17,7 @@ class CCubeSphere : public CMeshObject
         void bind(int i);
         void unbind(int i);
 
-    // private:
+    private:
         std::vector<CTerrainFace> mCubeFaces;
         std::array<geometry::CSimpleGeometry, 6> mGeometries;
         int mResolution;
