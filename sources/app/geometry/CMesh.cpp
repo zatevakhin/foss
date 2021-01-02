@@ -11,7 +11,7 @@ CMesh::CMesh()
 
 size_t CMesh::getVerticesCount() const
 {
-    return mVertices.size() /* * sizeof(mVertices[0]) */;
+    return mVertices.size();
 }
 
 size_t CMesh::getIndexesCount() const
@@ -61,6 +61,8 @@ void CMesh::setVertices(const glm::vec3 *vertices, size_t size)
     std::copy(vertices, vertices + size, std::back_inserter(mVertices));
 
     mVertices.shrink_to_fit();
+
+    createBoundingBox();
 }
 
 void CMesh::setIndexes(const int *indexes, size_t size)
@@ -70,7 +72,16 @@ void CMesh::setIndexes(const int *indexes, size_t size)
     mIndexes.shrink_to_fit();
 }
 
-void CMesh::setBoundingBox(geometry::CBoundingBox& bbox)
+void CMesh::createBoundingBox()
 {
-    mBBox = std::move(bbox);
+    glm::vec3 lowerBound(0);
+    glm::vec3 upperBound(0);
+
+    for (const auto& vtx : mVertices)
+    {
+        lowerBound = glm::min(lowerBound, vtx);
+        upperBound = glm::max(upperBound, vtx);
+    }
+
+    mBBox = geometry::CBoundingBox(lowerBound, upperBound);
 }

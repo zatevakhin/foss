@@ -32,7 +32,9 @@ class CMesh
         void clear();
         void setVertices(const glm::vec3 *vertices, size_t size);
         void setIndexes(const int *vertices, size_t size);
-        void setBoundingBox(geometry::CBoundingBox& bbox);
+
+    private:
+        void createBoundingBox();
 
     private:
         std::vector<glm::vec3> mVertices;
