@@ -11,7 +11,6 @@ class CCubeSphere : public CMeshObject
 {
     public:
         explicit CCubeSphere(int resolution);
-        void buildMeshes();
         void bindGeometry();
 
         void bind(int i);

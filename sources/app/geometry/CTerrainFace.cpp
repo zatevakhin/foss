@@ -16,10 +16,12 @@ CTerrainFace::CTerrainFace(CMesh &mesh, int resolution, glm::vec3 localUp)
 
 void CTerrainFace::buildMesh()
 {
+    trc_log("Face");
+
     glm::vec3 vertices[mResolution * mResolution];
     int indices[(mResolution - 1) * (mResolution - 1) * 6];
     int index = 0;
-    trc_log("Face");
+
     for (int y = 0; y < mResolution; ++y)
     {
         for (int x = 0; x < mResolution; ++x)
@@ -45,25 +47,29 @@ void CTerrainFace::buildMesh()
                 indices[index + 1] = i + 1;
                 indices[index + 2] = i + mResolution + 1;
                 index += 6;
-
-                //                 int obj_i = i + 1;
-                // trc_log("f %d %d %d", obj_i, obj_i + mResolution + 1, obj_i + mResolution);
-                // indices[index] = i;
-                // indices[index + 1] = i + mResolution + 1;
-                // indices[index + 2] = i + mResolution;
-
-                // trc_log("f %d %d %d", obj_i, obj_i + 1, obj_i + mResolution + 1);
-                // indices[index + 3] = i;
-                // indices[index + 4] = i + 1;
-                // indices[index + 5] = i + mResolution + 1;
-                // index += 6;
             }
         }
     }
 
     mMesh.setVertices(vertices, mResolution * mResolution);
-    mMesh.setIndexes(indices, index);;
+    mMesh.setIndexes(indices, index);
     mMesh.bindGeometry();
+
+    glm::vec3 lowerBound(0);
+    glm::vec3 upperBound(0);
+
+    for (unsigned vi = 0; vi < mResolution * mResolution; ++vi)
+    {
+        const glm::vec3 vertex = vertices[vi];
+        lowerBound = glm::min(lowerBound, vertex);
+        upperBound = glm::max(upperBound, vertex);
+    }
+
+    geometry::CBoundingBox box(lowerBound, upperBound);
+
+    mMesh.setBoundingBox(box);
+
+    // mMesh.clear();
 }
 
 

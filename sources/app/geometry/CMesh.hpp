@@ -22,6 +22,7 @@ class CMesh
 
         const std::vector<glm::vec3>& getVertices() const;
         const std::vector<int>& getIndexes() const;
+        const geometry::CBoundingBox& getBoundingBox() const;
 
         void bindGeometry();
 
@@ -31,10 +32,12 @@ class CMesh
         void clear();
         void setVertices(const glm::vec3 *vertices, size_t size);
         void setIndexes(const int *vertices, size_t size);
+        void setBoundingBox(geometry::CBoundingBox& bbox);
 
     private:
         std::vector<glm::vec3> mVertices;
         std::vector<int> mIndexes;
 
         geometry::CSimpleGeometry mGeometry;
+        geometry::CBoundingBox mBBox;
 };

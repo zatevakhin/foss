@@ -124,6 +124,18 @@ void C3DRenderSystem::renderBoundingBoxes(const glm::mat4 &view, const glm::mat4
             mBBoxRenderer.draw(*model.mModel);
         }
     }
+
+    for (auto [entity, components] : mEntityManager.getEntitySet<CMeshObjectComponent, C3dObjectComponent, CTransform3DComponent>())
+    {
+        auto [model, object, transform] = components;
+
+        if (object.isInCameraView)
+        {
+            mBBoxRenderer.setTransformMatrix(transform.toMat4());
+            mBBoxRenderer.setIsPicked(object.isPicked);
+            mBBoxRenderer.draw(*model.mMeshObject);
+        }
+    }
 }
 
 void C3DRenderSystem::renderInstanced(const glm::mat4 &view, const glm::mat4 &projection)

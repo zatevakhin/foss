@@ -11,6 +11,7 @@ public:
     ~CBoundingBox3DRenderer() = default;
 
     void draw(SStaticModel3D & model) override;
+    void draw(const CMeshObject& mesh) override;
 
 private:
     CBoundingBoxModel mBoxModel;

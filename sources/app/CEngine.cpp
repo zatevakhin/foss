@@ -215,17 +215,17 @@ void CEngine::prepare()
 
     mc1.mModel = cubeModel;
 
-    // auto rock = mEntityManager.createEntity();
-    // auto &mc2 = mEntityManager.addComponent<C3DModelComponent>(rock);
-    // auto &dc2 = mEntityManager.addComponent<C3dObjectComponent>(rock);
-    // auto &tc2 = mEntityManager.addComponent<CTransform3DComponent>(rock);
+    auto rock = mEntityManager.createEntity();
+    auto &mc2 = mEntityManager.addComponent<C3DModelComponent>(rock);
+    auto &dc2 = mEntityManager.addComponent<C3dObjectComponent>(rock);
+    auto &tc2 = mEntityManager.addComponent<CTransform3DComponent>(rock);
 
-    // tc2.mScale = glm::vec3(2);
-    // tc2.mPosition = glm::vec3(0.f, 0.f, 0.f);
-    // tc2.mOrientation = glm::quat(glm::vec3(1.f, 2.f, 3.f));
+    tc2.mScale = glm::vec3(2);
+    tc2.mPosition = glm::vec3(0.f, 0.f, 0.f);
+    tc2.mOrientation = glm::quat(glm::vec3(1.f, 2.f, 3.f));
 
-    // mc2.mModel = rockModel;
-    // dc2.isInCameraView = false;
+    mc2.mModel = rockModel;
+    dc2.isInCameraView = false;
 
     auto meshObject = mEntityManager.createEntity();
     auto &mc3 = mEntityManager.addComponent<CMeshObjectComponent>(meshObject);
@@ -237,7 +237,6 @@ void CEngine::prepare()
     tc3.mOrientation = glm::quat(glm::vec3(90.f, 0.f, 0.f));
 
     auto sphere = new CCubeSphere(40);
-    sphere->buildMeshes();
 
     mc3.mMeshObject.reset(sphere);
     dc3.isInCameraView = true;

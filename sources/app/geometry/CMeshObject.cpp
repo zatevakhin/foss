@@ -26,3 +26,15 @@ const CMesh& CMeshObject::get(size_t i) const
 {
     return *mMeshList.at(i);
 }
+
+const geometry::CBoundingBox CMeshObject::getBoundingBox() const
+{
+    geometry::CBoundingBox bbox;
+
+    for (const auto& m : mMeshList)
+    {
+        bbox.unite(m->getBoundingBox());
+    }
+
+    return bbox;
+}
