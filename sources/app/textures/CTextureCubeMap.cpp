@@ -20,6 +20,12 @@ CTextureCubeMap::~CTextureCubeMap()
     }
 }
 
+unsigned int CTextureCubeMap::id() const
+{
+    return mTextureId;
+}
+
+
 void CTextureCubeMap::bind() const
 {
     glBindTexture(GL_TEXTURE_CUBE_MAP, mTextureId);

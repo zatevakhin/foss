@@ -23,6 +23,8 @@ public:
     CTextureCubeMap();
     ~CTextureCubeMap() override;
 
+    unsigned int id() const override;
+
     CTextureCubeMap(const CTextureCubeMap&) = delete;
 
     void bind() const override;

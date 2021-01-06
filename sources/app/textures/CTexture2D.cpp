@@ -22,18 +22,15 @@ CTexture2D::~CTexture2D()
     }
 }
 
+unsigned int CTexture2D::id() const
+{
+    return mTextureId;
+}
 
 glm::ivec2 CTexture2D::size() const
 {
     return mSize;
 }
-
-
-bool CTexture2D::isAlpha() const
-{
-    return mHasAlpha;
-}
-
 
 void CTexture2D::bind() const
 {
@@ -46,22 +43,25 @@ void CTexture2D::unbind()
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void CTexture2D::setSurface(const SDL_Surface& surface)
+void CTexture2D::setTexture(uint format, uint internalFormat, uint type, glm::ivec2 size, const void* ptr)
 {
-    mHasAlpha = SDL_ISPIXELFORMAT_ALPHA(surface.format->format);
-    mSize = { surface.w, surface.h };
-
-    const GLenum pixelFormat = mHasAlpha ? GL_RGBA : GL_RGB;
-    glTexImage2D(GL_TEXTURE_2D, 0, GLint(pixelFormat), mSize.x, mSize.y,
-                 0, pixelFormat, GL_UNSIGNED_BYTE, surface.pixels);
-    glGenerateMipmap(GL_TEXTURE_2D);
+    mSize = size;
+    glTexImage2D(GL_TEXTURE_2D, 0, format, size.x, size.y, 0, internalFormat, type, ptr);
 }
-
 
 void CTexture2D::setWrapMode(ETextureWrapMode s, ETextureWrapMode t)
 {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, mapTextureWrapMode(s));
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, mapTextureWrapMode(t));
+}
+
+void CTexture2D::setFilter()
+{
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+}
+
+void CTexture2D::generateMipMaps() const
+{
+    glGenerateMipmap(GL_TEXTURE_2D);
 }

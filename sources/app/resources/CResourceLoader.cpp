@@ -4,6 +4,7 @@
 #include "app/textures/CTexture2D.hpp"
 #include "nlohmann/json.hpp"
 #include "app/auxiliary/opengl.hpp"
+#include "app/auxiliary/sdl.hpp"
 
 #include <fmt/core.h>
 #include <fmt/format.h>
@@ -126,8 +127,14 @@ CTextureSharedPtr CResourceLoader::loadTexture(const fs::path& path)
         textures::ETextureWrapMode::eRepeat,
         textures::ETextureWrapMode::eRepeat
     );
-    texture->setSurface(*surface);
-    //    texture->GenerateMipmaps();
+
+    texture->setFilter();
+
+    const auto size = glm::ivec2(surface->w, surface->h);
+
+    const GLenum format = hasAlpha ? GL_RGBA : GL_RGB;
+    texture->setTexture(format, format, GL_UNSIGNED_BYTE, size, surface->pixels);
+    texture->generateMipMaps();
     CTexture2D::unbind();
 
     return texture;

@@ -4,8 +4,6 @@
 #include "auxiliary.hpp"
 
 #include "app/auxiliary/glm.hpp"
-#include "app/auxiliary/sdl.hpp"
-
 
 using namespace textures;
 
@@ -17,24 +15,24 @@ public:
     CTexture2D();
     ~CTexture2D() override;
 
+    unsigned int id() const override;
+
     CTexture2D(const CTexture2D&) = delete;
 
     glm::ivec2 size() const;
-    bool isAlpha() const;
 
     void bind() const override;
     static void unbind();
 
-    void setSurface(const SDL_Surface& surface);
+    void setTexture(uint format, uint internalFormat, uint type, glm::ivec2 size, const void* ptr);
     void setWrapMode(ETextureWrapMode s, ETextureWrapMode t);
+    void setFilter();
+    void generateMipMaps() const;
 
-    inline unsigned int id()
-    {
-        return mTextureId;
-    }
+
 
 private:
-    unsigned int mTextureId;
+    uint mTextureId;
     glm::ivec2 mSize;
     bool mHasAlpha;
 };

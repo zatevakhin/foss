@@ -19,4 +19,6 @@ public:
      *
      */
     virtual void bind() const = 0;
+
+    virtual unsigned int id() const = 0;
 };
