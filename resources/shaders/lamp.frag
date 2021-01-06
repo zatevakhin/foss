@@ -1,12 +1,9 @@
-#version 330 core
+#version 450 core
 
 uniform vec4 lamp;
 
-out vec4 color;
+out vec4 FragColor;
 
 void main() {
-
-    // Set alle 4 vector values to 1.0f
-    color = lamp;
-
+    FragColor = lamp;
 }

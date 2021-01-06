@@ -1,4 +1,4 @@
-#version 330 core
+#version 450 core
 
 struct LightSource
 {
@@ -35,6 +35,8 @@ uniform mat4 view;
 in vec2 fragTextureUV;
 in vec3 fragNormal;
 in vec3 fragPosInViewSpace;
+
+out vec4 FragColor;
 
 // Returns direction from surface fragment to light source.
 // Light can be either directed or undirected.
@@ -95,5 +97,5 @@ void main()
     vec4 diffuseIntensity = matDiffuse * factors.diffuse * light0.diffuse;
     vec4 specularIntensity = matSpecular * factors.specular * light0.specular;
 
-    gl_FragColor = diffuseIntensity + specularIntensity + matEmissive;
+    FragColor = diffuseIntensity + specularIntensity + matEmissive;
 }

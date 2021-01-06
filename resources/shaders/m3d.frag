@@ -1,9 +1,10 @@
-#version 330 core
+#version 450 core
 
-out vec4 color;
+out vec4 FragColor;
 
 uniform vec4 background;
 
+
 void main() {
-    color = background;
+    FragColor = background;
 }
