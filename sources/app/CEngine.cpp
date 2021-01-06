@@ -20,6 +20,7 @@
 #include "app/geometry/CCubeSphere.hpp"
 #include "resources/CStaticModelLoader.hpp"
 
+#include "entities/windows/CFboDebugWindow.hpp"
 #include "entities/windows/CEngineDebugWindow.hpp"
 #include "entities/windows/CEngineSettingsWindow.hpp"
 
@@ -188,6 +189,9 @@ void CEngine::prepare()
     CRegistry::set("camera", &mCamera);
     CRegistry::set("texture/skybox", skyboxTexture);
 
+    CRegistry::set("dbg.tex.fbo.rgb", 0);
+    CRegistry::set("dbg.tex.fbo.depth", 0);
+
     constexpr auto nbEntities = std::size_t(10000);
     mEntityManager.reserve(nbEntities);
 
@@ -251,6 +255,10 @@ void CEngine::prepare()
     auto &window2 = mEntityManager.addComponent<CWindowComponent>(settingsWindow);
     window2.mWindow = std::make_shared<CEngineSettingsWindow>(mSettings, mCamera);
 
+    auto fboDebug = mEntityManager.createEntity();
+    auto &window3 = mEntityManager.addComponent<CWindowComponent>(fboDebug);
+    window3.mWindow = std::make_shared<CFboDebugWindow>();
+
     // auto asteroids = new CInstancedAsteroidField(mEntityManager);
     // asteroids->setupModel(rockModel);
     // asteroids->setupTransform(glm::vec3(1.f, 1.f, 10.f), glm::vec3(1.f), glm::quat(glm::vec3(0.f, 0.f, 0.f)));
@@ -312,7 +320,7 @@ void CEngine::loop()
         onUpdate(mChronometer.getDelta());
 
         // CLEAR
-        onClear();
+        // onClear();
 
         // DRAW
         onDraw();
@@ -370,6 +378,8 @@ void CEngine::onDraw()
 {
     const glm::mat4 view = mCamera.getView();
     const glm::mat4 projection = mCamera.getProjection();
+
+    m3dRenderSystem->prepare(&mCamera);
 
     m3dRenderSystem->render(view, projection);
 

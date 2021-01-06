@@ -31,7 +31,59 @@ C3DRenderSystem::C3DRenderSystem(ecs::EntityManager &entityManager)
     , mBBoxRenderer()
     , mCubeMapRenderer()
     , mStaticModelRenderer()
+    , mFbo()
+    , mFboTextureRgb()
+    , mFboTextureDepth()
+    , mScreenQuad()
 {
+    // test test test
+    CRegistry::set("dbg.tex.fbo.rgb", &mFboTextureRgb);
+    CRegistry::set("dbg.tex.fbo.depth", &mFboTextureDepth);
+
+
+    std::vector<float> vtx({
+        -1.0f,  1.0f, 0.0f, 1.0f,
+        -1.0f, -1.0f, 0.0f, 0.0f,
+         1.0f, -1.0f, 1.0f, 0.0f,
+        -1.0f,  1.0f, 0.0f, 1.0f,
+         1.0f, -1.0f, 1.0f, 0.0f,
+         1.0f,  1.0f, 1.0f, 1.0f
+    });
+
+    mScreenQuad.bind();
+    CVertexBufferObject q_vbo(EBufferType::eAttributes);
+    q_vbo.bind();
+    q_vbo.copy(vtx);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)0);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)(2 * sizeof(GLfloat)));
+    q_vbo.unbind();
+    mScreenQuad.unbind();
+
+    mFbo.bind();
+
+    mFboTextureRgb.bind();
+    mFboTextureRgb.setTexture(GL_RGB, GL_RGB, GL_UNSIGNED_BYTE, {1920, 1080}, 0);
+    mFboTextureRgb.setFilter();
+    mFboTextureRgb.unbind();
+
+    mFboTextureDepth.bind();
+    mFboTextureDepth.setTexture(GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, {1920, 1080}, 0);
+    mFboTextureDepth.setFilter();
+    mFboTextureDepth.unbind();
+
+    mFbo.attachTexture(mFboTextureRgb.id(), GL_COLOR_ATTACHMENT0);
+    mFbo.attachTexture(mFboTextureDepth.id(), GL_DEPTH_STENCIL_ATTACHMENT);
+
+    mFbo.isComplete();
+
+    mFbo.unbind();
+}
+
+void C3DRenderSystem::prepare(const ICamera* camera)
+{
+
 }
 
 void C3DRenderSystem::render(const glm::mat4 & view, const glm::mat4 & projection)
@@ -43,24 +95,49 @@ void C3DRenderSystem::render(const glm::mat4 & view, const glm::mat4 & projectio
     GL_SWITCH_OPTION(settings->mDepthTest, GL_DEPTH_TEST);
     GL_SWITCH_OPTION(settings->mCullFace, GL_CULL_FACE);
 
-    glFrontFace(GL_CCW);
+    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     renderForeground(view, projection);
-
     renderBoundingBoxes(view, projection);
 
-    // renderMinMax(view, projection);
-
     renderInstanced(view, projection);
-
-    glFrontFace(GL_CW);
-    glDepthFunc(GL_LEQUAL);
-
     renderEnvironment(view, projection);
+
+    mFbo.bind();
+    glClearColor(0.f, 0.f, 0.f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    renderForeground(view, projection);
+    renderBoundingBoxes(view, projection);
+    mFbo.unbind();
+
+
+    glViewport(0, 0, 320, 200);
+    glDisable(GL_DEPTH_TEST);
+
+    mScreenProgram.use();
+    mScreenQuad.bind();
+    mFboTextureRgb.bind();
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    mFboTextureRgb.unbind();
+    mScreenQuad.unbind();
+
+    glViewport(0, 200, 320, 200);
+    mDepthProgram.use();
+    mScreenQuad.bind();
+    mFboTextureDepth.bind();
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    mFboTextureDepth.unbind();
+    mScreenQuad.unbind();
+
+
+    glViewport(0, 0, 1920, 1080);
 }
 
 void C3DRenderSystem::renderEnvironment(const glm::mat4 & view, const glm::mat4 & projection)
 {
+    glDepthFunc(GL_LEQUAL);
+    glFrontFace(GL_CW);
 
     mCubeMapRenderer.use(mEnvironmentProgram);
     mCubeMapRenderer.setViewMatrix(glm::mat4(glm::mat3(view)));
@@ -73,6 +150,8 @@ void C3DRenderSystem::renderEnvironment(const glm::mat4 & view, const glm::mat4 
         mCubeMapRenderer.setTransformMatrix(glm::mat4(0.f));
         mCubeMapRenderer.draw(*mesh.mModel);
     }
+
+    glFrontFace(GL_CCW);
 }
 
 void C3DRenderSystem::renderForeground(const glm::mat4 &view, const glm::mat4 &projection)
@@ -140,10 +219,10 @@ void C3DRenderSystem::renderBoundingBoxes(const glm::mat4 &view, const glm::mat4
 
 void C3DRenderSystem::renderInstanced(const glm::mat4 &view, const glm::mat4 &projection)
 {
-    for (auto [entity, components] : mEntityManager.getEntitySet<C3DModelComponent, CInstanced3dObjectComponent, CTransform3DComponent>())
-    {
-        auto [model, object, transform] = components;
+    // for (auto [entity, components] : mEntityManager.getEntitySet<C3DModelComponent, CInstanced3dObjectComponent, CTransform3DComponent>())
+    // {
+        // auto [model, object, transform] = components;
 
         // trc_log("instanced entity = %ld", entity);
-    }
+    // }
 }
