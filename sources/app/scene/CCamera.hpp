@@ -3,6 +3,7 @@
 #include "app/auxiliary/opengl.hpp"
 #include "app/auxiliary/sdl.hpp"
 #include "app/auxiliary/glm.hpp"
+#include "ICamera.hpp"
 
 #include <set>
 
@@ -16,7 +17,7 @@ enum class ECameraMoveDirection
     eNone
 };
 
-class CCamera
+class CCamera : public ICamera
 {
 public:
     CCamera();
@@ -26,11 +27,11 @@ public:
     CCamera( const CCamera& ) = delete;
     CCamera& operator=( const CCamera& ) = delete;
 
-    void update(double delta);
+    void update(double delta) override;
 
-    glm::mat4 getView() const;
-    glm::mat4 getProjection() const;
-    glm::vec3 getPosition() const;
+    glm::mat4 getView() const override;
+    glm::mat4 getProjection() const override;
+    glm::vec3 getPosition() const override;
 
     double getMoveSpeed() const;
     void setMoveSpeed(double speed);
