@@ -5,7 +5,7 @@
 #include "app/components/C3DModelComponent.hpp"
 #include <glm/gtc/matrix_access.hpp>
 #include <glm/gtx/transform.hpp>
-#include <glm/gtx/intersect.hpp> 
+#include <glm/gtx/intersect.hpp>
 #include "app/resources/CRegistry.hpp"
 #include "app/scene/CCamera.hpp"
 #include "app/auxiliary/trace.hpp"
@@ -38,11 +38,11 @@ void ScreenPosToWorldRay(
     // // The Projection matrix goes from Camera Space to NDC.
     // // So inverse(ProjectionMatrix) goes from NDC to Camera Space.
     // glm::mat4 InverseProjectionMatrix = glm::inverse(ProjectionMatrix);
-    
+
     // // The View Matrix goes from World Space to Camera Space.
     // // So inverse(ViewMatrix) goes from Camera Space to World Space.
     // glm::mat4 InverseViewMatrix = glm::inverse(ViewMatrix);
-    
+
     // glm::vec4 lRayStart_camera = InverseProjectionMatrix * lRayStart_NDC;    lRayStart_camera/=lRayStart_camera.w;
     // glm::vec4 lRayStart_world  = InverseViewMatrix       * lRayStart_camera; lRayStart_world /=lRayStart_world .w;
     // glm::vec4 lRayEnd_camera   = InverseProjectionMatrix * lRayEnd_NDC;      lRayEnd_camera  /=lRayEnd_camera  .w;
@@ -128,8 +128,8 @@ void CPickingSystem::update(double& delta)
 
             if (object.isPicked)
             {
-                trc_log("OBJ_POSITION     = (%8.4f, %8.4f, %8.4f)", transform.mPosition.x, transform.mPosition.y, transform.mPosition.z);
-                trc_log("OBJ_INTERSECTION = %8.4f", object.intersection);
+                // trc_log("OBJ_POSITION     = (%8.4f, %8.4f, %8.4f)", transform.mPosition.x, transform.mPosition.y, transform.mPosition.z);
+                // trc_log("OBJ_INTERSECTION = %8.4f", object.intersection);
             }
         }
     }

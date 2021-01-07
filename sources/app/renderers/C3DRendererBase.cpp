@@ -1,6 +1,5 @@
 
 #include "C3DRendererBase.hpp"
-#include "app/shading/IShaderProgram.hpp"
 
 
 void C3DRendererBase::setIsPicked(const bool value)
@@ -23,8 +22,8 @@ void C3DRendererBase::setProjectionMatrix(const glm::mat4 & value)
     mProjection = value;
 }
 
-void C3DRendererBase::use(IShaderProgram & program)
+void C3DRendererBase::use(CProgramWeakPtr program)
 {
-    mProgram = &program;
+    mProgram = program.lock();
     mProgram->use();
 }

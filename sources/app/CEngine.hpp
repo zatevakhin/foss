@@ -9,6 +9,7 @@
 #include "app/systems/CCullingSystem.hpp"
 #include "app/systems/CPickingSystem.hpp"
 #include "app/scene/CCamera.hpp"
+#include "app/resources/CShaderManager.hpp"
 
 #include "SEngineSettings.hpp"
 
@@ -66,6 +67,7 @@ private:
     std::unique_ptr<CRotationUpdateSystem> mRotationUpdateSystem;
     std::unique_ptr<CCullingSystem> mCullingSystem;
     std::unique_ptr<CPickingSystem> mPickingSystem;
+    std::unique_ptr<CShaderManager> mShaderManager;
 
     bool mIsRunning;
     bool mIsDebugMode;

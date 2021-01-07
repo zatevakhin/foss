@@ -1,6 +1,6 @@
 
 #include "app/scene/SStaticModel3D.hpp"
-#include "app/shading/C3DModelProgram.hpp"
+#include "app/shading/CUniform.hpp"
 #include "app/renderers/CBoundingBox3DRenderer.hpp"
 
 

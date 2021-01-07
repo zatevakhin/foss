@@ -1,5 +1,4 @@
 
-#include "app/shading/CShaderProgram.hpp"
 #include "app/renderers/CMeshRenderer.hpp"
 #include "app/scene/SStaticModel3D.hpp"
 #include "app/shading/CUniform.hpp"

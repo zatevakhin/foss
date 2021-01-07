@@ -18,11 +18,11 @@ target_link_libraries(foss.app
         app_input
         app_systems
         app_renderers
-        app_shading
         app_window
         app_entities_windows
         app_entities_3d_objects
         app_resources
+        app_shading
         app_geometry
         app_textures
         app_scene

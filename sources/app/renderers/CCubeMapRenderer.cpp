@@ -15,7 +15,7 @@ void CCubeMapRenderer::draw(SStaticModel3D & model)
 {
     if (!mProgram)
     {
-        throw std::runtime_error("Cannot draw 3D model while no program set");
+        throw std::runtime_error("Cannot draw (CCubeMapRenderer) while no program set");
     }
 
     // TODO: do something with this!!

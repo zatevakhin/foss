@@ -14,7 +14,6 @@
 #include "app/auxiliary/glm.hpp"
 #include "app/auxiliary/trace.hpp"
 
-#include "app/shading/C3DModelProgram.hpp"
 #include "geometry/CSimpleGeometry.hpp"
 
 #include <glm/glm.hpp>
@@ -45,7 +44,7 @@ namespace
 }
 
 
-void CStaticModel3DRenderer::use(IShaderProgram & program)
+void CStaticModel3DRenderer::use(CProgramWeakPtr program)
 {
     C3DRendererBase::use(program);
 
@@ -61,9 +60,9 @@ void CStaticModel3DRenderer::use(IShaderProgram & program)
 
 void CStaticModel3DRenderer::draw(SStaticModel3D & model)
 {
-    if (!mProgram)
+    if (nullptr == mProgram)
     {
-        throw std::runtime_error("Cannot draw 3D model while no program set");
+        throw std::runtime_error("Cannot draw (CStaticModel3DRenderer) while no program set");
     }
 
     mProgram->uniform("projection") = mProjection;

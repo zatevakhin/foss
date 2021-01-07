@@ -2,11 +2,11 @@
 
 #include "app/geometry/SGeometryData.hpp"
 #include "app/geometry/CMeshObject.hpp"
+#include "app/shading/IShaderProgram.hpp"
 
 #include <glm/mat4x4.hpp>
 
 
-class IShaderProgram;
 class SStaticModel3D;
 
 
@@ -24,7 +24,7 @@ public:
     void setTransformMatrix(const glm::mat4 &value);
     void setProjectionMatrix(const glm::mat4 &value);
 
-    virtual void use(IShaderProgram &program);
+    virtual void use(CProgramWeakPtr program);
     virtual void draw(SStaticModel3D &model) = 0;
     virtual void draw(const CMeshObject &mesh) {}
 
@@ -34,5 +34,5 @@ protected:
     glm::mat4 mTransform;
     glm::mat4 mProjection;
 
-    IShaderProgram *mProgram = nullptr;
+    CProgramSharedPtr mProgram;
 };

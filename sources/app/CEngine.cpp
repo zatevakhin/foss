@@ -4,8 +4,6 @@
 #include "app/auxiliary/imgui.hpp"
 #include "resources/CRegistry.hpp"
 
-#include "app/shading/CShaderProgram.hpp"
-
 #include "app/input/CCameraListener.hpp"
 #include "app/input/CEngineListener.hpp"
 #include "resources/CResourceLoader.hpp"
@@ -106,6 +104,7 @@ CEngine::CEngine()
     , mPickingSystem(nullptr)
     , mIsRunning(false)
     , mIsDebugMode(false)
+    , mShaderManager(nullptr)
 {
 }
 
@@ -118,6 +117,8 @@ void CEngine::initialize()
     trc_debug("Initialize:");
     initializeVideo();
     initializeInput();
+
+    mShaderManager.reset(new CShaderManager("resources/shaders"));
 
     mSettings.mBlend = false;
     mSettings.mCullFace = false;
@@ -132,6 +133,9 @@ void CEngine::initialize()
 
     CRegistry::set("settings", &mSettings);
     CRegistry::set("mouse/position", glm::ivec2(1920 / 2, 1080 / 2));
+
+    // Load shaders
+    mShaderManager->initialize();
 }
 
 void CEngine::initializeVideo()
@@ -202,7 +206,7 @@ void CEngine::prepare()
     style.Colors[ImGuiCol_WindowBg] = ImVec4(0.00f, 0.00f, 0.00f, 0.30f);
 
     m2dRenderSystem.reset(new C2DRenderSystem(mEntityManager));
-    m3dRenderSystem.reset(new C3DRenderSystem(mEntityManager));
+    m3dRenderSystem.reset(new C3DRenderSystem(mEntityManager, *mShaderManager.get()));
     mCullingSystem.reset(new CCullingSystem(mEntityManager));
     mPickingSystem.reset(new CPickingSystem(mEntityManager));
     mRotationUpdateSystem.reset(new CRotationUpdateSystem(mEntityManager));
