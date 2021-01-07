@@ -44,9 +44,9 @@ namespace
 }
 
 
-void CStaticModel3DRenderer::use(CProgramWeakPtr program)
+void CStaticModel3DRenderer::use()
 {
-    C3DRendererBase::use(program);
+    C3DRendererBase::use();
 
     mProgram->uniform("diffuseMap")  = 0; // GL_TEXTURE0
     mProgram->uniform("specularMap") = 1; // GL_TEXTURE1

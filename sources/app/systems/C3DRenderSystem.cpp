@@ -81,11 +81,25 @@ C3DRenderSystem::C3DRenderSystem(ecs::EntityManager &entityManager, CShaderManag
     mFbo.isComplete();
 
     mFbo.unbind();
+
+    mCubeMapRenderer.setProgram(mShaderManager.getByName("skybox"));
+    mStaticModelRenderer.setProgram(mShaderManager.getByName("phong"));
+    mMeshRenderer.setProgram(mShaderManager.getByName("m3d"));
+    mBBoxRenderer.setProgram(mShaderManager.getByName("m3d"));
 }
 
 void C3DRenderSystem::prepare(const ICamera* camera)
 {
 
+    mCubeMapRenderer.setViewMatrix(glm::mat4(glm::mat3(camera->getView())));
+    mStaticModelRenderer.setViewMatrix(camera->getView());
+    mMeshRenderer.setViewMatrix(camera->getView());
+    mBBoxRenderer.setViewMatrix(camera->getView());
+
+    mCubeMapRenderer.setProjectionMatrix(camera->getProjection());
+    mStaticModelRenderer.setProjectionMatrix(camera->getProjection());
+    mMeshRenderer.setProjectionMatrix(camera->getProjection());
+    mBBoxRenderer.setProjectionMatrix(camera->getProjection());
 }
 
 void C3DRenderSystem::render(const glm::mat4 & view, const glm::mat4 & projection)
@@ -117,7 +131,6 @@ void C3DRenderSystem::render(const glm::mat4 & view, const glm::mat4 & projectio
     glViewport(0, 0, 320, 200);
     glDisable(GL_DEPTH_TEST);
 
-    // mScreenProgram.use();
     mShaderManager.use("screen");
     mScreenQuad.bind();
     mFboTextureRgb.bind();
@@ -142,9 +155,7 @@ void C3DRenderSystem::renderEnvironment(const glm::mat4 & view, const glm::mat4 
     glDepthFunc(GL_LEQUAL);
     glFrontFace(GL_CW);
 
-    mCubeMapRenderer.use(mShaderManager.getByName("skybox"));
-    mCubeMapRenderer.setViewMatrix(glm::mat4(glm::mat3(view)));
-    mCubeMapRenderer.setProjectionMatrix(projection);
+    mCubeMapRenderer.use();
 
     for (auto [entity, components] : mEntityManager.getEntitySet<C3DModelComponent, CSkyboxComponent>())
     {
@@ -159,10 +170,7 @@ void C3DRenderSystem::renderEnvironment(const glm::mat4 & view, const glm::mat4 
 
 void C3DRenderSystem::renderForeground(const glm::mat4 &view, const glm::mat4 &projection)
 {
-    mStaticModelRenderer.use(mShaderManager.getByName("phong"));
-    mStaticModelRenderer.setViewMatrix(view);
-    mStaticModelRenderer.setProjectionMatrix(projection);
-
+    mStaticModelRenderer.use();
     for (auto [entity, components] : mEntityManager.getEntitySet<C3DModelComponent, C3dObjectComponent, CTransform3DComponent>())
     {
         auto [model, drawable, transform] = components;
@@ -174,9 +182,7 @@ void C3DRenderSystem::renderForeground(const glm::mat4 &view, const glm::mat4 &p
         }
     }
 
-    mMeshRenderer.use(mShaderManager.getByName("m3d"));
-    mMeshRenderer.setViewMatrix(view);
-    mMeshRenderer.setProjectionMatrix(projection);
+    mMeshRenderer.use();
     for (auto [entity, components] : mEntityManager.getEntitySet<CMeshObjectComponent, C3dObjectComponent, CTransform3DComponent>())
     {
         auto [mesh, drawable, transform] = components;
@@ -191,10 +197,7 @@ void C3DRenderSystem::renderForeground(const glm::mat4 &view, const glm::mat4 &p
 
 void C3DRenderSystem::renderBoundingBoxes(const glm::mat4 &view, const glm::mat4 &projection)
 {
-    mBBoxRenderer.use(mShaderManager.getByName("m3d"));
-    mBBoxRenderer.setViewMatrix(view);
-    mBBoxRenderer.setProjectionMatrix(projection);
-
+    mBBoxRenderer.use();
     for (auto [entity, components] : mEntityManager.getEntitySet<C3DModelComponent, C3dObjectComponent, CTransform3DComponent>())
     {
         auto [model, object, transform] = components;

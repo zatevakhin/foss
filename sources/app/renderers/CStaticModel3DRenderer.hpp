@@ -12,7 +12,7 @@ public:
     CStaticModel3DRenderer() = default;
     ~CStaticModel3DRenderer() = default;
 
-    void use(CProgramWeakPtr program) override;
+    void use() override;
     void draw(SStaticModel3D & model) override;
 
 private:

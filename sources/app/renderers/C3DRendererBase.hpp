@@ -24,7 +24,8 @@ public:
     void setTransformMatrix(const glm::mat4 &value);
     void setProjectionMatrix(const glm::mat4 &value);
 
-    virtual void use(CProgramWeakPtr program);
+    virtual void setProgram(CProgramWeakPtr program);
+    virtual void use();
     virtual void draw(SStaticModel3D &model) = 0;
     virtual void draw(const CMeshObject &mesh) {}
 
