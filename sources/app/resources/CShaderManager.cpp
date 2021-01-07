@@ -15,6 +15,7 @@
 
 constexpr const char* VERT_SHADER_EXT = ".vert";
 constexpr const char* FRAG_SHADER_EXT = ".frag";
+constexpr const char* GEOM_SHADER_EXT = ".geom";
 
 
 namespace
@@ -120,17 +121,23 @@ void compile(const GLuint programId, std::vector<GLuint>& shaderIds, const std::
     glAttachShader(programId, shaderIds.back());
 }
 
-void load(GLuint& programId, std::vector<GLuint>& shaderIds, std::map<EShaderType, std::string>& shaders)
+void load(GLuint& programId, std::vector<GLuint>& shaderIds, std::string& shaderPath)
 {
-    /* const auto  */
     programId = glCreateProgram();
 
-    // std::vector<GLuint> shaderIds;
+    std::map<const char*, EShaderType> extensionTypeList = {
+        {VERT_SHADER_EXT, EShaderType::eVertex},
+        {FRAG_SHADER_EXT, EShaderType::eFragment},
+        {GEOM_SHADER_EXT, EShaderType::eGeometry}
+    };
 
-    for (const auto& shader : shaders)
+    for (const auto &e : extensionTypeList)
     {
-        const auto& source = CResourceLoader::getFileAsString(shader.second);
-        compile(programId, shaderIds, source, shader.first);
+        if (std::filesystem::exists(shaderPath + e.first))
+        {
+            const auto& source = CResourceLoader::getFileAsString(shaderPath + e.first);
+            compile(programId, shaderIds, source, e.second);
+        }
     }
 
     link(programId);
@@ -170,27 +177,25 @@ std::string CShaderManager::getShaderPath(const char* shaderName) const
     return std::filesystem::path(mShadersDirectory) / shaderName;
 }
 
+CProgramSharedPtr CShaderManager::getShaderByPath(const char* shaderName) const
+{
+    auto shaderPath = getShaderPath(shaderName);
+    GLuint programId;
+    std::vector<GLuint> shaderIds;
+
+    ::load(programId, shaderIds, shaderPath);
+
+    return std::move(std::make_shared<CBasicProgram>(programId, shaderIds));
+}
+
 void CShaderManager::initialize()
 {
     for (const auto& e : getShaders(mShadersDirectory))
     {
-        std::string shaderPath = getShaderPath(e.c_str());
-
-        std::map<EShaderType, std::string> shader = {
-            {EShaderType::eVertex, shaderPath + VERT_SHADER_EXT},
-            {EShaderType::eFragment, shaderPath + FRAG_SHADER_EXT}
-        };
-
-        GLuint programId;
-        std::vector<GLuint> shaderIds;
-
-        ::load(programId, shaderIds, shader);
-
-        auto program = std::make_shared<CBasicProgram>(programId, shaderIds);
-
+        auto program = getShaderByPath(e.c_str());
         mPrograms.emplace(e, program);
 
-        trc_debug("Shader [%s] loaded at (%p).", e.c_str(), program.get());
+        trc_debug("Shader [%s] loaded at (%u).", e.c_str(), program->id());
     }
 }
 
@@ -201,34 +206,17 @@ void CShaderManager::reloadByName(const char* shaderName)
 
     if (shaderPtr != mPrograms.end())
     {
-        std::string shaderPath = getShaderPath(shaderName);
+        auto program = getShaderByPath(shaderName);
 
-        std::map<EShaderType, std::string> shader = {
-            {EShaderType::eVertex, shaderPath + VERT_SHADER_EXT},
-            {EShaderType::eFragment, shaderPath + FRAG_SHADER_EXT}
-        };
+        trc_debug("Reloading shader [%s] reloaded (%u) -> (%u).", shaderName, shaderPtr->second->id(), program->id());
 
-        GLuint programId;
-        std::vector<GLuint> shaderIds;
-
-        ::load(programId, shaderIds, shader);
-
-        auto program = new CBasicProgram(programId, shaderIds);
-
-        trc_debug("Reloading shader [%s] reloaded (%p) -> (%p).", shaderName, shaderPtr->second.get(), program);
-
-        shaderPtr->second.reset(program);
+        shaderPtr->second.swap(program);
     }
 }
 
 
 CProgramWeakPtr CShaderManager::getByName(const char* shaderName) const
 {
-    if (mPrograms.find(shaderName) != mPrograms.end())
-    {
-        std::cout << "Shader (" << shaderName << ") not found." << std::endl;
-    }
-
     return mPrograms.at(shaderName);
 }
 

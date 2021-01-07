@@ -1,8 +1,10 @@
 #include "app/auxiliary/opengl.hpp"
+#include "app/auxiliary/trace.hpp"
 
 #include "CBasicProgram.hpp"
 #include "CUniform.hpp"
 #include "CVertexAttribute.hpp"
+
 
 
 CBasicProgram::CBasicProgram(unsigned int programId, std::vector<unsigned int> shaders)
@@ -13,6 +15,8 @@ CBasicProgram::CBasicProgram(unsigned int programId, std::vector<unsigned int> s
 
 CBasicProgram::~CBasicProgram()
 {
+    trc_debug("CBasicProgram::dtor(%u)", mProgramId);
+
     for (GLuint shaderId : mShaders)
     {
         glDetachShader(mProgramId, shaderId);
@@ -26,6 +30,11 @@ CBasicProgram::~CBasicProgram()
 void CBasicProgram::use() const
 {
     glUseProgram(mProgramId);
+}
+
+unsigned int CBasicProgram::id() const
+{
+    return mProgramId;
 }
 
 CUniform CBasicProgram::uniform(const char* name)

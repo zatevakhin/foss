@@ -25,6 +25,7 @@ public:
 
 private:
     std::string getShaderPath(const char* shaderName) const;
+    CProgramSharedPtr getShaderByPath(const char* shaderName) const;
 
 private:
     std::map<std::string, CProgramSharedPtr> mPrograms;
