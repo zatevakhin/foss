@@ -82,7 +82,7 @@ std::string getInfoLog(GLuint shaderId)
         log.erase(log.begin() + ptrdiff_t(infoLogLength), log.end());
     }
 
-    return std::move(log);
+    return log;
 }
 
 void link(const GLuint programId)
@@ -160,7 +160,7 @@ std::set<std::string> getShaders(std::string dir)
         }
     }
 
-    return std::move(shadersList);
+    return shadersList;
 }
 
 } // namespace
@@ -177,49 +177,54 @@ std::string CShaderManager::getShaderPath(const char* shaderName) const
     return std::filesystem::path(mShadersDirectory) / shaderName;
 }
 
-CProgramSharedPtr CShaderManager::getShaderByPath(const char* shaderName) const
+std::tuple<unsigned int, std::vector<unsigned int>> CShaderManager::getShaderByPath(const char* shaderName) const
 {
     auto shaderPath = getShaderPath(shaderName);
-    GLuint programId;
-    std::vector<GLuint> shaderIds;
+    unsigned int programId;
+    std::vector<unsigned int> shaderIds;
 
     ::load(programId, shaderIds, shaderPath);
 
-    return std::move(std::make_shared<CBasicProgram>(programId, shaderIds));
+    return std::tuple(programId, shaderIds);
 }
 
 void CShaderManager::initialize()
 {
     for (const auto& e : getShaders(mShadersDirectory))
     {
-        auto program = getShaderByPath(e.c_str());
-        mPrograms.emplace(e, program);
+        auto [programId, shaderIds] = getShaderByPath(e.c_str());
+        mPrograms.emplace(e, new CBasicProgram(programId, shaderIds));
 
-        trc_debug("Shader [%s] loaded at (%u).", e.c_str(), program->id());
+        trc_debug("Shader [%s] loaded at (%u).", e.c_str(), programId);
     }
 }
 
+std::vector<std::pair<std::string, unsigned int>> CShaderManager::getProgramsList() const
+{
+    std::vector<std::pair<std::string, unsigned int>> programs;
+
+    for (const auto &p : mPrograms)
+    {
+        programs.emplace_back(p.first, p.second->id());
+    }
+
+    return programs;
+}
 
 void CShaderManager::reloadByName(const char* shaderName)
 {
-    auto shaderPtr = mPrograms.find(shaderName);
+    auto& shaderPtr = mPrograms.at(shaderName);
+    auto [programId, shaderIds] = getShaderByPath(shaderName);
 
-    if (shaderPtr != mPrograms.end())
-    {
-        auto program = getShaderByPath(shaderName);
+    trc_debug("Reloading shader [%s] reloaded (%u) -> (%u).", shaderName, shaderPtr->id(), programId);
 
-        trc_debug("Reloading shader [%s] reloaded (%u) -> (%u).", shaderName, shaderPtr->second->id(), program->id());
-
-        shaderPtr->second.swap(program);
-    }
+    shaderPtr->replace(programId, shaderIds);
 }
-
 
 CProgramWeakPtr CShaderManager::getByName(const char* shaderName) const
 {
     return mPrograms.at(shaderName);
 }
-
 
 void CShaderManager::use(const char* shaderName) const
 {

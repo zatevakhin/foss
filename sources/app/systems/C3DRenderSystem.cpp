@@ -148,6 +148,7 @@ void C3DRenderSystem::render(const glm::mat4 & view, const glm::mat4 & projectio
 
 
     glViewport(0, 0, 1920, 1080);
+    glUseProgram(0U); // Free shader
 }
 
 void C3DRenderSystem::renderEnvironment(const glm::mat4 & view, const glm::mat4 & projection)

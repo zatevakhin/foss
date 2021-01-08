@@ -16,7 +16,11 @@ CBasicProgram::CBasicProgram(unsigned int programId, std::vector<unsigned int> s
 CBasicProgram::~CBasicProgram()
 {
     trc_debug("CBasicProgram::dtor(%u)", mProgramId);
+    deleteProgram();
+}
 
+void CBasicProgram::deleteProgram()
+{
     for (GLuint shaderId : mShaders)
     {
         glDetachShader(mProgramId, shaderId);
@@ -31,6 +35,15 @@ void CBasicProgram::use() const
 {
     glUseProgram(mProgramId);
 }
+
+void CBasicProgram::replace(unsigned int programId, std::vector<unsigned int>& shaderIds)
+{
+    trc_debug("CBasicProgram::replace(%u -> %u)", mProgramId, programId);
+    deleteProgram();
+
+    mProgramId = programId;
+    mShaders = shaderIds;
+};
 
 unsigned int CBasicProgram::id() const
 {

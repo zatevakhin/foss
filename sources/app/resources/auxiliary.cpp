@@ -12,7 +12,7 @@
 using boost::filesystem::path;
 
 
-namespace 
+namespace
 {
 
 

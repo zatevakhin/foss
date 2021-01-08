@@ -20,6 +20,7 @@
 
 #include "entities/windows/CFboDebugWindow.hpp"
 #include "entities/windows/CEngineDebugWindow.hpp"
+#include "entities/windows/CShaderManagerWindow.hpp"
 #include "entities/windows/CEngineSettingsWindow.hpp"
 
 #include "app/auxiliary/trace.hpp"
@@ -262,6 +263,10 @@ void CEngine::prepare()
     auto fboDebug = mEntityManager.createEntity();
     auto &window3 = mEntityManager.addComponent<CWindowComponent>(fboDebug);
     window3.mWindow = std::make_shared<CFboDebugWindow>();
+
+    auto shaderManager = mEntityManager.createEntity();
+    auto &window4 = mEntityManager.addComponent<CWindowComponent>(shaderManager);
+    window4.mWindow = std::make_shared<CShaderManagerWindow>(*mShaderManager.get());
 
     // auto asteroids = new CInstancedAsteroidField(mEntityManager);
     // asteroids->setupModel(rockModel);

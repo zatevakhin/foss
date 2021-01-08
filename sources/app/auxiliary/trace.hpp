@@ -6,7 +6,7 @@
 #include <chrono>
 
 
-namespace 
+namespace
 {
     const std::string timestamp()
     {
@@ -17,7 +17,7 @@ namespace
         std::stringstream ss;
         ss << std::put_time(std::localtime(&tt), "%Y-%m-%d %X");
         ss << '.' << std::setfill('0') << std::setw(3) << ms.count();
-        return std::move(ss.str());
+        return ss.str();
     }
 
 }

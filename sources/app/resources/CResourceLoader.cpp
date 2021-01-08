@@ -40,7 +40,7 @@ std::string CResourceLoader::getFileAsString(const fs::path& path)
     std::stringstream ss;
     ss << f.rdbuf();
 
-    return std::move(ss.str());
+    return ss.str();
 }
 
 
