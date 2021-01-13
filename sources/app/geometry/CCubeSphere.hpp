@@ -1,23 +1,20 @@
 #pragma once
 
 #include "app/geometry/CMeshObject.hpp"
-#include "app/geometry/CSimpleGeometry.hpp"
 #include "app/geometry/CTerrainFace.hpp"
-#include <vector>
 #include <array>
-
+#include <vector>
 
 class CCubeSphere : public CMeshObject
 {
-    public:
-        explicit CCubeSphere(int resolution);
-        void bindGeometry();
+public:
+    explicit CCubeSphere(int resolution);
+    void bindGeometry();
 
-        void bind(int i);
-        void unbind(int i);
+    void bind(size_t i) const;
+    void unbind(size_t i) const;
 
-    private:
-        std::vector<CTerrainFace> mCubeFaces;
-        std::array<geometry::CSimpleGeometry, 6> mGeometries;
-        int mResolution;
+private:
+    std::vector<CTerrainFace> mCubeFaces;
+    int mResolution;
 };

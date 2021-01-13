@@ -6,8 +6,8 @@
 
 enum class EBufferType
 {
-    eAttributes, // GL_ARRAY_BUFFER
-    eIndexes,    // GL_ELEMENT_ARRAY_BUFFER
+    eArrayBuffer,
+    eElementArrayBuffer,
 };
 
 enum class EBufferUsage
@@ -41,8 +41,6 @@ public:
         const size_t size = sizeof(T) * array.size();
         copy(array.data(), size);
     }
-
-    size_t getSize() const;
 
 private:
     GLuint mId = 0;

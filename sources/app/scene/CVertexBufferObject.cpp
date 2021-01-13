@@ -10,9 +10,10 @@ namespace
 
 inline GLenum mapType(EBufferType type)
 {
+    // https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glBindBuffer.xhtml
     static const std::map<EBufferType, GLenum> bufferTypeMap = {
-        { EBufferType::eAttributes, GL_ARRAY_BUFFER },
-        { EBufferType::eIndexes,   GL_ELEMENT_ARRAY_BUFFER },
+        { EBufferType::eArrayBuffer,        GL_ARRAY_BUFFER },
+        { EBufferType::eElementArrayBuffer, GL_ELEMENT_ARRAY_BUFFER },
     };
 
     return bufferTypeMap.at(type);
@@ -71,12 +72,4 @@ void CVertexBufferObject::copy(const void* data, size_t size)
     const GLenum bufferType = mapType(mType);
     glBindBuffer(bufferType, mId);
     glBufferData(bufferType, size, data, mapType(mUsage));
-}
-
-
-size_t CVertexBufferObject::getSize() const
-{
-    GLint result = 0;
-    glGetBufferParameteriv(mapType(mType), GL_BUFFER_SIZE, &result);
-    return static_cast<size_t>(result);
 }

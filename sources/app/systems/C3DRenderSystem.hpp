@@ -4,8 +4,9 @@
 #include "app/renderers/CCubeMapRenderer.hpp"
 #include "app/renderers/CStaticModel3DRenderer.hpp"
 #include "app/renderers/CBoundingBox3DRenderer.hpp"
+#include "app/renderers/CParticleSystemRenderer.hpp"
 #include "app/scene/ICamera.hpp"
-#include "app/scene/CFrameBufferObject.hpp"
+#include "app/scene/CCompleteFbo.hpp"
 #include "app/textures/CTexture2D.hpp"
 
 #include "ecs/EntityManager.hpp"
@@ -29,14 +30,13 @@ private:
     CCubeMapRenderer mCubeMapRenderer;
     CStaticModel3DRenderer mStaticModelRenderer;
     CBoundingBox3DRenderer mBBoxRenderer;
+    CParticleSystemRenderer mParticleSystemRenderer;
 
     ecs::EntityManager &mEntityManager;
     CShaderManager &mShaderManager;
 
-    CFrameBufferObject mFbo;
-    CTexture2D mFboTextureRgb;
-    CTexture2D mFboTextureDepth;
-    GLuint mRbo;
+    CCompleteFbo mFbo;
 
     CVertexArrayObject mScreenQuad;
+    CVertexArrayObject mParticlesVao;
 };

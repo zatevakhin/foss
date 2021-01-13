@@ -1,10 +1,13 @@
 #pragma once
 
-#include "app/geometry/CSimpleGeometry.hpp"
+#include "app/scene/CVertexBufferObject.hpp"
+#include "app/scene/CVertexArrayObject.hpp"
+#include "app/geometry/CBoundingBox.hpp"
 #include <glm/vec3.hpp>
 #include <vector>
 
-enum class EMeshType {
+enum class EMeshType
+{
     POINTS,
     LINES,
     TRIANGLES,
@@ -14,32 +17,35 @@ enum class EMeshType {
 
 class CMesh
 {
-    public:
-        CMesh();
+public:
+    CMesh();
 
-        size_t getVerticesCount() const;
-        size_t getIndexesCount() const;
+    size_t getVerticesCount() const;
+    size_t getIndicesCount() const;
 
-        const std::vector<glm::vec3>& getVertices() const;
-        const std::vector<int>& getIndexes() const;
-        const geometry::CBoundingBox& getBoundingBox() const;
+    const std::vector<float> &getVertices() const;
+    const std::vector<int> &getIndices() const;
+    const geometry::CBoundingBox &getBoundingBox() const;
 
-        void bindGeometry();
+    void bind() const;
+    void unbind() const;
 
-        void bind() const;
-        void unbind() const;
+    void clear();
+    void setVertices(const float *vertices, size_t size, bool noIndices = false);
+    void setIndices(const int *vertices, size_t size);
 
-        void clear();
-        void setVertices(const glm::vec3 *vertices, size_t size);
-        void setIndexes(const int *vertices, size_t size);
+private:
+    void createBoundingBox();
 
-    private:
-        void createBoundingBox();
+private:
+    bool mNoIndices;
 
-    private:
-        std::vector<glm::vec3> mVertices;
-        std::vector<int> mIndexes;
+    std::vector<float> mVertices;
+    std::vector<int> mIndices;
 
-        geometry::CSimpleGeometry mGeometry;
-        geometry::CBoundingBox mBBox;
+    geometry::CBoundingBox mBBox;
+
+    CVertexBufferObject mVerticesVbo;
+    CVertexBufferObject mIndicesVbo;
+    CVertexArrayObject mVao;
 };

@@ -3,7 +3,6 @@
 
 constexpr int CUBE_FACES_COUNT = 6;
 
-
 CCubeSphere::CCubeSphere(int resolution)
     : CMeshObject()
     , mResolution(resolution)
@@ -20,28 +19,16 @@ CCubeSphere::CCubeSphere(int resolution)
     for (int i = 0; i < CUBE_FACES_COUNT; ++i)
     {
         mCubeFaces.emplace_back(create(), mResolution, directions[i]);
-    }
-
-    for (int i = 0; i < CUBE_FACES_COUNT; ++i)
-    {
-        mCubeFaces[i].buildMesh();
+        mCubeFaces.back().buildMesh();
     }
 }
 
-void CCubeSphere::bindGeometry()
+void CCubeSphere::bind(size_t i) const
 {
-    for (int i = 0; i < CUBE_FACES_COUNT; ++i)
-    {
-        mGeometries[i].copy(get(i).getVertices(), get(i).getIndexes());
-    }
+    get(i).bind();
 }
 
-void CCubeSphere::bind(int i)
+void CCubeSphere::unbind(size_t i) const
 {
-    mGeometries[i].bind();
-}
-
-void CCubeSphere::unbind(int i)
-{
-    mGeometries[i].unbind();
+    get(i).unbind();
 }

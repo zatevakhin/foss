@@ -6,8 +6,8 @@ namespace geometry
 {
 
 CGeometry::CGeometry()
-    : mVerticies(EBufferType::eAttributes)
-    , mIndexes(EBufferType::eIndexes)
+    : mVerticies(EBufferType::eArrayBuffer)
+    , mIndices(EBufferType::eElementArrayBuffer)
     , mVao()
 {
 }
@@ -21,7 +21,7 @@ void CGeometry::bind()
 {
     mVao.bind();
     mVerticies.bind();
-    mIndexes.bind();
+    mIndices.bind();
 }
 
 

@@ -14,6 +14,7 @@
 #include "components/C3dObjectComponent.hpp"
 #include "components/CTransform3DComponent.hpp"
 #include "components/CMeshObjectComponent.hpp"
+#include "components/CParticleSystemComponent.hpp"
 
 #include "app/geometry/CCubeSphere.hpp"
 #include "resources/CStaticModelLoader.hpp"
@@ -60,7 +61,7 @@ void checkOpenGLErrors()
                 message = "error in some GL extension (framebuffers, shaders, etc)";
                 break;
         }
-        throw std::runtime_error("OpenGL error: " + message);
+        trc_error("OpenGL error: %s", message.c_str());
     }
 }
 
@@ -85,8 +86,8 @@ void GLAPIENTRY DebugOutputCallback(
 
 void setupOpenGlDebug()
 {
-    glEnable(GL_DEBUG_OUTPUT);
-    glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+    gl::Enable(GL_DEBUG_OUTPUT);
+    gl::Enable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
     glDebugMessageCallback(DebugOutputCallback, nullptr);
     glDebugMessageControl(GL_DONT_CARE, GL_DEBUG_TYPE_ERROR, GL_DONT_CARE, 0, nullptr, GL_TRUE);
 }
@@ -101,12 +102,14 @@ CEngine::CEngine()
     , m2dRenderSystem(nullptr)
     , m3dRenderSystem(nullptr)
     , mRotationUpdateSystem(nullptr)
+    , mParticleUpdateSystem(nullptr)
     , mCullingSystem(nullptr)
     , mPickingSystem(nullptr)
     , mIsRunning(false)
     , mIsDebugMode(false)
     , mShaderManager(nullptr)
 {
+    mSettings.mWindowSize = glm::ivec2(1920, 1080);
 }
 
 CEngine::~CEngine()
@@ -133,7 +136,7 @@ void CEngine::initialize()
 
 
     CRegistry::set("settings", &mSettings);
-    CRegistry::set("mouse/position", glm::ivec2(1920 / 2, 1080 / 2));
+    CRegistry::set("mouse/position", mSettings.mWindowSize / 2);
 
     // Load shaders
     mShaderManager->initialize();
@@ -145,7 +148,7 @@ void CEngine::initializeVideo()
 
     mMainWindow.reset(new CMainWindow);
 
-    mMainWindow->setSize({1920, 1080});
+    mMainWindow->setSize(mSettings.mWindowSize);
     mMainWindow->setTitle("F.O.S.S (0.3.5)");
     mMainWindow->setFlags(SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN);
 
@@ -154,14 +157,16 @@ void CEngine::initializeVideo()
         {SDL_GL_CONTEXT_MINOR_VERSION, 5},
         {SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE},
         {SDL_GL_DOUBLEBUFFER, 1},
+        {SDL_GL_ACCELERATED_VISUAL, 1},
         {SDL_GL_STENCIL_SIZE, 8},
         {SDL_GL_DEPTH_SIZE, 24},
         {SDL_GL_MULTISAMPLEBUFFERS, 1},
-        {SDL_GL_MULTISAMPLESAMPLES, 4}
+        {SDL_GL_MULTISAMPLESAMPLES, 8}
     };
 
     mMainWindow->setAttributes(attributes);
     mMainWindow->create();
+    glEnable(GL_MULTISAMPLE);
 }
 
 void CEngine::initializeInput()
@@ -188,6 +193,8 @@ void CEngine::stop()
 
 void CEngine::prepare()
 {
+    srand(SDL_GetTicks());
+
     trc_debug("prepare: ");
     auto skyboxTexture = mResourceLoader->getCubeMap("resources/skybox/purple-nebula", 1024 * 4);
 
@@ -211,11 +218,12 @@ void CEngine::prepare()
     mCullingSystem.reset(new CCullingSystem(mEntityManager));
     mPickingSystem.reset(new CPickingSystem(mEntityManager));
     mRotationUpdateSystem.reset(new CRotationUpdateSystem(mEntityManager));
+    mParticleUpdateSystem.reset(new CParticleUpdateSystem(mEntityManager));
 
 
     CStaticModelLoader modelLoader(*mResourceLoader);
     auto rockModel = modelLoader.load("resources/models/rock/rock.obj");
-    auto cubeModel = modelLoader.load("resources/models/cube/cube.obj");;
+    auto cubeModel = modelLoader.load("resources/models/cube/cube.obj");
 
 
     auto skybox = mEntityManager.createEntity();
@@ -230,7 +238,7 @@ void CEngine::prepare()
     auto &tc2 = mEntityManager.addComponent<CTransform3DComponent>(rock);
 
     tc2.mScale = glm::vec3(2);
-    tc2.mPosition = glm::vec3(0.f, 0.f, 0.f);
+    tc2.mPosition = glm::vec3(-10.f, 0.f, -10.f);
     tc2.mOrientation = glm::quat(glm::vec3(1.f, 2.f, 3.f));
 
     mc2.mModel = rockModel;
@@ -241,8 +249,9 @@ void CEngine::prepare()
     auto &dc3 = mEntityManager.addComponent<C3dObjectComponent>(meshObject);
     auto &tc3 = mEntityManager.addComponent<CTransform3DComponent>(meshObject);
 
+
     tc3.mScale = glm::vec3(5);
-    tc3.mPosition = glm::vec3(0.f, 0.f, -10.f);
+    tc3.mPosition = glm::vec3(0.f, 0.f, -20.f);
     tc3.mOrientation = glm::quat(glm::vec3(90.f, 0.f, 0.f));
 
     auto sphere = new CCubeSphere(40);
@@ -260,9 +269,9 @@ void CEngine::prepare()
     auto &window2 = mEntityManager.addComponent<CWindowComponent>(settingsWindow);
     window2.mWindow = std::make_shared<CEngineSettingsWindow>(mSettings, mCamera);
 
-    auto fboDebug = mEntityManager.createEntity();
-    auto &window3 = mEntityManager.addComponent<CWindowComponent>(fboDebug);
-    window3.mWindow = std::make_shared<CFboDebugWindow>();
+    // auto fboDebug = mEntityManager.createEntity();
+    // auto &window3 = mEntityManager.addComponent<CWindowComponent>(fboDebug);
+    // window3.mWindow = std::make_shared<CFboDebugWindow>();
 
     auto shaderManager = mEntityManager.createEntity();
     auto &window4 = mEntityManager.addComponent<CWindowComponent>(shaderManager);
@@ -272,42 +281,53 @@ void CEngine::prepare()
     // asteroids->setupModel(rockModel);
     // asteroids->setupTransform(glm::vec3(1.f, 1.f, 10.f), glm::vec3(1.f), glm::quat(glm::vec3(0.f, 0.f, 0.f)));
 
+    auto particleSystem = mEntityManager.createEntity();
+    auto &psComponent = mEntityManager.addComponent<CParticleSystemComponent>(particleSystem);
+    auto &psTransform = mEntityManager.addComponent<CTransform3DComponent>(particleSystem);
 
-    // srand(SDL_GetTicks());
+    auto pSystem = std::make_shared<CParticleSystem>();
 
-    // unsigned int amount = 1000 /* * 2 */;
-    // float radius = 200.0;
-    // float offset = 50.f;
+    psTransform.mScale = glm::vec3(0.5);
+    psTransform.mPosition = glm::vec3(0,0,0);
+    psTransform.mOrientation = glm::quat(glm::vec3(0));
+    pSystem->setGravity(-glm::vec3(0, 0, 0));
 
-    // glm::mat4* modelMatrices = new glm::mat4[amount];
+    // psTransform.mScale = glm::vec3(0.7);
+    // psTransform.mPosition = glm::vec3(-12, -2, 0);
+    // psTransform.mOrientation = glm::quat(glm::vec3(0));
+    // pSystem->setGravity(glm::vec3(0, -0.2, 0));
 
-    // for (unsigned int i = 0; i < amount; i++)  {
-    //     auto entity = mEntityManager.createEntity();
 
-    //     auto &mesh = mEntityManager.addComponent<CMeshComponent>(entity);
-    //     auto &object = mEntityManager.addComponent<C3dObjectComponent>(entity);
-    //     auto &transform = mEntityManager.addComponent<CTransform3DComponent>(entity);
+    pSystem->setParticleTexture(CResourceLoader::getTexture("resources/textures/orange.png"));
 
-    //     mesh.mModel = rockModel;
-    //     object.isInCameraView = true;
+    auto createEmitter = []() -> std::unique_ptr<CParticleEmitter> {
+        auto pEmitter = std::make_unique<CParticleEmitter>();
+        pEmitter->setPosition(glm::vec3(0, 0, 0));
+        pEmitter->setDirection(glm::vec3(0, -1, 0));
+        pEmitter->setMaxDeviationAngle(3.14f);
+        pEmitter->setDistanceRange(10, 10.1);
+        pEmitter->setEmitIntervalRange(0.0003, 0.0004);
+        pEmitter->setLifetimeRange(0.8, 0.9);
+        pEmitter->setSpeedRange(0.5, 0.6);
 
-    //     float angle = (float)i / (float)amount * 360.0f;
-    //     float displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
-    //     float x = sin(angle) * radius + displacement;
-    //     displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
-    //     float y = displacement * 0.4f;
-    //     displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
-    //     float z = cos(angle) * radius + displacement;
+        // pEmitter->setPosition(glm::vec3(0, 0, 0));
+        // pEmitter->setDirection(glm::vec3(1, -0.5, 0));
+        // pEmitter->setMaxDeviationAngle(0.3);
+        // pEmitter->setDistanceRange(0, 2);
+        // pEmitter->setEmitIntervalRange(0.003, 0.005);
+        // pEmitter->setLifetimeRange(2, 3);
+        // pEmitter->setSpeedRange(8, 10);
 
-    //     transform.mPosition = glm::vec3(x, y, z);
+        return pEmitter;
+    };
 
-    //     float scale = (rand() % 8) / 100.0f + 0.005;
-    //     transform.mScale = glm::vec3(scale);
 
-    //     transform.mOrientation = glm::angleAxis(static_cast<float>(rand() % 360), glm::vec3(0, 1, 0));
-    //     transform.mOrientation = glm::rotate(transform.mOrientation, static_cast<float>(rand() % 360), glm::vec3(1, 0, 0));
-    //     transform.mOrientation = glm::rotate(transform.mOrientation, static_cast<float>(rand() % 360), glm::vec3(0, 0, 1));
-    // }
+    pSystem->setEmitter(createEmitter());
+
+
+    psComponent.mParticleSystem = pSystem;
+
+
 }
 
 void CEngine::loop()
@@ -370,6 +390,7 @@ void CEngine::onUpdate(double delta)
 
     mCullingSystem->update(delta);
     mPickingSystem->update(delta);
+    mParticleUpdateSystem->update(delta);
 
     // add ignore rotation on invisible objects
     mRotationUpdateSystem->update(delta);
@@ -379,8 +400,8 @@ void CEngine::onUpdate(double delta)
 
 void CEngine::onClear()
 {
-    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    gl::ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    gl::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void CEngine::onDraw()

@@ -15,6 +15,10 @@
 #include "app/components/C3dObjectComponent.hpp"
 #include "app/components/CSkyboxComponent.hpp"
 #include "app/components/CInstanced3dObjectComponent.hpp"
+#include "app/components/CParticleSystemComponent.hpp"
+#include "app/shading/CUniform.hpp"
+
+#include "app/shading/CVertexAttribute.cpp"
 
 #include "app/auxiliary/trace.hpp"
 #include "app/auxiliary/glm.hpp"
@@ -24,7 +28,7 @@
 #include <iostream>
 
 
-#define GL_SWITCH_OPTION(expression, option) (((expression) ? glEnable : glDisable)(option))
+#define GL_SWITCH_OPTION(expression, option) (((expression) ? gl::Enable : gl::Disable)(option))
 
 C3DRenderSystem::C3DRenderSystem(ecs::EntityManager &entityManager, CShaderManager& shaderManager)
     : mEntityManager(entityManager)
@@ -33,15 +37,11 @@ C3DRenderSystem::C3DRenderSystem(ecs::EntityManager &entityManager, CShaderManag
     , mBBoxRenderer()
     , mCubeMapRenderer()
     , mStaticModelRenderer()
-    , mFbo()
-    , mFboTextureRgb()
-    , mFboTextureDepth()
+    , mParticleSystemRenderer()
+    , mFbo({1920, 1080})
     , mScreenQuad()
+    , mParticlesVao()
 {
-    // test test test
-    CRegistry::set("dbg.tex.fbo.rgb", &mFboTextureRgb);
-    CRegistry::set("dbg.tex.fbo.depth", &mFboTextureDepth);
-
 
     std::vector<float> vtx({
         -1.0f,  1.0f, 0.0f, 1.0f,
@@ -52,35 +52,45 @@ C3DRenderSystem::C3DRenderSystem(ecs::EntityManager &entityManager, CShaderManag
          1.0f,  1.0f, 1.0f, 1.0f
     });
 
+    std::vector<glm::vec3> vtxParticles;
+
+    unsigned int amount = 1000;
+    float radius = 50.0;
+    float offset = 10.f;
+
+    for (size_t i = 0; i < amount; ++i)
+    {
+        float angle = i / amount * 360.0f;
+
+        float displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
+        float x = sin(angle) * radius + displacement;
+        displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
+        float y = displacement * 0.4f;
+        displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
+        float z = cos(angle) * radius + displacement;
+
+
+        vtxParticles.push_back(glm::vec3(x, y, z));
+    }
+
+
+    mParticlesVao.bind();
+    CVertexBufferObject particlesVbo(EBufferType::eArrayBuffer);
+    particlesVbo.bind();
+    particlesVbo.copy(vtxParticles);
+    gl::VertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    particlesVbo.unbind();
+    mParticlesVao.unbind();
+
+
     mScreenQuad.bind();
-    CVertexBufferObject q_vbo(EBufferType::eAttributes);
+    CVertexBufferObject q_vbo(EBufferType::eArrayBuffer);
     q_vbo.bind();
     q_vbo.copy(vtx);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)0);
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)(2 * sizeof(GLfloat)));
+    gl::VertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)0);
+    gl::VertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)(2 * sizeof(GLfloat)));
     q_vbo.unbind();
     mScreenQuad.unbind();
-
-    mFbo.bind();
-
-    mFboTextureRgb.bind();
-    mFboTextureRgb.setTexture(GL_RGB, GL_RGB, GL_UNSIGNED_BYTE, {1920, 1080}, 0);
-    mFboTextureRgb.setFilter();
-    mFboTextureRgb.unbind();
-
-    mFboTextureDepth.bind();
-    mFboTextureDepth.setTexture(GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, {1920, 1080}, 0);
-    mFboTextureDepth.setFilter();
-    mFboTextureDepth.unbind();
-
-    mFbo.attachTexture(mFboTextureRgb.id(), GL_COLOR_ATTACHMENT0);
-    mFbo.attachTexture(mFboTextureDepth.id(), GL_DEPTH_STENCIL_ATTACHMENT);
-
-    mFbo.isComplete();
-
-    mFbo.unbind();
 
     mCubeMapRenderer.setProgram(mShaderManager.getByName("skybox"));
     mStaticModelRenderer.setProgram(mShaderManager.getByName("phong"));
@@ -90,6 +100,11 @@ C3DRenderSystem::C3DRenderSystem(ecs::EntityManager &entityManager, CShaderManag
 
 void C3DRenderSystem::prepare(const ICamera* camera)
 {
+    // for (auto [entity, component] : mEntityManager.getEntitySet<CParticleSystemComponent, CTransform3DComponent>())
+    // {
+    //     auto [c, t] = component;
+    //     t.mPosition = camera->getPosition();
+    // }
 
     mCubeMapRenderer.setViewMatrix(glm::mat4(glm::mat3(camera->getView())));
     mStaticModelRenderer.setViewMatrix(camera->getView());
@@ -111,43 +126,48 @@ void C3DRenderSystem::render(const glm::mat4 & view, const glm::mat4 & projectio
     GL_SWITCH_OPTION(settings->mDepthTest, GL_DEPTH_TEST);
     GL_SWITCH_OPTION(settings->mCullFace, GL_CULL_FACE);
 
-    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    gl::ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    gl::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 
     renderForeground(view, projection);
     renderBoundingBoxes(view, projection);
 
-    renderInstanced(view, projection);
     renderEnvironment(view, projection);
+    renderInstanced(view, projection);
 
     mFbo.bind();
-    glClearColor(0.f, 0.f, 0.f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    gl::ClearColor(0.f, 0.f, 0.f, 1.0f);
+    gl::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     renderForeground(view, projection);
     renderBoundingBoxes(view, projection);
+    renderInstanced(view, projection);
     mFbo.unbind();
 
 
-    glViewport(0, 0, 320, 200);
-    glDisable(GL_DEPTH_TEST);
+    gl::Viewport(0, 0, 320, 200);
+    gl::Disable(GL_DEPTH_TEST);
+
+    auto& colorTexture = mFbo.getColorTexture();
+    auto& depthTexture = mFbo.getDepthTexture();
 
     mShaderManager.use("screen");
     mScreenQuad.bind();
-    mFboTextureRgb.bind();
+    colorTexture.bind();
     glDrawArrays(GL_TRIANGLES, 0, 6);
-    mFboTextureRgb.unbind();
+    colorTexture.unbind();
     mScreenQuad.unbind();
 
-    glViewport(0, 200, 320, 200);
+    gl::Viewport(0, 200, 320, 200);
     mShaderManager.use("depth");
     mScreenQuad.bind();
-    mFboTextureDepth.bind();
+    depthTexture.bind();
     glDrawArrays(GL_TRIANGLES, 0, 6);
-    mFboTextureDepth.unbind();
+    depthTexture.unbind();
     mScreenQuad.unbind();
 
 
-    glViewport(0, 0, 1920, 1080);
+    gl::Viewport(0, 0, 1920, 1080);
     glUseProgram(0U); // Free shader
 }
 
@@ -226,10 +246,27 @@ void C3DRenderSystem::renderBoundingBoxes(const glm::mat4 &view, const glm::mat4
 
 void C3DRenderSystem::renderInstanced(const glm::mat4 &view, const glm::mat4 &projection)
 {
-    // for (auto [entity, components] : mEntityManager.getEntitySet<C3DModelComponent, CInstanced3dObjectComponent, CTransform3DComponent>())
-    // {
-        // auto [model, object, transform] = components;
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // More real alpha blend.
+    // glDepthMask(GL_FALSE); // Don't write to depth buffer.
 
-        // trc_log("instanced entity = %ld", entity);
-    // }
+    auto program = mShaderManager.getByName("particles").lock();
+
+    program->use();
+    program->uniform("projection") = projection;
+
+    for (auto [entity, component] : mEntityManager.getEntitySet<CParticleSystemComponent, CTransform3DComponent>())
+    {
+        auto [c, t] = component;
+
+        const auto& modelView = view * t.toMat4();
+        program->uniform("modelView") = modelView;
+        program->uniform("sizeScale") = t.mScale;
+
+        c.mParticleSystem->draw(modelView);
+    }
+
+    glDepthMask(GL_TRUE);
+    glDisable(GL_BLEND);
 }

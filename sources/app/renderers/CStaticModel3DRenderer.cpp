@@ -14,8 +14,6 @@
 #include "app/auxiliary/glm.hpp"
 #include "app/auxiliary/trace.hpp"
 
-#include "geometry/CSimpleGeometry.hpp"
-
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <stdexcept>

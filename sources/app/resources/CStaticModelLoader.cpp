@@ -69,7 +69,7 @@ namespace
 
         CMeshAccumulator()
         {
-            mGeometry.mIndexes.reserve(RESERVED_SIZE);
+            mGeometry.mIndices.reserve(RESERVED_SIZE);
             mGeometry.mVerticies.reserve(RESERVED_SIZE);
         }
 
@@ -99,8 +99,8 @@ namespace
             }
 
             setupBytesLayout(mesh, mesh3d.mLayout);
-            copyVertexes(mesh, mesh3d.mLayout);
-            copyIndexes(mesh, mesh3d.mLayout);
+            copyVertices(mesh, mesh3d.mLayout);
+            copyIndices(mesh, mesh3d.mLayout);
 
             mMeshes.push_back(mesh3d);
         }
@@ -157,7 +157,7 @@ namespace
             layout.mIndexCount = size_t(vertexPerPrimitive * mesh.mNumFaces);
             layout.mVertexCount = size_t(mesh.mNumVertices);
             layout.mBaseVertexOffset = getBytesCount(mGeometry.mVerticies);
-            layout.mBaseIndexOffset = getBytesCount(mGeometry.mIndexes);
+            layout.mBaseIndexOffset = getBytesCount(mGeometry.mIndices);
 
             layout.mPosition3D = layout.mVertexSize;
             layout.mVertexSize += sizeof(aiVector3D);
@@ -180,7 +180,7 @@ namespace
             }
         }
 
-        void copyVertexes(const aiMesh& mesh, geometry::SGeometryLayout &layout)
+        void copyVertices(const aiMesh& mesh, geometry::SGeometryLayout &layout)
         {
             const size_t dataSize = layout.mVertexCount * layout.mVertexSize;
             uint8_t *dest = addItemsToWrite(mGeometry.mVerticies, dataSize);
@@ -213,11 +213,11 @@ namespace
             }
         }
 
-        void copyIndexes(const aiMesh& mesh, geometry::SGeometryLayout &layout)
+        void copyIndices(const aiMesh& mesh, geometry::SGeometryLayout &layout)
         {
             const unsigned vertexPerPrimitive = getPrimitiveVertexCount(layout.mPrimitive);
             const size_t dataSize = vertexPerPrimitive * mesh.mNumFaces;
-            uint32_t *dest = addItemsToWrite(mGeometry.mIndexes, dataSize);
+            uint32_t *dest = addItemsToWrite(mGeometry.mIndices, dataSize);
 
             for (unsigned i = 0, n = mesh.mNumFaces; i < n; i += 1)
             {

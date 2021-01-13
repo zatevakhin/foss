@@ -1,11 +1,16 @@
 
 #include "app/geometry/CMesh.hpp"
+#include <algorithm>
 
 
 CMesh::CMesh()
-    : mIndexes()
+    : mVerticesVbo(EBufferType::eArrayBuffer)
+    , mIndicesVbo(EBufferType::eElementArrayBuffer)
+    , mNoIndices(false)
     , mVertices()
+    , mIndices()
     , mBBox()
+    , mVao()
 {
 }
 
@@ -14,62 +19,62 @@ size_t CMesh::getVerticesCount() const
     return mVertices.size();
 }
 
-size_t CMesh::getIndexesCount() const
+size_t CMesh::getIndicesCount() const
 {
-    return mIndexes.size();
+    return mIndices.size();
 }
 
-const std::vector<glm::vec3>& CMesh::getVertices() const
+const std::vector<float> &CMesh::getVertices() const
 {
     return mVertices;
 }
 
-const geometry::CBoundingBox& CMesh::getBoundingBox() const
+const geometry::CBoundingBox &CMesh::getBoundingBox() const
 {
     return mBBox;
 }
 
-const std::vector<int>& CMesh::getIndexes() const
+const std::vector<int> &CMesh::getIndices() const
 {
-    return mIndexes;
-}
-
-void CMesh::bindGeometry()
-{
-    mGeometry.copy(mVertices, mIndexes);
+    return mIndices;
 }
 
 void CMesh::bind() const
 {
-    mGeometry.bind();
+    mVao.bind();
 }
 
 void CMesh::unbind() const
 {
-    mGeometry.unbind();
+    mVao.unbind();
 }
 
 void CMesh::clear()
 {
     mVertices.clear();
-    mIndexes.clear();
+    mIndices.clear();
 }
 
-void CMesh::setVertices(const glm::vec3 *vertices, size_t size)
+void CMesh::setVertices(const float *vertices, size_t size, bool noIndices)
 {
-    mVertices.reserve(size);
-    std::copy(vertices, vertices + size, std::back_inserter(mVertices));
+    mNoIndices = noIndices;
 
+    mVertices.reserve(size);
+    std::move(vertices, vertices + size, std::back_inserter(mVertices));
     mVertices.shrink_to_fit();
+
+    mVerticesVbo.copy(mVertices);
 
     createBoundingBox();
 }
 
-void CMesh::setIndexes(const int *indexes, size_t size)
+void CMesh::setIndices(const int *indices, size_t size)
 {
-    mIndexes.reserve(size);
-    std::copy(indexes, indexes + size, std::back_inserter(mIndexes));
-    mIndexes.shrink_to_fit();
+    mIndices.reserve(size);
+    std::move(indices, indices + size, std::back_inserter(mIndices));
+    mIndices.shrink_to_fit();
+
+    mIndicesVbo.copy(mIndices);
 }
 
 void CMesh::createBoundingBox()
@@ -77,7 +82,7 @@ void CMesh::createBoundingBox()
     glm::vec3 lowerBound(0);
     glm::vec3 upperBound(0);
 
-    for (const auto& vtx : mVertices)
+    for (const auto &vtx : mVertices)
     {
         lowerBound = glm::min(lowerBound, vtx);
         upperBound = glm::max(upperBound, vtx);

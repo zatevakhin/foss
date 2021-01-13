@@ -1,5 +1,6 @@
 
 #include "app/geometry/CTerrainFace.hpp"
+#include <glm/gtc/type_ptr.hpp>
 #include <glm/matrix.hpp>
 
 #include "app/auxiliary/trace.hpp"
@@ -45,9 +46,15 @@ void CTerrainFace::buildMesh()
         }
     }
 
-    mMesh.setVertices(vertices, mResolution * mResolution);
-    mMesh.setIndexes(indices, index);
-    mMesh.bindGeometry();
+    const auto size = (mResolution * mResolution) * (sizeof(glm::vec3) / sizeof(float));
+
+    mMesh.bind();
+    mMesh.setVertices(glm::value_ptr(vertices[0]), size);
+    mMesh.setIndices(indices, index);
+
+    gl::VertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+    mMesh.unbind();
 }
 
 

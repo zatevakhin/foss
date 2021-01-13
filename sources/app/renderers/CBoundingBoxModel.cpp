@@ -24,16 +24,15 @@ constexpr int AABB_INDECIES[] = {
 };
 
 CBoundingBoxModel::CBoundingBoxModel()
-    : mVerteciesVbo(EBufferType::eAttributes)
-    , mIndeciesVbo(EBufferType::eIndexes)
+    : mVerteciesVbo(EBufferType::eArrayBuffer)
+    , mIndeciesVbo(EBufferType::eElementArrayBuffer)
     , mVao()
 {
     mVao.bind();
     mVerteciesVbo.copy(AABB_VERTECIES, sizeof(AABB_VERTECIES));
     mIndeciesVbo.copy(AABB_INDECIES, sizeof(AABB_INDECIES));
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-    glEnableVertexAttribArray(0);
+    gl::VertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
     mVao.unbind();
 }

@@ -29,7 +29,7 @@ public:
     {
         mVao.bind();
         mVerticies.copy(data.mVerticies);
-        mIndexes.copy(data.mIndexes);
+        mIndices.copy(data.mIndices);
         mBBox = data.mBBox;
         mVao.unbind();
     }
@@ -41,7 +41,7 @@ public:
 
 private:
     CVertexBufferObject mVerticies;
-    CVertexBufferObject mIndexes;
+    CVertexBufferObject mIndices;
     CBoundingBox  mBBox;
     CVertexArrayObject mVao;
 

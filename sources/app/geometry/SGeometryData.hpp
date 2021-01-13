@@ -12,13 +12,13 @@ template <class TV, class TI>
 struct SGeometryData
 {
     std::vector<TV> mVerticies;
-    std::vector<TI> mIndexes;
+    std::vector<TI> mIndices;
     CBoundingBox    mBBox;
 
     SGeometryData() = default;
 
-    SGeometryData(const std::vector<TV> &verticies, const std::vector<TI> &indexes)
-        : mVerticies(verticies), mIndexes(indexes)
+    SGeometryData(const std::vector<TV> &verticies, const std::vector<TI> &indices)
+        : mVerticies(verticies), mIndices(indices)
     {
     }
 };
