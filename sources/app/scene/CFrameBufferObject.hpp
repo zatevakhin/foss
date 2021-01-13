@@ -13,10 +13,7 @@ public:
 
     void bind() const;
     void attachTexture(unsigned int textureId, unsigned int attachment) const;
-    bool isComplete() const;
     void unbind() const;
-
-    GLuint getId() const;
 
 private:
     GLuint mId;
