@@ -1,9 +1,12 @@
 #pragma once
 
 #include <vector>
+#include <glm/vec2.hpp>
+
 
 struct SEngineSettings
 {
+    glm::ivec2 mWindowSize;
 
     struct SComboBoxData
     {

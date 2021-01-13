@@ -3,3 +3,4 @@ build/
 trash/
 docs/
 imgui.ini
+.cache

@@ -5,10 +5,6 @@
 #include "auxiliary.hpp"
 #include "app/auxiliary/glm.hpp"
 
-#include <boost/filesystem/path.hpp>
-
-
-namespace fs = boost::filesystem;
 
 using namespace textures;
 
