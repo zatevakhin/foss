@@ -1,0 +1,61 @@
+---
+BasedOnStyle: LLVM
+IndentWidth: 4
+---
+Language: Cpp
+
+Standard: Cpp11
+
+ColumnLimit: 100
+
+PointerAlignment: Left
+DerivePointerAlignment: false
+
+IndentCaseLabels: false
+
+AlignAfterOpenBracket: true
+AlignTrailingComments: true
+AlignOperands: true
+
+AccessModifierOffset: -4
+BreakInheritanceList: BeforeComma
+BreakConstructorInitializers: BeforeComma
+# InsertTrailingCommas: Wrapped
+
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+
+FixNamespaceComments: true
+MaxEmptyLinesToKeep: 2
+
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterControlStatement: true
+  AfterEnum: true
+  AfterUnion: true
+  AfterClass: true
+  AfterStruct: true
+  AfterFunction: true
+  AfterNamespace: true
+  SplitEmptyRecord: true
+  AfterExternBlock: true
+  SplitEmptyFunction: true
+  SplitEmptyNamespace: true
+
+AllowShortIfStatementsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: false
+AllowShortEnumsOnASingleLine: false
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortBlocksOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+
+SpaceBeforeAssignmentOperators: true
+SpaceBeforeParens: ControlStatements
+SpaceInEmptyParentheses: false
+SpacesBeforeTrailingComments: 1
+SpacesInAngles: false
+SpacesInSquareBrackets: false
+SpacesInParentheses: false
+SpaceBeforeCtorInitializerColon: true
+SpaceBeforeInheritanceColon: true

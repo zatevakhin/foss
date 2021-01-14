@@ -17,9 +17,9 @@ public:
     virtual void replace(unsigned int programId, std::vector<unsigned int>& shaderIds) = 0;
     virtual unsigned int id() const = 0;
 
-    virtual CUniform uniform(const char *name) = 0;
-    virtual CVertexAttribute attribute(const char *name) = 0;
-    virtual unsigned int attributeId(const char *name) = 0;
+    virtual CUniform uniform(const char* name) = 0;
+    virtual CVertexAttribute attribute(const char* name) = 0;
+    virtual unsigned int attributeId(const char* name) = 0;
 };
 
 using CProgramSharedPtr = std::shared_ptr<IShaderProgram>;

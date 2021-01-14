@@ -9,10 +9,9 @@ public:
     CCubeMapRenderer() = default;
     ~CCubeMapRenderer() = default;
 
-    void draw(SStaticModel3D & model) override;
+    void draw(SStaticModel3D& model) override;
 
 private:
-    void applyModelView(const glm::mat4 & local);
-    void bindAttributes(const geometry::SGeometryLayout & layout) const;
-
+    void applyModelView(const glm::mat4& local);
+    void bindAttributes(const geometry::SGeometryLayout& layout) const;
 };

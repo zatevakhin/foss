@@ -12,8 +12,8 @@ inline GLenum mapType(EBufferType type)
 {
     // https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glBindBuffer.xhtml
     static const std::map<EBufferType, GLenum> bufferTypeMap = {
-        { EBufferType::eArrayBuffer,        GL_ARRAY_BUFFER },
-        { EBufferType::eElementArrayBuffer, GL_ELEMENT_ARRAY_BUFFER },
+        {EBufferType::eArrayBuffer, GL_ARRAY_BUFFER},
+        {EBufferType::eElementArrayBuffer, GL_ELEMENT_ARRAY_BUFFER},
     };
 
     return bufferTypeMap.at(type);
@@ -22,15 +22,15 @@ inline GLenum mapType(EBufferType type)
 inline GLenum mapType(EBufferUsage type)
 {
     static const std::map<EBufferUsage, GLenum> bufferUsageMap = {
-        { EBufferUsage::eStaticDraw,  GL_STATIC_DRAW },
-        { EBufferUsage::eDynamicDraw, GL_DYNAMIC_DRAW },
-        { EBufferUsage::eStreamDraw,  GL_STREAM_DRAW },
+        {EBufferUsage::eStaticDraw, GL_STATIC_DRAW},
+        {EBufferUsage::eDynamicDraw, GL_DYNAMIC_DRAW},
+        {EBufferUsage::eStreamDraw, GL_STREAM_DRAW},
     };
 
     return bufferUsageMap.at(type);
 }
 
-}
+} // namespace
 
 
 CVertexBufferObject::CVertexBufferObject(EBufferType type, EBufferUsage usage)

@@ -10,14 +10,14 @@ class CMeshObject
 public:
     CMeshObject();
 
-    CMesh &create();
+    CMesh& create();
 
-    void add(CMesh *mesh);
+    void add(CMesh* mesh);
 
     size_t count() const;
 
-    CMesh &get(size_t i);
-    const CMesh &get(size_t i) const;
+    CMesh& get(size_t i);
+    const CMesh& get(size_t i) const;
 
     const geometry::CBoundingBox getBoundingBox() const;
 

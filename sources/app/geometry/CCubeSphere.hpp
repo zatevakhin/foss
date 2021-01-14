@@ -2,8 +2,10 @@
 
 #include "app/geometry/CMeshObject.hpp"
 #include "app/geometry/CTerrainFace.hpp"
+
 #include <array>
 #include <vector>
+
 
 class CCubeSphere : public CMeshObject
 {

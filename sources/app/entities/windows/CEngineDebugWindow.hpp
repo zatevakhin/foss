@@ -8,10 +8,11 @@ class CCamera;
 class CEngineDebugWindow : public IWindow
 {
 public:
-    CEngineDebugWindow(const CCamera & camera);
+    CEngineDebugWindow(const CCamera& camera);
     ~CEngineDebugWindow();
 
     void draw() override;
+
 private:
-    const CCamera & mCamera;
+    const CCamera& mCamera;
 };

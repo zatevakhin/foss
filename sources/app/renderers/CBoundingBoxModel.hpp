@@ -20,5 +20,4 @@ private:
     CVertexArrayObject mVao;
     CVertexBufferObject mIndeciesVbo;
     CVertexBufferObject mVerteciesVbo;
-
 };

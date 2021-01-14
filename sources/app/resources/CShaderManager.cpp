@@ -1,16 +1,16 @@
 
 #include "CShaderManager.hpp"
 #include "CResourceLoader.hpp"
-#include "app/shading/CBasicProgram.hpp"
-#include "app/shading/EShaderType.hpp"
 #include "app/auxiliary/opengl.hpp"
 #include "app/auxiliary/trace.hpp"
+#include "app/shading/CBasicProgram.hpp"
+#include "app/shading/EShaderType.hpp"
 
 #include <filesystem>
 #include <iostream>
-#include <string>
 #include <map>
 #include <set>
+#include <string>
 
 
 constexpr const char* VERT_SHADER_EXT = ".vert";
@@ -46,18 +46,17 @@ public:
         return id;
     }
 
-    CShaderRaii(const CShaderRaii &) = delete;
-    CShaderRaii& operator=(const CShaderRaii &) = delete;
+    CShaderRaii(const CShaderRaii&) = delete;
+    CShaderRaii& operator=(const CShaderRaii&) = delete;
 
 private:
     GLuint mId;
 
 private:
-
     static GLenum mapShaderType(EShaderType type)
     {
         static const std::map<EShaderType, GLenum> typeMap = {
-            {EShaderType::eVertex,   GL_VERTEX_SHADER},
+            {EShaderType::eVertex, GL_VERTEX_SHADER},
             {EShaderType::eFragment, GL_FRAGMENT_SHADER},
             {EShaderType::eGeometry, GL_GEOMETRY_SHADER},
             // other shader types
@@ -99,10 +98,11 @@ void link(const GLuint programId)
     }
 }
 
-void compile(const GLuint programId, std::vector<GLuint>& shaderIds, const std::string& source, EShaderType type)
+void compile(const GLuint programId, std::vector<GLuint>& shaderIds, const std::string& source,
+             EShaderType type)
 {
-    const GLchar* shaderSource[] = { source.c_str() };
-    const GLint sourceLength[] = { GLint(source.size()) };
+    const GLchar* shaderSource[] = {source.c_str()};
+    const GLint sourceLength[] = {GLint(source.size())};
 
     CShaderRaii shaderObject(type);
     glShaderSource(shaderObject.id(), 1, shaderSource, sourceLength);
@@ -128,10 +128,9 @@ void load(GLuint& programId, std::vector<GLuint>& shaderIds, std::string& shader
     std::map<const char*, EShaderType> extensionTypeList = {
         {VERT_SHADER_EXT, EShaderType::eVertex},
         {FRAG_SHADER_EXT, EShaderType::eFragment},
-        {GEOM_SHADER_EXT, EShaderType::eGeometry}
-    };
+        {GEOM_SHADER_EXT, EShaderType::eGeometry}};
 
-    for (const auto &e : extensionTypeList)
+    for (const auto& e : extensionTypeList)
     {
         if (std::filesystem::exists(shaderPath + e.first))
         {
@@ -177,7 +176,8 @@ std::string CShaderManager::getShaderPath(const char* shaderName) const
     return std::filesystem::path(mShadersDirectory) / shaderName;
 }
 
-std::tuple<unsigned int, std::vector<unsigned int>> CShaderManager::getShaderByPath(const char* shaderName) const
+std::tuple<unsigned int, std::vector<unsigned int>>
+CShaderManager::getShaderByPath(const char* shaderName) const
 {
     auto shaderPath = getShaderPath(shaderName);
     unsigned int programId;
@@ -203,7 +203,7 @@ std::vector<std::pair<std::string, unsigned int>> CShaderManager::getProgramsLis
 {
     std::vector<std::pair<std::string, unsigned int>> programs;
 
-    for (const auto &p : mPrograms)
+    for (const auto& p : mPrograms)
     {
         programs.emplace_back(p.first, p.second->id());
     }
@@ -216,7 +216,8 @@ void CShaderManager::reloadByName(const char* shaderName)
     auto& shaderPtr = mPrograms.at(shaderName);
     auto [programId, shaderIds] = getShaderByPath(shaderName);
 
-    trc_debug("Reloading shader [%s] reloaded (%u) -> (%u).", shaderName, shaderPtr->id(), programId);
+    trc_debug("Reloading shader [%s] reloaded (%u) -> (%u).", shaderName, shaderPtr->id(),
+              programId);
 
     shaderPtr->replace(programId, shaderIds);
 }

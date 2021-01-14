@@ -1,14 +1,13 @@
 #pragma once
 
-#include "app/scene/CVertexBufferObject.hpp"
+#include "app/auxiliary/glm.hpp"
 #include "app/scene/CVertexArrayObject.hpp"
+#include "app/scene/CVertexBufferObject.hpp"
 #include "auxiliary.hpp"
 
-#include "SGeometryData.hpp"
 #include "CBoundingBox.hpp"
-#include "app/auxiliary/glm.hpp"
+#include "SGeometryData.hpp"
 
-#include <boost/noncopyable.hpp>
 #include <memory>
 #include <vector>
 
@@ -24,8 +23,7 @@ public:
 
     CGeometry(const CGeometry&) = delete;
 
-    template<class TV, class TI>
-    void copy(const SGeometryData<TV, TI> & data)
+    template <class TV, class TI> void copy(const SGeometryData<TV, TI>& data)
     {
         mVao.bind();
         mVerticies.copy(data.mVerticies);
@@ -34,7 +32,7 @@ public:
         mVao.unbind();
     }
 
-    const CBoundingBox & getBoundingBox() const;
+    const CBoundingBox& getBoundingBox() const;
 
     void bind();
     void unbind();
@@ -42,11 +40,10 @@ public:
 private:
     CVertexBufferObject mVerticies;
     CVertexBufferObject mIndices;
-    CBoundingBox  mBBox;
+    CBoundingBox mBBox;
     CVertexArrayObject mVao;
-
 };
 
 using CGeometrySharedPtr = std::shared_ptr<CGeometry>;
 
-} // geometry
+} // namespace geometry

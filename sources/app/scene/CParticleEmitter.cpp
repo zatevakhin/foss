@@ -5,14 +5,14 @@
 
 using glm::vec3;
 
-CParticle::CParticle(const vec3 &position, const vec3 &velocity, float lifetime)
+CParticle::CParticle(const vec3& position, const vec3& velocity, float lifetime)
     : mPosition(position)
     , mVelocity(velocity)
     , mLifetime(lifetime)
 {
 }
 
-void CParticle::advance(float deltaSeconds, const glm::vec3 &acceleration)
+void CParticle::advance(float deltaSeconds, const glm::vec3& acceleration)
 {
     mLifetime -= deltaSeconds;
     mVelocity += acceleration * deltaSeconds;
@@ -57,7 +57,7 @@ CParticle CParticleEmitter::emit()
     return CParticle(position, velocity, lifetime);
 }
 
-void CParticleEmitter::setPosition(const glm::vec3 &value)
+void CParticleEmitter::setPosition(const glm::vec3& value)
 {
     mPosition = value;
 }
@@ -67,7 +67,7 @@ void CParticleEmitter::setDistanceRange(float minValue, float maxValue)
     mDistanceRange.param(linear_random_float::param_type(minValue, maxValue));
 }
 
-void CParticleEmitter::setDirection(const glm::vec3 &value)
+void CParticleEmitter::setDirection(const glm::vec3& value)
 {
     mDirection = glm::normalize(value);
 }

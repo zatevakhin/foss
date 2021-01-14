@@ -1,10 +1,10 @@
 
 #include "CResourceLoader.hpp"
-#include "app/textures/CTextureCubeMap.hpp"
-#include "app/textures/CTexture2D.hpp"
-#include "nlohmann/json.hpp"
 #include "app/auxiliary/opengl.hpp"
 #include "app/auxiliary/sdl.hpp"
+#include "app/textures/CTexture2D.hpp"
+#include "app/textures/CTextureCubeMap.hpp"
+#include "nlohmann/json.hpp"
 
 #include <fmt/core.h>
 #include <fmt/format.h>
@@ -32,9 +32,7 @@ std::string CResourceLoader::getFileAsString(const fs::path& path)
     f.open(path.native());
     if (!f.is_open())
     {
-        throw std::runtime_error(
-            "Cannot open for reading: " + absolute.generic_string()
-        );
+        throw std::runtime_error("Cannot open for reading: " + absolute.generic_string());
     }
 
     std::stringstream ss;
@@ -71,7 +69,7 @@ CTextureSharedPtr CResourceLoader::getCubeMap(const fs::path& path, unsigned int
 }
 
 
-TSurfacePtr CResourceLoader::loadImage(const fs::path& path, bool & hasAlpha)
+TSurfacePtr CResourceLoader::loadImage(const fs::path& path, bool& hasAlpha)
 {
     const fs::path abspath = CResourceLoader::getAbsolute(path);
     TSurfacePtr surface(IMG_Load(abspath.native().c_str()));
@@ -84,9 +82,7 @@ TSurfacePtr CResourceLoader::loadImage(const fs::path& path, bool & hasAlpha)
     hasAlpha = SDL_ISPIXELFORMAT_ALPHA(surface->format->format);
 
     // All images will be converted to RGB or RGBA (if has alpha chanel).
-    const uint32_t requiredFormat = hasAlpha
-                                    ? SDL_PIXELFORMAT_ABGR8888
-                                    : SDL_PIXELFORMAT_RGB24;
+    const uint32_t requiredFormat = hasAlpha ? SDL_PIXELFORMAT_ABGR8888 : SDL_PIXELFORMAT_RGB24;
 
     if (surface->format->format != requiredFormat)
     {
@@ -121,12 +117,9 @@ CTextureSharedPtr CResourceLoader::loadTexture(const fs::path& path)
     auto texture = std::make_shared<CTexture2D>();
     texture->bind();
 
-//    texture->ApplyTrilinearFilter();
-//    texture->ApplyMaxAnisotropy();
-    texture->setWrapMode(
-        textures::ETextureWrapMode::eRepeat,
-        textures::ETextureWrapMode::eRepeat
-    );
+    //    texture->ApplyTrilinearFilter();
+    //    texture->ApplyMaxAnisotropy();
+    texture->setWrapMode(textures::ETextureWrapMode::eRepeat, textures::ETextureWrapMode::eRepeat);
 
     texture->setFilter();
 
@@ -149,10 +142,10 @@ CTextureSharedPtr CResourceLoader::loadCubeMap(const fs::path& path, unsigned in
     json cubeMapData;
     cubeMapFile >> cubeMapData;
 
-//    if (cubeMapData["sizes"].find(size))
-//    {
-//        throw std::invalid_argument(fmt::format("This cubemap not have size '%d'!", size));
-//    }
+    //    if (cubeMapData["sizes"].find(size))
+    //    {
+    //        throw std::invalid_argument(fmt::format("This cubemap not have size '%d'!", size));
+    //    }
 
     std::string type = cubeMapData.at("filetype").get<std::string>();
 
@@ -160,11 +153,9 @@ CTextureSharedPtr CResourceLoader::loadCubeMap(const fs::path& path, unsigned in
     auto texture = std::make_shared<CTextureCubeMap>();
 
     texture->bind();
-    texture->setWrapMode(
-        textures::ETextureWrapMode::eClampToEdge,
-        textures::ETextureWrapMode::eClampToEdge,
-        textures::ETextureWrapMode::eClampToEdge
-    );
+    texture->setWrapMode(textures::ETextureWrapMode::eClampToEdge,
+                         textures::ETextureWrapMode::eClampToEdge,
+                         textures::ETextureWrapMode::eClampToEdge);
 
     bool hasAlpha;
     for (auto i = 0U; i < cubeMapData["files"].get<int>(); ++i)
@@ -174,17 +165,8 @@ CTextureSharedPtr CResourceLoader::loadCubeMap(const fs::path& path, unsigned in
         TSurfacePtr surface = loadImage(file.c_str(), hasAlpha);
         const GLenum pixelFormat = hasAlpha ? GL_RGBA : GL_RGB;
         std::cout << file << "(w: " << surface->w << ", h: " << surface->h << ")" << std::endl;
-        glTexImage2D(
-            GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
-            0,
-            GLint(pixelFormat),
-            surface->w,
-            surface->h,
-            0,
-            pixelFormat,
-            GL_UNSIGNED_BYTE,
-            surface->pixels
-        );
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GLint(pixelFormat), surface->w,
+                     surface->h, 0, pixelFormat, GL_UNSIGNED_BYTE, surface->pixels);
     }
 
     texture->genMipMap();

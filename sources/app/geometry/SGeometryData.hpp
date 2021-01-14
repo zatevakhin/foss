@@ -8,19 +8,19 @@
 namespace geometry
 {
 
-template <class TV, class TI>
-struct SGeometryData
+template <class TV, class TI> struct SGeometryData
 {
     std::vector<TV> mVerticies;
     std::vector<TI> mIndices;
-    CBoundingBox    mBBox;
+    CBoundingBox mBBox;
 
     SGeometryData() = default;
 
-    SGeometryData(const std::vector<TV> &verticies, const std::vector<TI> &indices)
-        : mVerticies(verticies), mIndices(indices)
+    SGeometryData(const std::vector<TV>& verticies, const std::vector<TI>& indices)
+        : mVerticies(verticies)
+        , mIndices(indices)
     {
     }
 };
 
-}
+} // namespace geometry

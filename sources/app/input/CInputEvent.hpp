@@ -8,9 +8,9 @@ class CInputEvent
 {
 
 public:
-    CInputEvent(const SDL_Event & event, const std::map<int, bool>& keyMap);
+    CInputEvent(const SDL_Event& event, const std::map<int, bool>& keyMap);
 
-    inline const SDL_Event & event() const
+    inline const SDL_Event& event() const
     {
         return mEvent;
     }
@@ -21,6 +21,6 @@ public:
     }
 
 private:
-    const SDL_Event & mEvent;
+    const SDL_Event& mEvent;
     const std::map<int, bool>& mKeyMap;
 };

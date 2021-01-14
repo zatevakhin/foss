@@ -5,7 +5,7 @@
 
 
 CVertexAttribute::CVertexAttribute(int location)
-        : mLocation(location)
+    : mLocation(location)
 {
 }
 
@@ -43,8 +43,8 @@ void CVertexAttribute::setVec3Offset(size_t offset, size_t stride, bool needClam
     if (mLocation != -1)
     {
         const GLboolean normalize = needClamp ? GL_TRUE : GL_FALSE;
-        glVertexAttribPointer(GLuint(mLocation), 3, GL_FLOAT, normalize,
-                              GLsizei(stride), reinterpret_cast<const void *>(offset));
+        glVertexAttribPointer(GLuint(mLocation), 3, GL_FLOAT, normalize, GLsizei(stride),
+                              reinterpret_cast<const void*>(offset));
     }
 }
 
@@ -53,20 +53,19 @@ void CVertexAttribute::setVec2Offset(size_t offset, size_t stride)
     if (mLocation != -1)
     {
         const GLboolean normalize = GL_FALSE;
-        glVertexAttribPointer(GLuint(mLocation), 2,
-                              GL_FLOAT, normalize, GLsizei(stride),
-                              reinterpret_cast<const void *>(offset));
+        glVertexAttribPointer(GLuint(mLocation), 2, GL_FLOAT, normalize, GLsizei(stride),
+                              reinterpret_cast<const void*>(offset));
     }
 }
 
-void CVertexAttribute::setFloatsOffset(size_t offset, size_t stride, unsigned numComponents, bool needClamp)
+void CVertexAttribute::setFloatsOffset(size_t offset, size_t stride, unsigned numComponents,
+                                       bool needClamp)
 {
     if (mLocation != -1)
     {
         const GLboolean normalize = needClamp ? GL_TRUE : GL_FALSE;
-        glVertexAttribPointer(GLuint(mLocation), GLint(numComponents),
-                              GL_FLOAT, normalize, GLsizei(stride),
-                              reinterpret_cast<const void *>(offset));
+        glVertexAttribPointer(GLuint(mLocation), GLint(numComponents), GL_FLOAT, normalize,
+                              GLsizei(stride), reinterpret_cast<const void*>(offset));
     }
 }
 
@@ -74,8 +73,7 @@ void CVertexAttribute::setUint8Offset(size_t offset, size_t stride, unsigned num
 {
     if (mLocation != -1)
     {
-        glVertexAttribIPointer(GLuint(mLocation), GLint(numComponents),
-                               GL_UNSIGNED_BYTE, GLsizei(stride),
-                               reinterpret_cast<const void *>(offset));
+        glVertexAttribIPointer(GLuint(mLocation), GLint(numComponents), GL_UNSIGNED_BYTE,
+                               GLsizei(stride), reinterpret_cast<const void*>(offset));
     }
 }

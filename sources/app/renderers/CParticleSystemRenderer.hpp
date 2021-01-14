@@ -9,7 +9,6 @@ public:
     CParticleSystemRenderer();
     ~CParticleSystemRenderer() = default;
 
-    void draw(SStaticModel3D & model) override;
+    void draw(SStaticModel3D& model) override;
     void draw(const CMeshObject& mesh) override;
-
 };

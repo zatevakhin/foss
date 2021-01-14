@@ -6,7 +6,6 @@
 #include "CVertexAttribute.hpp"
 
 
-
 CBasicProgram::CBasicProgram(unsigned int programId, std::vector<unsigned int> shaders)
     : mProgramId(programId)
     , mShaders(shaders)

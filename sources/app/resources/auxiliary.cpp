@@ -1,12 +1,12 @@
 
 #include "auxiliary.hpp"
-#include "SPhongMaterial.hpp"
 #include "CResourceLoader.hpp"
+#include "SPhongMaterial.hpp"
 
+#include <assimp/Importer.hpp>
+#include <assimp/postprocess.h>
 #include <assimp/scene.h>
 #include <assimp/types.h>
-#include <assimp/postprocess.h>
-#include <assimp/Importer.hpp>
 
 
 using boost::filesystem::path;
@@ -34,8 +34,8 @@ bool canBePhongShaded(unsigned shadingMode)
 class CMaterialReader
 {
 public:
-    CMaterialReader(const aiMaterial& srcMat, const path &resourceDir,
-                    CResourceLoader &resourceLoader)
+    CMaterialReader(const aiMaterial& srcMat, const path& resourceDir,
+                    CResourceLoader& resourceLoader)
         : m_srcMat(srcMat)
         , m_resourceDir(resourceDir)
         , mResourceLoader(resourceLoader)
@@ -43,7 +43,7 @@ public:
     }
 
     /// returns normalized material color or default value
-    glm::vec4 getColor(const char *key, unsigned int type, unsigned int index)
+    glm::vec4 getColor(const char* key, unsigned int type, unsigned int index)
     {
         aiColor3D color(0, 0, 0);
         if (AI_SUCCESS == m_srcMat.Get(key, type, index, color))
@@ -53,7 +53,7 @@ public:
         return glm::vec4(0);
     }
 
-    float getFloat(const char *key, unsigned int type, unsigned int index)
+    float getFloat(const char* key, unsigned int type, unsigned int index)
     {
         float value = 0;
         if (AI_SUCCESS == m_srcMat.Get(key, type, index, value))
@@ -63,7 +63,7 @@ public:
         return 0.f;
     }
 
-    unsigned int getUnsigned(const char *key, unsigned int type, unsigned int index)
+    unsigned int getUnsigned(const char* key, unsigned int type, unsigned int index)
     {
         auto value = 0U;
         if (AI_SUCCESS == m_srcMat.Get(key, type, index, value))
@@ -73,7 +73,7 @@ public:
         return 0;
     }
 
-    CTextureSharedPtr getTexture(const char *key, unsigned int type, unsigned int index)
+    CTextureSharedPtr getTexture(const char* key, unsigned int type, unsigned int index)
     {
         aiString filename;
         if (AI_SUCCESS == m_srcMat.Get(key, type, index, filename))
@@ -87,16 +87,17 @@ public:
 private:
     const aiMaterial& m_srcMat;
     path m_resourceDir;
-    CResourceLoader & mResourceLoader;
+    CResourceLoader& mResourceLoader;
 };
 
-}
+} // namespace
 
 
 namespace resources
 {
 
-void loadMaterials(const path &resourceDir, CResourceLoader & resourceLoader, const aiScene & scene, std::vector<SPhongMaterial> & materials)
+void loadMaterials(const path& resourceDir, CResourceLoader& resourceLoader, const aiScene& scene,
+                   std::vector<SPhongMaterial>& materials)
 {
     const auto DEFAULT_SHININESS = 30.f;
 
@@ -104,7 +105,7 @@ void loadMaterials(const path &resourceDir, CResourceLoader & resourceLoader, co
     for (auto mi = 0U; mi < scene.mNumMaterials; ++mi)
     {
         CMaterialReader reader(*(scene.mMaterials[mi]), resourceDir, resourceLoader);
-        SPhongMaterial &material = materials[mi];
+        SPhongMaterial& material = materials[mi];
 
         const unsigned int shadingMode = reader.getUnsigned(AI_MATKEY_SHADING_MODEL);
         if (!canBePhongShaded(shadingMode))
@@ -135,4 +136,4 @@ void loadMaterials(const path &resourceDir, CResourceLoader & resourceLoader, co
     }
 }
 
-}
+} // namespace resources

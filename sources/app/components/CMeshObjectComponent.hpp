@@ -4,7 +4,7 @@
 #include "ecs/Component.hpp"
 
 
-class CMeshObjectComponent: public ecs::Component<CMeshObjectComponent>
+class CMeshObjectComponent : public ecs::Component<CMeshObjectComponent>
 {
 public:
     CMeshObjectPtr mMeshObject;

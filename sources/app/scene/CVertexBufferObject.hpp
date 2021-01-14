@@ -33,10 +33,9 @@ public:
 
     void unbind() const;
 
-    void copy(const void *data, size_t size);
+    void copy(const void* data, size_t size);
 
-    template <class T>
-    inline void copy(const std::vector<T> &array)
+    template <class T> inline void copy(const std::vector<T>& array)
     {
         const size_t size = sizeof(T) * array.size();
         copy(array.data(), size);
@@ -47,5 +46,4 @@ private:
 
     EBufferType mType;
     EBufferUsage mUsage;
-
 };

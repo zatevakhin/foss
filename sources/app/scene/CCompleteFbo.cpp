@@ -22,7 +22,8 @@ void CCompleteFbo::createTexturesAndBind()
     mFboTextureRgb.unbind();
 
     mFboTextureDepth.bind();
-    mFboTextureDepth.setTexture(GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, mSize, 0);
+    mFboTextureDepth.setTexture(GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, mSize,
+                                0);
     mFboTextureDepth.setFilter();
     mFboTextureDepth.unbind();
 

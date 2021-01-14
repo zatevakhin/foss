@@ -11,27 +11,33 @@ inline ECameraMoveDirection getDirection(const CInputEvent& event)
     ECameraMoveDirection direction;
     switch (event.event().key.keysym.sym)
     {
-        case SDLK_w: direction = ECameraMoveDirection::eForward; break;
-        case SDLK_s: direction = ECameraMoveDirection::eBack;    break;
-        case SDLK_a: direction = ECameraMoveDirection::eLeft;    break;
-        case SDLK_d: direction = ECameraMoveDirection::eRight;   break;
-        default:     direction = ECameraMoveDirection::eNone;    break;
+    case SDLK_w:
+        direction = ECameraMoveDirection::eForward;
+        break;
+    case SDLK_s:
+        direction = ECameraMoveDirection::eBack;
+        break;
+    case SDLK_a:
+        direction = ECameraMoveDirection::eLeft;
+        break;
+    case SDLK_d:
+        direction = ECameraMoveDirection::eRight;
+        break;
+    default:
+        direction = ECameraMoveDirection::eNone;
+        break;
     }
 
     return direction;
 }
 
-}
+} // namespace
 
 CCameraListener::CCameraListener(CCamera* camera)
     : mCamera(camera)
 {
     mAcceptable = {
-        SDL_KEYDOWN,
-        SDL_KEYUP,
-        SDL_MOUSEMOTION,
-        SDL_MOUSEBUTTONDOWN,
-        SDL_MOUSEBUTTONUP,
+        SDL_KEYDOWN, SDL_KEYUP, SDL_MOUSEMOTION, SDL_MOUSEBUTTONDOWN, SDL_MOUSEBUTTONUP,
     };
 }
 
@@ -44,23 +50,23 @@ void CCameraListener::accept(const CInputEvent& event)
 {
     switch (event.event().type)
     {
-        case SDL_MOUSEMOTION:
-            onMouseMotion(event);
-            break;
-        case SDL_KEYDOWN:
-            onKeyDown(event);
-            break;
-        case SDL_KEYUP:
-            onKeyUp(event);
-            break;
-        case SDL_MOUSEBUTTONDOWN:
-            onMouseButtonDown(event);
-            break;
-        case SDL_MOUSEBUTTONUP:
-            onMouseButtonUp(event);
-            break;
-        default:
-            break;
+    case SDL_MOUSEMOTION:
+        onMouseMotion(event);
+        break;
+    case SDL_KEYDOWN:
+        onKeyDown(event);
+        break;
+    case SDL_KEYUP:
+        onKeyUp(event);
+        break;
+    case SDL_MOUSEBUTTONDOWN:
+        onMouseButtonDown(event);
+        break;
+    case SDL_MOUSEBUTTONUP:
+        onMouseButtonUp(event);
+        break;
+    default:
+        break;
     }
 }
 

@@ -9,11 +9,13 @@ void CMeshRenderer::draw(SStaticModel3D& model)
 {
 }
 
-void CMeshRenderer::draw(const CMeshObject& mesh) {
+void CMeshRenderer::draw(const CMeshObject& mesh)
+{
     mProgram->uniform("projection") = mProjection;
     mProgram->uniform("view") = mView * mTransform;
 
-    for (int i = 0; i < mesh.count(); ++i) {
+    for (int i = 0; i < mesh.count(); ++i)
+    {
         mProgram->uniform("background") = glm::vec4(util::color(255, 255, 0), 1.f);
         auto& m = mesh.get(i);
 

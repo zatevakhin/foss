@@ -1,6 +1,6 @@
 
-#include "app/auxiliary/opengl.hpp"
 #include "CTexture2D.hpp"
+#include "app/auxiliary/opengl.hpp"
 
 #include <map>
 
@@ -35,7 +35,6 @@ glm::ivec2 CTexture2D::size() const
 void CTexture2D::bind() const
 {
     glBindTexture(GL_TEXTURE_2D, mTextureId);
-
 }
 
 void CTexture2D::unbind()
@@ -43,7 +42,8 @@ void CTexture2D::unbind()
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void CTexture2D::setTexture(uint format, uint internalFormat, uint type, glm::ivec2 size, const void* ptr)
+void CTexture2D::setTexture(uint format, uint internalFormat, uint type, glm::ivec2 size,
+                            const void* ptr)
 {
     mSize = size;
     glTexImage2D(GL_TEXTURE_2D, 0, format, size.x, size.y, 0, internalFormat, type, ptr);

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "app/scene/CVertexBufferObject.hpp"
-#include "app/scene/CVertexArrayObject.hpp"
 #include "app/geometry/CBoundingBox.hpp"
+#include "app/scene/CVertexArrayObject.hpp"
+#include "app/scene/CVertexBufferObject.hpp"
 #include <glm/vec3.hpp>
 #include <vector>
 
@@ -23,16 +23,16 @@ public:
     size_t getVerticesCount() const;
     size_t getIndicesCount() const;
 
-    const std::vector<float> &getVertices() const;
-    const std::vector<int> &getIndices() const;
-    const geometry::CBoundingBox &getBoundingBox() const;
+    const std::vector<float>& getVertices() const;
+    const std::vector<int>& getIndices() const;
+    const geometry::CBoundingBox& getBoundingBox() const;
 
     void bind() const;
     void unbind() const;
 
     void clear();
-    void setVertices(const float *vertices, size_t size, bool noIndices = false);
-    void setIndices(const int *vertices, size_t size);
+    void setVertices(const float* vertices, size_t size, bool noIndices = false);
+    void setIndices(const int* vertices, size_t size);
 
 private:
     void createBoundingBox();

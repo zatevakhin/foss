@@ -5,15 +5,14 @@
  * @brief The file which is contains a \b main window implementation.
  * */
 
+#include "app/auxiliary/glm.hpp"
+#include "app/auxiliary/opengl.hpp"
+#include "app/auxiliary/sdl.hpp"
 #include "app/gears/CChronometer.hpp"
 
-#include "app/auxiliary/opengl.hpp"
-#include "app/auxiliary/glm.hpp"
-#include "app/auxiliary/sdl.hpp"
-
+#include <map>
 #include <memory>
 #include <string>
-#include <map>
 
 
 /*!
@@ -36,11 +35,11 @@ public:
      * */
     ~CMainWindow();
 
-    void setTitle(const std::string & value);
+    void setTitle(const std::string& value);
 
-    void setSize(const glm::ivec2 & value);
+    void setSize(const glm::ivec2& value);
 
-    void setFlags(const Uint32 & value);
+    void setFlags(const Uint32& value);
 
     void create();
 
@@ -55,18 +54,18 @@ public:
      * */
     Uint32 getId() const;
 
-    const glm::ivec2 & getSize() const;
+    const glm::ivec2& getSize() const;
 
     /*!
      * @brief Set SDL2 window attribute value
      * @param attribute - SDL2 attribute
      * @param value - value of attribute
      * */
-    void setAttributes(std::map<SDL_GLattr, int> & attributes);
+    void setAttributes(std::map<SDL_GLattr, int>& attributes);
 
 private:
     /*!
-* @brief The SDL2 window used for OpenGL context creation and buffer switching
+     * @brief The SDL2 window used for OpenGL context creation and buffer switching
      * */
     SDL_Window* mWindow;
 

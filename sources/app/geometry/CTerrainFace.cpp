@@ -6,7 +6,7 @@
 #include "app/auxiliary/trace.hpp"
 
 
-CTerrainFace::CTerrainFace(CMesh &mesh, int resolution, glm::vec3 localUp)
+CTerrainFace::CTerrainFace(CMesh& mesh, int resolution, glm::vec3 localUp)
     : mMesh(mesh)
     , mResolution(resolution)
     , mLocalUp(localUp)
@@ -27,7 +27,8 @@ void CTerrainFace::buildMesh()
         {
             int i = x + y * mResolution;
             glm::vec2 percent = glm::vec2(x, y) / glm::vec2(mResolution - 1);
-            glm::vec3 pointOnUnitCube = mLocalUp + (percent.x - .5f) * 2 * mAxisA + (percent.y - .5f) * 2 * mAxisB;
+            glm::vec3 pointOnUnitCube =
+                mLocalUp + (percent.x - .5f) * 2 * mAxisA + (percent.y - .5f) * 2 * mAxisB;
             glm::vec3 pointOnUnitSphere = glm::normalize(pointOnUnitCube);
             vertices[i] = pointOnUnitSphere;
 
@@ -56,5 +57,3 @@ void CTerrainFace::buildMesh()
 
     mMesh.unbind();
 }
-
-

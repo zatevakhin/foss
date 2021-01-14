@@ -1,8 +1,8 @@
 
 #include "app/auxiliary/imgui.hpp"
 
-#include "CInputEventManager.hpp"
 #include "CInputEvent.hpp"
+#include "CInputEventManager.hpp"
 
 
 CInputEventManager::CInputEventManager()
@@ -19,7 +19,7 @@ CInputEventManager::~CInputEventManager()
     }
 }
 
-void CInputEventManager::addListener(IEventListener * listener)
+void CInputEventManager::addListener(IEventListener* listener)
 {
     mListeners.push_back(listener);
 }
@@ -33,23 +33,23 @@ void CInputEventManager::handle()
         ImGui_ImplSdlGL3_ProcessEvent(&event);
         switch (event.type)
         {
-            case SDL_KEYDOWN:
-                mKeyStateMap[event.key.keysym.sym] = true;
-                break;
-            case SDL_KEYUP:
-                mKeyStateMap[event.key.keysym.sym] = false;
-                break;
-            case SDL_MOUSEBUTTONDOWN:
-                mKeyStateMap[event.button.button] = true;
-                break;
-            case SDL_MOUSEBUTTONUP:
-                mKeyStateMap[event.button.button] = false;
-                break;
-            default:
-                break;
+        case SDL_KEYDOWN:
+            mKeyStateMap[event.key.keysym.sym] = true;
+            break;
+        case SDL_KEYUP:
+            mKeyStateMap[event.key.keysym.sym] = false;
+            break;
+        case SDL_MOUSEBUTTONDOWN:
+            mKeyStateMap[event.button.button] = true;
+            break;
+        case SDL_MOUSEBUTTONUP:
+            mKeyStateMap[event.button.button] = false;
+            break;
+        default:
+            break;
         }
 
-        for (auto & listener : mListeners)
+        for (auto& listener : mListeners)
         {
             if (listener->isAcceptable(event.type))
             {

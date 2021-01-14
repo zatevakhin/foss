@@ -1,7 +1,7 @@
 
 #include "CTextureCubeMap.hpp"
-#include "app/resources/CResourceLoader.hpp"
 #include "app/auxiliary/opengl.hpp"
+#include "app/resources/CResourceLoader.hpp"
 
 
 CTextureCubeMap::CTextureCubeMap()
@@ -48,4 +48,3 @@ void CTextureCubeMap::setWrapMode(ETextureWrapMode s, ETextureWrapMode t, ETextu
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, mapTextureWrapMode(t));
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, mapTextureWrapMode(r));
 }
-

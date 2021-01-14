@@ -1,9 +1,9 @@
 #pragma once
 
+#include "ICamera.hpp"
+#include "app/auxiliary/glm.hpp"
 #include "app/auxiliary/opengl.hpp"
 #include "app/auxiliary/sdl.hpp"
-#include "app/auxiliary/glm.hpp"
-#include "ICamera.hpp"
 
 #include <set>
 
@@ -24,8 +24,8 @@ public:
 
     ~CCamera() = default;
 
-    CCamera( const CCamera& ) = delete;
-    CCamera& operator=( const CCamera& ) = delete;
+    CCamera(const CCamera&) = delete;
+    CCamera& operator=(const CCamera&) = delete;
 
     void update(double delta) override;
 

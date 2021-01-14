@@ -1,9 +1,8 @@
 #pragma once
 
 #include "ITexture.hpp"
-#include "CTextureCache.hpp"
-#include "auxiliary.hpp"
 #include "app/auxiliary/glm.hpp"
+#include "auxiliary.hpp"
 
 
 using namespace textures;
@@ -12,8 +11,7 @@ using namespace textures;
 class CResourceLoader;
 
 
-class CTextureCubeMap :
-    public ITexture
+class CTextureCubeMap : public ITexture
 {
 public:
     CTextureCubeMap();

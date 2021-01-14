@@ -30,4 +30,4 @@ struct SGeometryLayout
     size_t mBitangent = UNSET;
 };
 
-}
+} // namespace geometry

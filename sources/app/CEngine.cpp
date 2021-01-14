@@ -1,33 +1,31 @@
-
 #include "CEngine.hpp"
 
 #include "app/auxiliary/imgui.hpp"
-#include "resources/CRegistry.hpp"
-
+#include "app/auxiliary/trace.hpp"
+#include "app/geometry/CCubeSphere.hpp"
 #include "app/input/CCameraListener.hpp"
 #include "app/input/CEngineListener.hpp"
-#include "resources/CResourceLoader.hpp"
 
 #include "components/C3DModelComponent.hpp"
-#include "components/CWindowComponent.hpp"
-#include "components/CSkyboxComponent.hpp"
 #include "components/C3dObjectComponent.hpp"
-#include "components/CTransform3DComponent.hpp"
 #include "components/CMeshObjectComponent.hpp"
 #include "components/CParticleSystemComponent.hpp"
+#include "components/CSkyboxComponent.hpp"
+#include "components/CTransform3DComponent.hpp"
+#include "components/CWindowComponent.hpp"
 
-#include "app/geometry/CCubeSphere.hpp"
+#include "resources/CRegistry.hpp"
+#include "resources/CResourceLoader.hpp"
 #include "resources/CStaticModelLoader.hpp"
 
-#include "entities/windows/CFboDebugWindow.hpp"
 #include "entities/windows/CEngineDebugWindow.hpp"
-#include "entities/windows/CShaderManagerWindow.hpp"
 #include "entities/windows/CEngineSettingsWindow.hpp"
-
-#include "app/auxiliary/trace.hpp"
+#include "entities/windows/CFboDebugWindow.hpp"
+#include "entities/windows/CShaderManagerWindow.hpp"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+
 
 namespace
 {
@@ -39,48 +37,44 @@ void checkOpenGLErrors()
         std::string message;
         switch (error)
         {
-            case GL_INVALID_ENUM:
-                message = "invalid enum passed to GL function (GL_INVALID_ENUM)";
-                break;
-            case GL_INVALID_VALUE:
-                message = "invalid parameter passed to GL function (GL_INVALID_VALUE)";
-                break;
-            case GL_INVALID_OPERATION:
-                message = "cannot execute some of GL functions in current state (GL_INVALID_OPERATION)";
-                break;
-            case GL_STACK_OVERFLOW:
-                message = "matrix stack overflow occurred inside GL (GL_STACK_OVERFLOW)";
-                break;
-            case GL_STACK_UNDERFLOW:
-                message = "matrix stack underflow occurred inside GL (GL_STACK_UNDERFLOW)";
-                break;
-            case GL_OUT_OF_MEMORY:
-                message = "no enough memory to execute GL function (GL_OUT_OF_MEMORY)";
-                break;
-            default:
-                message = "error in some GL extension (framebuffers, shaders, etc)";
-                break;
+        case GL_INVALID_ENUM:
+            message = "invalid enum passed to GL function (GL_INVALID_ENUM)";
+            break;
+        case GL_INVALID_VALUE:
+            message = "invalid parameter passed to GL function (GL_INVALID_VALUE)";
+            break;
+        case GL_INVALID_OPERATION:
+            message = "cannot execute some of GL functions in current state "
+                      "(GL_INVALID_OPERATION)";
+            break;
+        case GL_STACK_OVERFLOW:
+            message = "matrix stack overflow occurred inside GL (GL_STACK_OVERFLOW)";
+            break;
+        case GL_STACK_UNDERFLOW:
+            message = "matrix stack underflow occurred inside GL "
+                      "(GL_STACK_UNDERFLOW)";
+            break;
+        case GL_OUT_OF_MEMORY:
+            message = "no enough memory to execute GL function (GL_OUT_OF_MEMORY)";
+            break;
+        default:
+            message = "error in some GL extension (framebuffers, shaders, etc)";
+            break;
         }
         trc_error("OpenGL error: %s", message.c_str());
     }
 }
 
-void GLAPIENTRY DebugOutputCallback(
-    GLenum /*source*/,
-    GLenum type,
-    GLuint id,
-    GLenum /*severity*/,
-    GLsizei /*length*/,
-    const GLchar* message,
-    const void* /*userParam*/)
+void GLAPIENTRY DebugOutputCallback(GLenum /*source*/, GLenum type, GLuint id, GLenum /*severity*/,
+                                    GLsizei /*length*/, const GLchar* message,
+                                    const void* /*userParam*/)
 {
     // errors only
     if (type != GL_DEBUG_TYPE_ERROR)
     {
         return;
     }
-    std::string formatted =
-        "OpenGL error #" + std::to_string(id) + ": " + message;
+    std::string formatted = "OpenGL error #" + std::to_string(id) + ": " + message;
     std::cerr << formatted << std::endl;
 }
 
@@ -92,7 +86,7 @@ void setupOpenGlDebug()
     glDebugMessageControl(GL_DONT_CARE, GL_DEBUG_TYPE_ERROR, GL_DONT_CARE, 0, nullptr, GL_TRUE);
 }
 
-}
+} // namespace
 
 
 CEngine::CEngine()
@@ -161,7 +155,7 @@ void CEngine::initializeVideo()
         {SDL_GL_STENCIL_SIZE, 8},
         {SDL_GL_DEPTH_SIZE, 24},
         {SDL_GL_MULTISAMPLEBUFFERS, 1},
-        {SDL_GL_MULTISAMPLESAMPLES, 8}
+        {SDL_GL_MULTISAMPLESAMPLES, 8},
     };
 
     mMainWindow->setAttributes(attributes);
@@ -227,15 +221,15 @@ void CEngine::prepare()
 
 
     auto skybox = mEntityManager.createEntity();
-    auto &mc1 = mEntityManager.addComponent<C3DModelComponent>(skybox);
+    auto& mc1 = mEntityManager.addComponent<C3DModelComponent>(skybox);
     mEntityManager.addComponent<CSkyboxComponent>(skybox);
 
     mc1.mModel = cubeModel;
 
     auto rock = mEntityManager.createEntity();
-    auto &mc2 = mEntityManager.addComponent<C3DModelComponent>(rock);
-    auto &dc2 = mEntityManager.addComponent<C3dObjectComponent>(rock);
-    auto &tc2 = mEntityManager.addComponent<CTransform3DComponent>(rock);
+    auto& mc2 = mEntityManager.addComponent<C3DModelComponent>(rock);
+    auto& dc2 = mEntityManager.addComponent<C3dObjectComponent>(rock);
+    auto& tc2 = mEntityManager.addComponent<CTransform3DComponent>(rock);
 
     tc2.mScale = glm::vec3(2);
     tc2.mPosition = glm::vec3(-10.f, 0.f, -10.f);
@@ -245,9 +239,9 @@ void CEngine::prepare()
     dc2.isInCameraView = false;
 
     auto meshObject = mEntityManager.createEntity();
-    auto &mc3 = mEntityManager.addComponent<CMeshObjectComponent>(meshObject);
-    auto &dc3 = mEntityManager.addComponent<C3dObjectComponent>(meshObject);
-    auto &tc3 = mEntityManager.addComponent<CTransform3DComponent>(meshObject);
+    auto& mc3 = mEntityManager.addComponent<CMeshObjectComponent>(meshObject);
+    auto& dc3 = mEntityManager.addComponent<C3dObjectComponent>(meshObject);
+    auto& tc3 = mEntityManager.addComponent<CTransform3DComponent>(meshObject);
 
 
     tc3.mScale = glm::vec3(5);
@@ -260,13 +254,12 @@ void CEngine::prepare()
     dc3.isInCameraView = true;
 
 
-
     auto debugWindow = mEntityManager.createEntity();
-    auto &window1 = mEntityManager.addComponent<CWindowComponent>(debugWindow);
+    auto& window1 = mEntityManager.addComponent<CWindowComponent>(debugWindow);
     window1.mWindow = std::make_shared<CEngineDebugWindow>(mCamera);
 
     auto settingsWindow = mEntityManager.createEntity();
-    auto &window2 = mEntityManager.addComponent<CWindowComponent>(settingsWindow);
+    auto& window2 = mEntityManager.addComponent<CWindowComponent>(settingsWindow);
     window2.mWindow = std::make_shared<CEngineSettingsWindow>(mSettings, mCamera);
 
     // auto fboDebug = mEntityManager.createEntity();
@@ -274,21 +267,22 @@ void CEngine::prepare()
     // window3.mWindow = std::make_shared<CFboDebugWindow>();
 
     auto shaderManager = mEntityManager.createEntity();
-    auto &window4 = mEntityManager.addComponent<CWindowComponent>(shaderManager);
+    auto& window4 = mEntityManager.addComponent<CWindowComponent>(shaderManager);
     window4.mWindow = std::make_shared<CShaderManagerWindow>(*mShaderManager.get());
 
     // auto asteroids = new CInstancedAsteroidField(mEntityManager);
     // asteroids->setupModel(rockModel);
-    // asteroids->setupTransform(glm::vec3(1.f, 1.f, 10.f), glm::vec3(1.f), glm::quat(glm::vec3(0.f, 0.f, 0.f)));
+    // asteroids->setupTransform(glm::vec3(1.f, 1.f, 10.f), glm::vec3(1.f),
+    // glm::quat(glm::vec3(0.f, 0.f, 0.f)));
 
     auto particleSystem = mEntityManager.createEntity();
-    auto &psComponent = mEntityManager.addComponent<CParticleSystemComponent>(particleSystem);
-    auto &psTransform = mEntityManager.addComponent<CTransform3DComponent>(particleSystem);
+    auto& psComponent = mEntityManager.addComponent<CParticleSystemComponent>(particleSystem);
+    auto& psTransform = mEntityManager.addComponent<CTransform3DComponent>(particleSystem);
 
     auto pSystem = std::make_shared<CParticleSystem>();
 
     psTransform.mScale = glm::vec3(0.5);
-    psTransform.mPosition = glm::vec3(0,0,0);
+    psTransform.mPosition = glm::vec3(0, 0, 0);
     psTransform.mOrientation = glm::quat(glm::vec3(0));
     pSystem->setGravity(-glm::vec3(0, 0, 0));
 
@@ -326,8 +320,6 @@ void CEngine::prepare()
 
 
     psComponent.mParticleSystem = pSystem;
-
-
 }
 
 void CEngine::loop()
@@ -382,8 +374,8 @@ void CEngine::onEvent()
 
 void CEngine::onUpdate(double delta)
 {
-    const auto &projection = mCamera.getProjection();
-    const auto &view = mCamera.getView();
+    const auto& projection = mCamera.getProjection();
+    const auto& view = mCamera.getView();
 
     mCullingSystem->setProjectionMatrix(projection);
     mCullingSystem->setViewMatrix(view);

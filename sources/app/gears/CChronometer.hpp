@@ -18,7 +18,6 @@ class CChronometer
 {
 
 public:
-
     /*!
      * @brief Constructor initialize the \b mLastTimePoint with last point of time.
      * */
@@ -36,12 +35,11 @@ public:
      * @brief Stopping current thread if the passed time is less than \b framePeriod.
      * @param framePeriod - frame length in milliseconds.
      * */
-    void wait(const unsigned long & framePeriod);
+    void wait(const unsigned long& framePeriod);
 
 private:
     /*!
      * @brief Contains stored previous point of time.
      * */
     std::chrono::system_clock::time_point mLastTimePoint;
-
 };

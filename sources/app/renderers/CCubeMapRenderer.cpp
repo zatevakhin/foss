@@ -1,17 +1,17 @@
 
 #include "app/renderers/CCubeMapRenderer.hpp"
-#include "app/scene/SStaticModel3D.hpp"
-#include "app/shading/CVertexAttribute.hpp"
-#include "app/shading/CUniform.hpp"
-#include "app/textures/CTextureCubeMap.hpp"
-#include "app/resources/CRegistry.hpp"
-#include "app/shading/IShaderProgram.hpp"
 #include "app/renderers/auxiliary.hpp"
+#include "app/resources/CRegistry.hpp"
+#include "app/scene/SStaticModel3D.hpp"
+#include "app/shading/CUniform.hpp"
+#include "app/shading/CVertexAttribute.hpp"
+#include "app/shading/IShaderProgram.hpp"
+#include "app/textures/CTextureCubeMap.hpp"
 
 #include <stdexcept>
 
 
-void CCubeMapRenderer::draw(SStaticModel3D & model)
+void CCubeMapRenderer::draw(SStaticModel3D& model)
 {
     if (!mProgram)
     {
@@ -28,7 +28,7 @@ void CCubeMapRenderer::draw(SStaticModel3D & model)
     // TODO: and this!!
     cubeMap->bind();
 
-    for (CStaticMesh3D & mesh : model.mMeshes)
+    for (CStaticMesh3D& mesh : model.mMeshes)
     {
         bindAttributes(mesh.mLayout);
         renderers::drawRangeElements(mesh.mLayout);
@@ -36,15 +36,14 @@ void CCubeMapRenderer::draw(SStaticModel3D & model)
     model.mGeometry->unbind();
 }
 
-void CCubeMapRenderer::bindAttributes(const geometry::SGeometryLayout & layout) const
+void CCubeMapRenderer::bindAttributes(const geometry::SGeometryLayout& layout) const
 {
-    auto bind = [&](const char * attr, size_t offset, unsigned int numComponents, bool needClamp) {
+    auto bind = [&](const char* attr, size_t offset, unsigned int numComponents, bool needClamp) {
         CVertexAttribute attrVar = mProgram->attribute(attr);
         if (offset == geometry::SGeometryLayout::UNSET)
         {
             attrVar.disablePointer();
-        }
-        else
+        } else
         {
             const auto bytesOffset = size_t(layout.mBaseVertexOffset + unsigned(offset));
             const auto bytesStride = size_t(layout.mVertexSize);

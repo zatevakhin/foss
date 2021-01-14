@@ -3,6 +3,6 @@
 #include "ecs/Component.hpp"
 
 
-class CSkyboxComponent: public ecs::Component<CSkyboxComponent>
+class CSkyboxComponent : public ecs::Component<CSkyboxComponent>
 {
 };

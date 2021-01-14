@@ -8,12 +8,8 @@ CCubeSphere::CCubeSphere(int resolution)
     , mResolution(resolution)
 {
     std::array<glm::vec3, CUBE_FACES_COUNT> directions = {
-        glm::vec3( 0,  1,  0),
-        glm::vec3( 0, -1,  0),
-        glm::vec3( 1,  0,  0),
-        glm::vec3(-1,  0,  0),
-        glm::vec3( 0,  0,  1),
-        glm::vec3( 0,  0, -1),
+        glm::vec3(0, 1, 0),  glm::vec3(0, -1, 0), glm::vec3(1, 0, 0),
+        glm::vec3(-1, 0, 0), glm::vec3(0, 0, 1),  glm::vec3(0, 0, -1),
     };
 
     for (int i = 0; i < CUBE_FACES_COUNT; ++i)

@@ -2,36 +2,35 @@
 #include "CCamera.hpp"
 #include "app/auxiliary/glm.hpp"
 
-#include <glm/gtx/rotate_vector.hpp>
 #include <glm/gtx/euler_angles.hpp>
+#include <glm/gtx/rotate_vector.hpp>
 
 namespace
 {
 
 glm::vec3 CAMERA_EYE = glm::vec3(0, 0, 1);
-glm::vec3 CAMERA_AT  = glm::vec3(0, 0, 0);
-glm::vec3 CAMERA_UP  = glm::vec3(0, 1, 0);
+glm::vec3 CAMERA_AT = glm::vec3(0, 0, 0);
+glm::vec3 CAMERA_UP = glm::vec3(0, 1, 0);
 
-glm::ivec2 VIEW_PORT  = glm::ivec2(1920, 1080);
+glm::ivec2 VIEW_PORT = glm::ivec2(1920, 1080);
 
-constexpr double CAMERA_DEFAULT_SPEED  = 1.0;
-constexpr double CAMERA_FOV    = 90.0;
+constexpr double CAMERA_DEFAULT_SPEED = 1.0;
+constexpr double CAMERA_FOV = 90.0;
 
-constexpr double CAMERA_NEAR   = 0.1;
-constexpr double CAMERA_FAR    = 1000.0;
+constexpr double CAMERA_NEAR = 0.1;
+constexpr double CAMERA_FAR = 1000.0;
 
 constexpr double CAMERA_RADIANS_IN_PIXEL = 1.0 / 3000.0;
 
 
-glm::vec3 getMoveDirection(const std::set<ECameraMoveDirection> & directions)
+glm::vec3 getMoveDirection(const std::set<ECameraMoveDirection>& directions)
 {
     glm::vec3 direction(0.f);
 
     if (directions.count(ECameraMoveDirection::eForward))
     {
         direction.z = +1.f;
-    }
-    else if (directions.count(ECameraMoveDirection::eBack))
+    } else if (directions.count(ECameraMoveDirection::eBack))
     {
         direction.z = -1.f;
     }
@@ -39,8 +38,7 @@ glm::vec3 getMoveDirection(const std::set<ECameraMoveDirection> & directions)
     if (directions.count(ECameraMoveDirection::eRight))
     {
         direction.x = -1.f;
-    }
-    else if (directions.count(ECameraMoveDirection::eLeft))
+    } else if (directions.count(ECameraMoveDirection::eLeft))
     {
         direction.x = +1.f;
     }
@@ -53,7 +51,7 @@ glm::vec3 getMoveDirection(const std::set<ECameraMoveDirection> & directions)
     return direction;
 }
 
-}
+} // namespace
 
 
 CCamera::CCamera()
@@ -147,7 +145,7 @@ void CCamera::mouseMove(const glm::ivec2& delta)
 {
     if (mIsActive)
     {
-        const double deltaYaw  = -delta.x * CAMERA_RADIANS_IN_PIXEL;
+        const double deltaYaw = -delta.x * CAMERA_RADIANS_IN_PIXEL;
         const double deltaRoll = -delta.y * CAMERA_RADIANS_IN_PIXEL;
 
         mForward = glm::normalize(glm::rotate(mForward, float(deltaYaw), mUp));
@@ -157,5 +155,3 @@ void CCamera::mouseMove(const glm::ivec2& delta)
         mForward = glm::normalize(glm::cross(mUp, right));
     }
 }
-
-

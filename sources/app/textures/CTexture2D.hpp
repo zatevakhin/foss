@@ -5,11 +5,11 @@
 
 #include "app/auxiliary/glm.hpp"
 
+
 using namespace textures;
 
 
-class CTexture2D :
-    public ITexture
+class CTexture2D : public ITexture
 {
 public:
     CTexture2D();
@@ -28,7 +28,6 @@ public:
     void setWrapMode(ETextureWrapMode s, ETextureWrapMode t);
     void setFilter();
     void generateMipMaps() const;
-
 
 
 private:

@@ -1,8 +1,6 @@
 
 #include "CEngine.hpp"
 
-#include <iostream>
-
 
 int main()
 {

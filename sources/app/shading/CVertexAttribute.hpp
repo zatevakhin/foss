@@ -1,10 +1,12 @@
 #pragma once
 
-#include <glm/fwd.hpp>
-#include <cstdlib>
 #include <cstdint>
+#include <cstdlib>
+#include <glm/fwd.hpp>
+
 
 class CShaderProgram;
+
 
 class CVertexAttribute
 {

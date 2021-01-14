@@ -1,8 +1,8 @@
 #pragma once
 
-#include "IShaderProgram.hpp"
-#include "CVertexAttribute.hpp"
 #include "CUniform.hpp"
+#include "CVertexAttribute.hpp"
+#include "IShaderProgram.hpp"
 #include <vector>
 
 
@@ -13,8 +13,8 @@ public:
     CBasicProgram(unsigned int, std::vector<unsigned int>);
     ~CBasicProgram();
 
-    CBasicProgram(const CBasicProgram &) = delete;
-    CBasicProgram& operator=(const CBasicProgram &) = delete;
+    CBasicProgram(const CBasicProgram&) = delete;
+    CBasicProgram& operator=(const CBasicProgram&) = delete;
 
     void use() const override;
     void replace(unsigned int programId, std::vector<unsigned int>& shaderIds) override;
@@ -30,7 +30,4 @@ private:
 private:
     unsigned int mProgramId;
     std::vector<unsigned int> mShaders;
-
 };
-
-

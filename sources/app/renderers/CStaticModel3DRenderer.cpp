@@ -1,62 +1,62 @@
 
 #include "app/renderers/CStaticModel3DRenderer.hpp"
-#include "app/shading/IShaderProgram.hpp"
-#include "app/shading/CVertexAttribute.hpp"
-#include "app/scene/SStaticModel3D.hpp"
-#include "app/shading/CUniform.hpp"
-#include "app/textures/CTextureCubeMap.hpp"
-#include "app/resources/CRegistry.hpp"
-#include "geometry/auxiliary.hpp"
-#include "app/textures/auxiliary.hpp"
-#include "app/renderers/auxiliary.hpp"
-#include "app/resources/SPhongMaterial.hpp"
-#include "app/scene/CCamera.hpp"
 #include "app/auxiliary/glm.hpp"
 #include "app/auxiliary/trace.hpp"
+#include "app/renderers/auxiliary.hpp"
+#include "app/resources/CRegistry.hpp"
+#include "app/resources/SPhongMaterial.hpp"
+#include "app/scene/CCamera.hpp"
+#include "app/scene/SStaticModel3D.hpp"
+#include "app/shading/CUniform.hpp"
+#include "app/shading/CVertexAttribute.hpp"
+#include "app/shading/IShaderProgram.hpp"
+#include "app/textures/CTextureCubeMap.hpp"
+#include "app/textures/auxiliary.hpp"
+#include "geometry/auxiliary.hpp"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <stdexcept>
 #include <iostream>
+#include <stdexcept>
 
 
 namespace
 {
 
-    void attributeAction(const char * attr, size_t offset, unsigned int numComponents, bool needClamp, size_t layoutOffset, size_t stride, IShaderProgram& program)
+void attributeAction(const char* attr, size_t offset, unsigned int numComponents, bool needClamp,
+                     size_t layoutOffset, size_t stride, IShaderProgram& program)
+{
+    CVertexAttribute attrVar = program.attribute(attr);
+    if (offset == geometry::SGeometryLayout::UNSET)
     {
-        CVertexAttribute attrVar = program.attribute(attr);
-        if (offset == geometry::SGeometryLayout::UNSET)
-        {
-            attrVar.disablePointer();
-        }
-        else
-        {
-            const auto bytesOffset = size_t(layoutOffset + unsigned(offset));
-            const auto bytesStride = size_t(stride);
-            attrVar.enablePointer();
-            attrVar.setFloatsOffset(bytesOffset, bytesStride, numComponents, needClamp);
-        }
-    };
+        attrVar.disablePointer();
+    } else
+    {
+        const auto bytesOffset = size_t(layoutOffset + unsigned(offset));
+        const auto bytesStride = size_t(stride);
+        attrVar.enablePointer();
+        attrVar.setFloatsOffset(bytesOffset, bytesStride, numComponents, needClamp);
+    }
+};
 
-}
+} // namespace
 
 
 void CStaticModel3DRenderer::use()
 {
     C3DRendererBase::use();
 
-    mProgram->uniform("diffuseMap")  = 0; // GL_TEXTURE0
+    mProgram->uniform("diffuseMap") = 0;  // GL_TEXTURE0
     mProgram->uniform("specularMap") = 1; // GL_TEXTURE1
     mProgram->uniform("emissiveMap") = 2; // GL_TEXTURE2
 
     // TODO: Move light to scene config ??
     mProgram->uniform("light0.position") = glm::vec4(100.f, 100.f, 100.f, 0);
-    mProgram->uniform("light0.diffuse") = glm::vec4(0.8f,  0.5f,  0.5f, 1);
+    mProgram->uniform("light0.diffuse") = glm::vec4(0.8f, 0.5f, 0.5f, 1);
     mProgram->uniform("light0.specular") = glm::vec4(0.3f, 0.3f, 0.3f, 1.0f);
 }
 
-void CStaticModel3DRenderer::draw(SStaticModel3D & model)
+void CStaticModel3DRenderer::draw(SStaticModel3D& model)
 {
     if (nullptr == mProgram)
     {
@@ -68,7 +68,7 @@ void CStaticModel3DRenderer::draw(SStaticModel3D & model)
 
     model.mGeometry->bind();
 
-    for (CStaticMesh3D & mesh : model.mMeshes)
+    for (CStaticMesh3D& mesh : model.mMeshes)
     {
         applyModelView(mesh.mLocal);
         applyMaterial(model.mMaterials[mesh.mMaterialIndex]);
@@ -78,7 +78,7 @@ void CStaticModel3DRenderer::draw(SStaticModel3D & model)
     model.mGeometry->unbind();
 }
 
-void CStaticModel3DRenderer::applyModelView(const glm::mat4 & local)
+void CStaticModel3DRenderer::applyModelView(const glm::mat4& local)
 {
     const glm::mat4 worldMatrix = mView * mTransform * local;
     const glm::mat4 normalMatrix = glm::transpose(glm::inverse(worldMatrix));
@@ -87,7 +87,7 @@ void CStaticModel3DRenderer::applyModelView(const glm::mat4 & local)
     mProgram->uniform("modelView") = worldMatrix;
 }
 
-void CStaticModel3DRenderer::applyMaterial(const SPhongMaterial & material) const
+void CStaticModel3DRenderer::applyMaterial(const SPhongMaterial& material) const
 {
     mProgram->uniform("material.shininess") = material.mShininess;
     mProgram->uniform("material.diffuse") = material.mDiffuseColor;
@@ -101,9 +101,12 @@ void CStaticModel3DRenderer::applyMaterial(const SPhongMaterial & material) cons
     /// Texture GL_TEXTURE0 must be binded at last.
 }
 
-void CStaticModel3DRenderer::bindAttributes(const geometry::SGeometryLayout &layout) const
+void CStaticModel3DRenderer::bindAttributes(const geometry::SGeometryLayout& layout) const
 {
-    attributeAction("vertex", layout.mPosition3D, 3, false, layout.mBaseVertexOffset, layout.mVertexSize, *mProgram);
-    attributeAction("normal", layout.mNormal, 3, false, layout.mBaseVertexOffset, layout.mVertexSize, *mProgram);
-    attributeAction("textureUV", layout.mTexCoord2D, 2, false, layout.mBaseVertexOffset, layout.mVertexSize, *mProgram);
+    attributeAction("vertex", layout.mPosition3D, 3, false, layout.mBaseVertexOffset,
+                    layout.mVertexSize, *mProgram);
+    attributeAction("normal", layout.mNormal, 3, false, layout.mBaseVertexOffset,
+                    layout.mVertexSize, *mProgram);
+    attributeAction("textureUV", layout.mTexCoord2D, 2, false, layout.mBaseVertexOffset,
+                    layout.mVertexSize, *mProgram);
 }

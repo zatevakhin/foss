@@ -1,8 +1,9 @@
 
 #include "CTransform3D.hpp"
 
-#include <glm/gtc/matrix_transform.hpp>
 #include "app/auxiliary/trace.hpp"
+#include <glm/gtc/matrix_transform.hpp>
+
 
 CTransform3D::CTransform3D()
     : mScale(glm::vec3(1))

@@ -1,17 +1,17 @@
 #pragma once
 
-#include "app/textures/ITexture.hpp"
 #include "app/geometry/SGeometryLayout.hpp"
+#include "app/textures/ITexture.hpp"
 
 
 namespace geometry
 {
-    struct SGeometryLayout;
+struct SGeometryLayout;
 }
 
 
 namespace renderers
 {
 
-void drawRangeElements(const geometry::SGeometryLayout & layout);
+void drawRangeElements(const geometry::SGeometryLayout& layout);
 }

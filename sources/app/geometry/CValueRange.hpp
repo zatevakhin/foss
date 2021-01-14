@@ -3,27 +3,26 @@
 #include "app/auxiliary/glm.hpp"
 
 
-template <class T>
-class CValueRange
+template <class T> class CValueRange
 {
 public:
     T mMin;
     T mMax;
 
     CValueRange()
-            : mMin(T())
-            , mMax(T())
+        : mMin(T())
+        , mMax(T())
     {
     }
 
-    CValueRange(const T & minValue, const T & maxValue)
-            : mMin(minValue)
-            , mMax(maxValue)
+    CValueRange(const T& minValue, const T& maxValue)
+        : mMin(minValue)
+        , mMax(maxValue)
     {
         normalize();
     }
 
-    CValueRange getUnion(const CValueRange & other) const
+    CValueRange getUnion(const CValueRange& other) const
     {
         CValueRange result;
         result.mMin = glm::min(mMin, other.mMin);
@@ -32,7 +31,7 @@ public:
         return result;
     }
 
-    CValueRange getIntersection(const CValueRange & other) const
+    CValueRange getIntersection(const CValueRange& other) const
     {
         CValueRange result;
         result.mMin = glm::max(mMin, other.mMin);

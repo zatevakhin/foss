@@ -6,14 +6,17 @@
 
 namespace
 {
-    static auto vector_getter = [](void* vec, int idx, const char** out_text)
-    {
-        auto& vector = *static_cast<std::vector<std::string>*>(vec);
-        if (idx < 0 || idx >= static_cast<int>(vector.size())) { return false; }
 
-        *out_text = vector.at(idx).c_str();
-        return true;
-    };
+static auto vector_getter = [](void* vec, int idx, const char** out_text) {
+    auto& vector = *static_cast<std::vector<std::string>*>(vec);
+    if (idx < 0 || idx >= static_cast<int>(vector.size()))
+    {
+        return false;
+    }
+
+    *out_text = vector.at(idx).c_str();
+    return true;
+};
 
 } // namespace
 
@@ -31,13 +34,14 @@ void CShaderManagerWindow::draw()
     std::vector<std::string> programsNames;
     programsNames.reserve(programs.size());
 
-    for (const auto &i : programs)
+    for (const auto& i : programs)
     {
         programsNames.emplace_back(i.first + "(" + std::to_string(i.second) + ")");
     }
 
     ImGui::Begin("Shader manager");
-    ImGui::ListBox("", &currentProgrmName, vector_getter, static_cast<void*>(&programsNames), programsNames.size(), 6);
+    ImGui::ListBox("", &currentProgrmName, vector_getter, static_cast<void*>(&programsNames),
+                   programsNames.size(), 6);
 
     if (ImGui::Button("Reload"))
     {

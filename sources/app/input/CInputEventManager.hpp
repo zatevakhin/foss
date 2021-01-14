@@ -3,8 +3,8 @@
 #include "IEventListener.hpp"
 
 #include <SDL2/SDL_events.h>
-#include <vector>
 #include <map>
+#include <vector>
 
 
 class CInputEventManager
@@ -17,7 +17,7 @@ public:
     void handle();
 
 private:
-    std::vector<IEventListener *> mListeners;
+    std::vector<IEventListener*> mListeners;
 
     std::map<int, bool> mKeyStateMap;
 };

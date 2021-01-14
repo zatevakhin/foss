@@ -6,13 +6,13 @@
 
 struct SPhongMaterial
 {
-   glm::vec4 mDiffuseColor;
-   glm::vec4 mSpecularColor;
-   glm::vec4 mEmissiveColor;
+    glm::vec4 mDiffuseColor;
+    glm::vec4 mSpecularColor;
+    glm::vec4 mEmissiveColor;
 
-   float mShininess = 0;
+    float mShininess = 0;
 
-   CTextureSharedPtr mDiffuse;
-   CTextureSharedPtr mSpecular;
-   CTextureSharedPtr mEmissive;
+    CTextureSharedPtr mDiffuse;
+    CTextureSharedPtr mSpecular;
+    CTextureSharedPtr mEmissive;
 };

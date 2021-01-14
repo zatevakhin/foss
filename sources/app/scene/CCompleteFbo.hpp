@@ -1,8 +1,8 @@
 #pragma once
 
-#include <glm/vec2.hpp>
 #include "CFrameBufferObject.hpp"
 #include "app/textures/CTexture2D.hpp"
+#include <glm/vec2.hpp>
 
 
 class CCompleteFbo
@@ -12,8 +12,8 @@ public:
     CCompleteFbo(glm::ivec2 size);
     ~CCompleteFbo() = default;
 
-    CCompleteFbo( const CCompleteFbo& ) = delete;
-    CCompleteFbo& operator=( const CCompleteFbo& ) = delete;
+    CCompleteFbo(const CCompleteFbo&) = delete;
+    CCompleteFbo& operator=(const CCompleteFbo&) = delete;
 
     void bind() const;
     void unbind() const;
@@ -30,5 +30,4 @@ private:
     CFrameBufferObject mFbo;
     CTexture2D mFboTextureRgb;
     CTexture2D mFboTextureDepth;
-
 };

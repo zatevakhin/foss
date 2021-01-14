@@ -9,9 +9,9 @@
 class CPickingSystem
 {
 public:
-    CPickingSystem(ecs::EntityManager &entityManager);
+    CPickingSystem(ecs::EntityManager& entityManager);
     void update(double& delta);
 
 private:
-    ecs::EntityManager &mEntityManager;
+    ecs::EntityManager& mEntityManager;
 };

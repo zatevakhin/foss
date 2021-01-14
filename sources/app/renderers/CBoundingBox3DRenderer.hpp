@@ -10,7 +10,7 @@ public:
     CBoundingBox3DRenderer();
     ~CBoundingBox3DRenderer() = default;
 
-    void draw(SStaticModel3D & model) override;
+    void draw(SStaticModel3D& model) override;
     void draw(const CMeshObject& mesh) override;
 
     void drawBoundingBox(const geometry::CBoundingBox& aabb);

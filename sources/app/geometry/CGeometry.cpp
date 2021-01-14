@@ -12,7 +12,7 @@ CGeometry::CGeometry()
 {
 }
 
-const CBoundingBox & CGeometry::getBoundingBox() const
+const CBoundingBox& CGeometry::getBoundingBox() const
 {
     return mBBox;
 }
@@ -31,4 +31,4 @@ void CGeometry::unbind()
 }
 
 
-} // geometry
+} // namespace geometry

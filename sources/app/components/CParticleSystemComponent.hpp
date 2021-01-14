@@ -1,7 +1,7 @@
 #pragma once
 
-#include "ecs/Component.hpp"
 #include "app/scene/CParticleSystem.hpp"
+#include "ecs/Component.hpp"
 
 
 class CParticleSystemComponent : public ecs::Component<CParticleSystemComponent>

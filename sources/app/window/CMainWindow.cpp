@@ -31,19 +31,19 @@ CMainWindow::~CMainWindow()
 }
 
 
-void CMainWindow::setTitle(const std::string & value)
+void CMainWindow::setTitle(const std::string& value)
 {
     mTitle = value;
 }
 
 
-void CMainWindow::setSize(const glm::ivec2 & value)
+void CMainWindow::setSize(const glm::ivec2& value)
 {
     mSize = value;
 }
 
 
-void CMainWindow::setFlags(const Uint32 & value)
+void CMainWindow::setFlags(const Uint32& value)
 {
     mFlags = value;
 }
@@ -64,12 +64,13 @@ void CMainWindow::create()
     //     return;
     // }
 
-    for (const auto & item : mAttributes)
+    for (const auto& item : mAttributes)
     {
         SDL_GL_SetAttribute(item.first, item.second);
     }
 
-    mWindow = SDL_CreateWindow(mTitle.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, mSize.x, mSize.y, mFlags);
+    mWindow = SDL_CreateWindow(mTitle.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+                               mSize.x, mSize.y, mFlags);
 
     // if (nullptr == mWindow)
     // {
@@ -84,7 +85,7 @@ void CMainWindow::create()
     //     trc_error("Failed to create gl context!");
     // }
 
-    printf ("glGetString (GL_VERSION) returns %s\n", glGetString (GL_VERSION));
+    printf("glGetString (GL_VERSION) returns %s\n", glGetString(GL_VERSION));
 }
 
 void CMainWindow::swapBuffers()
@@ -93,7 +94,7 @@ void CMainWindow::swapBuffers()
 }
 
 
-void CMainWindow::setAttributes(std::map<SDL_GLattr, int> & attributes)
+void CMainWindow::setAttributes(std::map<SDL_GLattr, int>& attributes)
 {
     mAttributes = attributes;
 }
@@ -105,8 +106,7 @@ Uint32 CMainWindow::getId() const
 }
 
 
-const glm::ivec2 & CMainWindow::getSize() const
+const glm::ivec2& CMainWindow::getSize() const
 {
     return mSize;
 }
-

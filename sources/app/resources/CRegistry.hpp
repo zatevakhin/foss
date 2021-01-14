@@ -2,11 +2,12 @@
 
 /*!
  * @file
- * @brief File, with the class implementing the \b registry to store various data in the format key-value.
+ * @brief File, with the class implementing the \b registry to store various data in the format
+ * key-value.
  * */
 
-#include <boost/noncopyable.hpp>
 #include <boost/any.hpp>
+#include <boost/noncopyable.hpp>
 #include <iostream>
 #include <map>
 
@@ -33,7 +34,7 @@ public:
      * @param key - Registry key
      * @param value - The value which can be any type
      * */
-    inline static void set(const std::string & key, boost::any value)
+    inline static void set(const std::string& key, boost::any value)
     {
         CRegistry::registry[key] = value;
     }
@@ -43,8 +44,7 @@ public:
      * @param key - Registry key
      * @return The value which is stored in the registry
      * */
-    template <typename Type>
-    inline static Type get(const std::string & key)
+    template <typename Type> inline static Type get(const std::string& key)
     {
         return boost::any_cast<Type>(CRegistry::registry[key]);
     }

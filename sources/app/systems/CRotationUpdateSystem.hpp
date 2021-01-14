@@ -6,9 +6,9 @@
 class CRotationUpdateSystem
 {
 public:
-    CRotationUpdateSystem(ecs::EntityManager &entityManager);
+    CRotationUpdateSystem(ecs::EntityManager& entityManager);
     void update(double& delta);
 
 private:
-    ecs::EntityManager &mEntityManager;
+    ecs::EntityManager& mEntityManager;
 };

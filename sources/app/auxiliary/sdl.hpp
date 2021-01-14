@@ -11,12 +11,12 @@ namespace
 
 struct SDLSurfaceDeleter
 {
-    void operator()(SDL_Surface *ptr)
+    void operator()(SDL_Surface* ptr)
     {
         SDL_FreeSurface(ptr);
     }
 };
 
-}
+} // namespace
 
 using TSurfacePtr = std::unique_ptr<SDL_Surface, SDLSurfaceDeleter>;

@@ -7,7 +7,7 @@
 // CInstancedAsteroidField::CInstancedAsteroidField(ecs::EntityManager &entityManager)
 //     : mEntityManager(entityManager)
 //     , mEntity(entityManager.createEntity())
-// {   
+// {
 //     mEntityManager.addComponent<CInstanced3dObjectComponent>(mEntity);
 // }
 
@@ -17,7 +17,8 @@
 //     mesh.mModel = model;
 // }
 
-// void CInstancedAsteroidField::setupTransform(glm::vec3 position, glm::vec3 scale, glm::quat orientation)
+// void CInstancedAsteroidField::setupTransform(glm::vec3 position, glm::vec3 scale, glm::quat
+// orientation)
 // {
 //     auto &transform = mEntityManager.addComponent<CTransform3DComponent>(mEntity);
 //     transform.mOrientation = orientation;

@@ -24,17 +24,17 @@ size_t CMesh::getIndicesCount() const
     return mIndices.size();
 }
 
-const std::vector<float> &CMesh::getVertices() const
+const std::vector<float>& CMesh::getVertices() const
 {
     return mVertices;
 }
 
-const geometry::CBoundingBox &CMesh::getBoundingBox() const
+const geometry::CBoundingBox& CMesh::getBoundingBox() const
 {
     return mBBox;
 }
 
-const std::vector<int> &CMesh::getIndices() const
+const std::vector<int>& CMesh::getIndices() const
 {
     return mIndices;
 }
@@ -55,7 +55,7 @@ void CMesh::clear()
     mIndices.clear();
 }
 
-void CMesh::setVertices(const float *vertices, size_t size, bool noIndices)
+void CMesh::setVertices(const float* vertices, size_t size, bool noIndices)
 {
     mNoIndices = noIndices;
 
@@ -68,7 +68,7 @@ void CMesh::setVertices(const float *vertices, size_t size, bool noIndices)
     createBoundingBox();
 }
 
-void CMesh::setIndices(const int *indices, size_t size)
+void CMesh::setIndices(const int* indices, size_t size)
 {
     mIndices.reserve(size);
     std::move(indices, indices + size, std::back_inserter(mIndices));
@@ -82,7 +82,7 @@ void CMesh::createBoundingBox()
     glm::vec3 lowerBound(0);
     glm::vec3 upperBound(0);
 
-    for (const auto &vtx : mVertices)
+    for (const auto& vtx : mVertices)
     {
         lowerBound = glm::min(lowerBound, vtx);
         upperBound = glm::max(upperBound, vtx);

@@ -4,7 +4,7 @@
 #include "ecs/Component.hpp"
 
 
-class CWindowComponent: public ecs::Component<CWindowComponent>
+class CWindowComponent : public ecs::Component<CWindowComponent>
 {
 public:
     CWindowPtr mWindow;

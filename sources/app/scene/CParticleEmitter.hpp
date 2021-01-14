@@ -1,19 +1,18 @@
 #pragma once
 
-#include <random>
 #include "app/auxiliary/glm.hpp"
+#include <random>
+
 
 class CParticle
 {
 public:
-    CParticle(const glm::vec3 &position,
-              const glm::vec3 &velocity,
-              float lifetime);
+    CParticle(const glm::vec3& position, const glm::vec3& velocity, float lifetime);
 
-    void advance(float deltaSeconds, const glm::vec3 &acceleration);
+    void advance(float deltaSeconds, const glm::vec3& acceleration);
 
-    glm::vec3 getPosition()const;
-    bool isAlive()const;
+    glm::vec3 getPosition() const;
+    bool isAlive() const;
 
 private:
     glm::vec3 mPosition;
@@ -27,6 +26,7 @@ class CClampedNormalDistribution
     std::normal_distribution<float> mDistribution;
     float mMin = 0.f;
     float mMax = 0.f;
+
 public:
     // m_distribution requires two parameters:
     // `mean`, those. median value and at the same time mathematical expectation
@@ -45,7 +45,7 @@ public:
     // Normal distribution produces values over the entire float range
     // But we cut the values out of the range [min, max]
     // Statistically, about 0.3% of the values will be thrown out.
-    float operator ()(std::mt19937 &random)
+    float operator()(std::mt19937& random)
     {
         while (true)
         {
@@ -67,14 +67,14 @@ public:
 
 
     void advance(float dt);
-    bool isEmitReady()const;
+    bool isEmitReady() const;
     CParticle emit();
 
-    void setPosition(const glm::vec3 &value);
+    void setPosition(const glm::vec3& value);
 
     void setDistanceRange(float minValue, float maxValue);
 
-    void setDirection(const glm::vec3 &value);
+    void setDirection(const glm::vec3& value);
 
     void setMaxDeviationAngle(float value);
 

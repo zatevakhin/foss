@@ -10,12 +10,12 @@ class CCamera;
 class CCameraListener : public IEventListener
 {
 public:
-    explicit CCameraListener(CCamera * camera);
+    explicit CCameraListener(CCamera* camera);
     bool isAcceptable(int type) override;
-    void accept(const CInputEvent & event) override;
+    void accept(const CInputEvent& event) override;
 
 private:
-    CCamera * mCamera;
+    CCamera* mCamera;
     std::set<int> mAcceptable;
 
 private:

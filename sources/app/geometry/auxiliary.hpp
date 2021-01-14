@@ -13,6 +13,6 @@ enum class EPrimitiveType
     eTriangleStrip,
 };
 
-const unsigned int mapPrimitiveType(const EPrimitiveType & primitive);
+const unsigned int mapPrimitiveType(const EPrimitiveType& primitive);
 
-} // geometry
+} // namespace geometry

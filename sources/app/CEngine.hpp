@@ -19,6 +19,7 @@
 #include <memory>
 #include <vector>
 
+
 class CResourceLoader;
 
 

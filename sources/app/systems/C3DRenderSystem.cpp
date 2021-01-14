@@ -1,27 +1,26 @@
 
 #include "C3DRenderSystem.hpp"
-#include "renderers/CStaticModel3DRenderer.hpp"
-#include "renderers/CBoundingBox3DRenderer.hpp"
-#include "renderers/CCubeMapRenderer.hpp"
+#include "SEngineSettings.hpp"
+
+#include "app/auxiliary/glm.hpp"
+#include "app/auxiliary/trace.hpp"
+#include "app/components/C3DModelComponent.hpp"
+#include "app/components/C3dObjectComponent.hpp"
+#include "app/components/CInstanced3dObjectComponent.hpp"
+#include "app/components/CMeshObjectComponent.hpp"
+#include "app/components/CParticleSystemComponent.hpp"
+#include "app/components/CSkyboxComponent.hpp"
+#include "app/components/CTransform3DComponent.hpp"
+#include "app/geometry/CBoundingBox.hpp"
+#include "app/renderers/CBoundingBox3DRenderer.hpp"
+#include "app/renderers/CCubeMapRenderer.hpp"
+#include "app/renderers/CStaticModel3DRenderer.hpp"
 #include "app/resources/CRegistry.hpp"
 #include "app/resources/CShaderManager.hpp"
 #include "app/scene/CCamera.hpp"
-#include "SEngineSettings.hpp"
-#include "geometry/CBoundingBox.hpp"
-
-#include "app/components/CTransform3DComponent.hpp"
-#include "app/components/CMeshObjectComponent.hpp"
-#include "app/components/C3DModelComponent.hpp"
-#include "app/components/C3dObjectComponent.hpp"
-#include "app/components/CSkyboxComponent.hpp"
-#include "app/components/CInstanced3dObjectComponent.hpp"
-#include "app/components/CParticleSystemComponent.hpp"
 #include "app/shading/CUniform.hpp"
-
 #include "app/shading/CVertexAttribute.cpp"
 
-#include "app/auxiliary/trace.hpp"
-#include "app/auxiliary/glm.hpp"
 
 #include <glm/gtc/matrix_access.hpp>
 #include <glm/gtx/transform.hpp>
@@ -30,7 +29,8 @@
 
 #define GL_SWITCH_OPTION(expression, option) (((expression) ? gl::Enable : gl::Disable)(option))
 
-C3DRenderSystem::C3DRenderSystem(ecs::EntityManager &entityManager, CShaderManager& shaderManager)
+
+C3DRenderSystem::C3DRenderSystem(ecs::EntityManager& entityManager, CShaderManager& shaderManager)
     : mEntityManager(entityManager)
     , mShaderManager(shaderManager)
     , mMeshRenderer()
@@ -43,14 +43,9 @@ C3DRenderSystem::C3DRenderSystem(ecs::EntityManager &entityManager, CShaderManag
     , mParticlesVao()
 {
 
-    std::vector<float> vtx({
-        -1.0f,  1.0f, 0.0f, 1.0f,
-        -1.0f, -1.0f, 0.0f, 0.0f,
-         1.0f, -1.0f, 1.0f, 0.0f,
-        -1.0f,  1.0f, 0.0f, 1.0f,
-         1.0f, -1.0f, 1.0f, 0.0f,
-         1.0f,  1.0f, 1.0f, 1.0f
-    });
+    std::vector<float> vtx({-1.0f, 1.0f,  0.0f, 1.0f, -1.0f, -1.0f, 0.0f, 0.0f,
+                            1.0f,  -1.0f, 1.0f, 0.0f, -1.0f, 1.0f,  0.0f, 1.0f,
+                            1.0f,  -1.0f, 1.0f, 0.0f, 1.0f,  1.0f,  1.0f, 1.0f});
 
     std::vector<glm::vec3> vtxParticles;
 
@@ -88,7 +83,8 @@ C3DRenderSystem::C3DRenderSystem(ecs::EntityManager &entityManager, CShaderManag
     q_vbo.bind();
     q_vbo.copy(vtx);
     gl::VertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)0);
-    gl::VertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)(2 * sizeof(GLfloat)));
+    gl::VertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat),
+                            (GLvoid*)(2 * sizeof(GLfloat)));
     q_vbo.unbind();
     mScreenQuad.unbind();
 
@@ -100,7 +96,8 @@ C3DRenderSystem::C3DRenderSystem(ecs::EntityManager &entityManager, CShaderManag
 
 void C3DRenderSystem::prepare(const ICamera* camera)
 {
-    // for (auto [entity, component] : mEntityManager.getEntitySet<CParticleSystemComponent, CTransform3DComponent>())
+    // for (auto [entity, component] : mEntityManager.getEntitySet<CParticleSystemComponent,
+    // CTransform3DComponent>())
     // {
     //     auto [c, t] = component;
     //     t.mPosition = camera->getPosition();
@@ -117,10 +114,10 @@ void C3DRenderSystem::prepare(const ICamera* camera)
     mBBoxRenderer.setProjectionMatrix(camera->getProjection());
 }
 
-void C3DRenderSystem::render(const glm::mat4 & view, const glm::mat4 & projection)
+void C3DRenderSystem::render(const glm::mat4& view, const glm::mat4& projection)
 {
     // For testing purposes.
-    auto settings = CRegistry::get<SEngineSettings *>("settings");
+    auto settings = CRegistry::get<SEngineSettings*>("settings");
 
     glPolygonMode(GL_FRONT_AND_BACK, settings->mPolygonMode.mItems[settings->mPolygonMode.mIndex]);
     GL_SWITCH_OPTION(settings->mDepthTest, GL_DEPTH_TEST);
@@ -171,14 +168,15 @@ void C3DRenderSystem::render(const glm::mat4 & view, const glm::mat4 & projectio
     glUseProgram(0U); // Free shader
 }
 
-void C3DRenderSystem::renderEnvironment(const glm::mat4 & view, const glm::mat4 & projection)
+void C3DRenderSystem::renderEnvironment(const glm::mat4& view, const glm::mat4& projection)
 {
     glDepthFunc(GL_LEQUAL);
     glFrontFace(GL_CW);
 
     mCubeMapRenderer.use();
 
-    for (auto [entity, components] : mEntityManager.getEntitySet<C3DModelComponent, CSkyboxComponent>())
+    for (auto [entity, components] :
+         mEntityManager.getEntitySet<C3DModelComponent, CSkyboxComponent>())
     {
         auto [mesh, skybox] = components;
 
@@ -189,10 +187,12 @@ void C3DRenderSystem::renderEnvironment(const glm::mat4 & view, const glm::mat4 
     glFrontFace(GL_CCW);
 }
 
-void C3DRenderSystem::renderForeground(const glm::mat4 &view, const glm::mat4 &projection)
+void C3DRenderSystem::renderForeground(const glm::mat4& view, const glm::mat4& projection)
 {
     mStaticModelRenderer.use();
-    for (auto [entity, components] : mEntityManager.getEntitySet<C3DModelComponent, C3dObjectComponent, CTransform3DComponent>())
+    for (auto [entity, components] :
+         mEntityManager
+             .getEntitySet<C3DModelComponent, C3dObjectComponent, CTransform3DComponent>())
     {
         auto [model, drawable, transform] = components;
 
@@ -204,7 +204,9 @@ void C3DRenderSystem::renderForeground(const glm::mat4 &view, const glm::mat4 &p
     }
 
     mMeshRenderer.use();
-    for (auto [entity, components] : mEntityManager.getEntitySet<CMeshObjectComponent, C3dObjectComponent, CTransform3DComponent>())
+    for (auto [entity, components] :
+         mEntityManager
+             .getEntitySet<CMeshObjectComponent, C3dObjectComponent, CTransform3DComponent>())
     {
         auto [mesh, drawable, transform] = components;
 
@@ -216,10 +218,12 @@ void C3DRenderSystem::renderForeground(const glm::mat4 &view, const glm::mat4 &p
     }
 }
 
-void C3DRenderSystem::renderBoundingBoxes(const glm::mat4 &view, const glm::mat4 &projection)
+void C3DRenderSystem::renderBoundingBoxes(const glm::mat4& view, const glm::mat4& projection)
 {
     mBBoxRenderer.use();
-    for (auto [entity, components] : mEntityManager.getEntitySet<C3DModelComponent, C3dObjectComponent, CTransform3DComponent>())
+    for (auto [entity, components] :
+         mEntityManager
+             .getEntitySet<C3DModelComponent, C3dObjectComponent, CTransform3DComponent>())
     {
         auto [model, object, transform] = components;
 
@@ -231,7 +235,9 @@ void C3DRenderSystem::renderBoundingBoxes(const glm::mat4 &view, const glm::mat4
         }
     }
 
-    for (auto [entity, components] : mEntityManager.getEntitySet<CMeshObjectComponent, C3dObjectComponent, CTransform3DComponent>())
+    for (auto [entity, components] :
+         mEntityManager
+             .getEntitySet<CMeshObjectComponent, C3dObjectComponent, CTransform3DComponent>())
     {
         auto [model, object, transform] = components;
 
@@ -244,7 +250,7 @@ void C3DRenderSystem::renderBoundingBoxes(const glm::mat4 &view, const glm::mat4
     }
 }
 
-void C3DRenderSystem::renderInstanced(const glm::mat4 &view, const glm::mat4 &projection)
+void C3DRenderSystem::renderInstanced(const glm::mat4& view, const glm::mat4& projection)
 {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
@@ -256,7 +262,8 @@ void C3DRenderSystem::renderInstanced(const glm::mat4 &view, const glm::mat4 &pr
     program->use();
     program->uniform("projection") = projection;
 
-    for (auto [entity, component] : mEntityManager.getEntitySet<CParticleSystemComponent, CTransform3DComponent>())
+    for (auto [entity, component] :
+         mEntityManager.getEntitySet<CParticleSystemComponent, CTransform3DComponent>())
     {
         auto [c, t] = component;
 

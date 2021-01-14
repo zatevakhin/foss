@@ -3,9 +3,9 @@
 #include "app/shading/IShaderProgram.hpp"
 #include <memory>
 #include <string>
-#include <vector>
 #include <tuple>
 #include <unordered_map>
+#include <vector>
 
 
 class CShaderManager
@@ -15,8 +15,8 @@ public:
     CShaderManager(std::string shadersDirectory);
     ~CShaderManager() = default;
 
-    CShaderManager( const CShaderManager& ) = delete;
-    CShaderManager& operator=( const CShaderManager& ) = delete;
+    CShaderManager(const CShaderManager&) = delete;
+    CShaderManager& operator=(const CShaderManager&) = delete;
 
     void initialize();
 
@@ -29,7 +29,8 @@ public:
 
 private:
     std::string getShaderPath(const char* shaderName) const;
-    std::tuple<unsigned int, std::vector<unsigned int>> getShaderByPath(const char* shaderName) const;
+    std::tuple<unsigned int, std::vector<unsigned int>>
+    getShaderByPath(const char* shaderName) const;
 
 private:
     std::unordered_map<std::string, CProgramSharedPtr> mPrograms;
