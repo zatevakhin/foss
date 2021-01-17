@@ -8,9 +8,6 @@
 using namespace textures;
 
 
-class CResourceLoader;
-
-
 class CTextureCubeMap : public ITexture
 {
 public:

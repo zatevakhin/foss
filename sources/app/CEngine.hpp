@@ -1,26 +1,23 @@
 #pragma once
 
-#include "app/window/CMainWindow.hpp"
 #include "app/input/CInputEventManager.hpp"
+#include "app/window/CMainWindow.hpp"
 
-#include "app/systems/CRotationUpdateSystem.hpp"
-#include "app/systems/C3DRenderSystem.hpp"
 #include "app/systems/C2DRenderSystem.hpp"
+#include "app/systems/C3DRenderSystem.hpp"
 #include "app/systems/CCullingSystem.hpp"
-#include "app/systems/CPickingSystem.hpp"
 #include "app/systems/CParticleUpdateSystem.hpp"
+#include "app/systems/CPickingSystem.hpp"
+#include "app/systems/CRotationUpdateSystem.hpp"
 
-#include "app/scene/CCamera.hpp"
 #include "app/resources/CShaderManager.hpp"
+#include "app/scene/CCamera.hpp"
 
 #include "SEngineSettings.hpp"
 
 #include "ecs/EntityManager.hpp"
 #include <memory>
 #include <vector>
-
-
-class CResourceLoader;
 
 
 class CEngine
@@ -62,7 +59,6 @@ private:
 
     std::unique_ptr<CMainWindow> mMainWindow;
     std::unique_ptr<CInputEventManager> mInputManager;
-    std::unique_ptr<CResourceLoader> mResourceLoader;
 
     std::unique_ptr<C2DRenderSystem> m2dRenderSystem;
     std::unique_ptr<C3DRenderSystem> m3dRenderSystem;

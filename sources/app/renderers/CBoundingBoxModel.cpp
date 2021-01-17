@@ -19,7 +19,7 @@ CBoundingBoxModel::CBoundingBoxModel()
     mVerteciesVbo.copy(AABB_VERTECIES, sizeof(AABB_VERTECIES));
     mIndeciesVbo.copy(AABB_INDECIES, sizeof(AABB_INDECIES));
 
-    gl::VertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    gl::vertex_attrib_pointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
     mVao.unbind();
 }

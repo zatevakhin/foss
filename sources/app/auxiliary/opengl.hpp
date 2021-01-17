@@ -7,34 +7,34 @@
 namespace gl
 {
 
-inline void VertexAttribPointer(GLuint index, GLint size, GLenum type, GLboolean normalized,
-                                GLsizei stride, const void* pointer)
+inline void vertex_attrib_pointer(GLuint index, GLint size, GLenum type, GLboolean normalized,
+                                  GLsizei stride, const void* pointer)
 {
     glEnableVertexAttribArray(index);
     glVertexAttribPointer(index, size, type, normalized, stride, pointer);
 }
 
-inline void Viewport(GLint x, GLint y, GLsizei width, GLsizei height)
+inline void viewport(GLint x, GLint y, GLsizei width, GLsizei height)
 {
     glViewport(x, y, width, height);
 }
 
-inline void Disable(GLenum cap)
+inline void disable(GLenum cap)
 {
     glDisable(cap);
 }
 
-inline void Enable(GLenum cap)
+inline void enable(GLenum cap)
 {
     glEnable(cap);
 }
 
-inline void ClearColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha)
+inline void clear_color(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha)
 {
     glClearColor(red, green, blue, alpha);
 }
 
-inline void Clear(GLbitfield mask)
+inline void clear(GLbitfield mask)
 {
     glClear(mask);
 }

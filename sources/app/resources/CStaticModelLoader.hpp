@@ -1,10 +1,9 @@
 #pragma once
 
-#include "CResourceLoader.hpp"
 #include "app/scene/SStaticModel3D.hpp"
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
-
+#include <filesystem>
 
 enum class SceneImportQuality
 {
@@ -17,13 +16,11 @@ enum class SceneImportQuality
 class CStaticModelLoader
 {
 public:
-    explicit CStaticModelLoader(CResourceLoader& resourceLoader);
+    explicit CStaticModelLoader();
 
-    SStaticModel3DPtr load(const boost::filesystem::path& path);
+    SStaticModel3DPtr load(const std::filesystem::path& path);
 
 private:
-    CResourceLoader& mResourceLoader;
-
-    static const aiScene& openScene(const boost::filesystem::path& path, Assimp::Importer& importer,
+    static const aiScene& openScene(const std::filesystem::path& path, Assimp::Importer& importer,
                                     SceneImportQuality quality = SceneImportQuality::HighQuality);
 };

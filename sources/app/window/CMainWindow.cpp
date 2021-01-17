@@ -53,7 +53,7 @@ void CMainWindow::create()
 {
     if (mAttributes.empty())
     {
-        trc_error("CMainWindow::create : can`t create window, attributes is not set.");
+        spdlog::error("CMainWindow::create : can`t create window, attributes is not set.");
         return;
     }
 

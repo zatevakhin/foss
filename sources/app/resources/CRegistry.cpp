@@ -1,4 +1,4 @@
 
 #include "CRegistry.hpp"
 
-std::map<std::string, boost::any> CRegistry::registry;
+std::map<std::string, std::any> CRegistry::registry;

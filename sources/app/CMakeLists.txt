@@ -34,8 +34,6 @@ target_link_libraries(foss.app
         GL
         SDL2
         SDL2_image
-        boost_system
-        boost_filesystem
         assimp
         fmt
     )

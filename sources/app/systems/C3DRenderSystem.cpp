@@ -27,7 +27,7 @@
 #include <iostream>
 
 
-#define GL_SWITCH_OPTION(expression, option) (((expression) ? gl::Enable : gl::Disable)(option))
+#define GL_SWITCH_OPTION(expression, option) (((expression) ? gl::enable : gl::disable)(option))
 
 
 C3DRenderSystem::C3DRenderSystem(ecs::EntityManager& entityManager, CShaderManager& shaderManager)
@@ -73,7 +73,7 @@ C3DRenderSystem::C3DRenderSystem(ecs::EntityManager& entityManager, CShaderManag
     CVertexBufferObject particlesVbo(EBufferType::eArrayBuffer);
     particlesVbo.bind();
     particlesVbo.copy(vtxParticles);
-    gl::VertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    gl::vertex_attrib_pointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
     particlesVbo.unbind();
     mParticlesVao.unbind();
 
@@ -82,9 +82,9 @@ C3DRenderSystem::C3DRenderSystem(ecs::EntityManager& entityManager, CShaderManag
     CVertexBufferObject q_vbo(EBufferType::eArrayBuffer);
     q_vbo.bind();
     q_vbo.copy(vtx);
-    gl::VertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)0);
-    gl::VertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat),
-                            (GLvoid*)(2 * sizeof(GLfloat)));
+    gl::vertex_attrib_pointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)0);
+    gl::vertex_attrib_pointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat),
+                              (GLvoid*)(2 * sizeof(GLfloat)));
     q_vbo.unbind();
     mScreenQuad.unbind();
 
@@ -96,8 +96,8 @@ C3DRenderSystem::C3DRenderSystem(ecs::EntityManager& entityManager, CShaderManag
 
 void C3DRenderSystem::prepare(const ICamera* camera)
 {
-    // for (auto [entity, component] : mEntityManager.getEntitySet<CParticleSystemComponent,
-    // CTransform3DComponent>())
+    // for (auto [entity, component] :
+    //      mEntityManager.getEntitySet<CParticleSystemComponent, CTransform3DComponent>())
     // {
     //     auto [c, t] = component;
     //     t.mPosition = camera->getPosition();
@@ -123,8 +123,8 @@ void C3DRenderSystem::render(const glm::mat4& view, const glm::mat4& projection)
     GL_SWITCH_OPTION(settings->mDepthTest, GL_DEPTH_TEST);
     GL_SWITCH_OPTION(settings->mCullFace, GL_CULL_FACE);
 
-    gl::ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-    gl::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    gl::clear_color(0.2f, 0.3f, 0.3f, 1.0f);
+    gl::clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
     renderForeground(view, projection);
@@ -134,16 +134,16 @@ void C3DRenderSystem::render(const glm::mat4& view, const glm::mat4& projection)
     renderInstanced(view, projection);
 
     mFbo.bind();
-    gl::ClearColor(0.f, 0.f, 0.f, 1.0f);
-    gl::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    gl::clear_color(0.f, 0.f, 0.f, 1.0f);
+    gl::clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     renderForeground(view, projection);
     renderBoundingBoxes(view, projection);
     renderInstanced(view, projection);
     mFbo.unbind();
 
 
-    gl::Viewport(0, 0, 320, 200);
-    gl::Disable(GL_DEPTH_TEST);
+    gl::viewport(0, 0, 320, 200);
+    gl::disable(GL_DEPTH_TEST);
 
     auto& colorTexture = mFbo.getColorTexture();
     auto& depthTexture = mFbo.getDepthTexture();
@@ -155,7 +155,7 @@ void C3DRenderSystem::render(const glm::mat4& view, const glm::mat4& projection)
     colorTexture.unbind();
     mScreenQuad.unbind();
 
-    gl::Viewport(0, 200, 320, 200);
+    gl::viewport(0, 200, 320, 200);
     mShaderManager.use("depth");
     mScreenQuad.bind();
     depthTexture.bind();
@@ -164,7 +164,7 @@ void C3DRenderSystem::render(const glm::mat4& view, const glm::mat4& projection)
     mScreenQuad.unbind();
 
 
-    gl::Viewport(0, 0, 1920, 1080);
+    gl::viewport(0, 0, 1920, 1080);
     glUseProgram(0U); // Free shader
 }
 

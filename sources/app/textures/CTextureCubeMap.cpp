@@ -1,7 +1,6 @@
 
 #include "CTextureCubeMap.hpp"
 #include "app/auxiliary/opengl.hpp"
-#include "app/resources/CResourceLoader.hpp"
 
 
 CTextureCubeMap::CTextureCubeMap()

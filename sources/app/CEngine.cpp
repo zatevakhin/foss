@@ -15,8 +15,8 @@
 #include "components/CWindowComponent.hpp"
 
 #include "resources/CRegistry.hpp"
-#include "resources/CResourceLoader.hpp"
 #include "resources/CStaticModelLoader.hpp"
+#include "resources/resources.hpp"
 
 #include "entities/windows/CEngineDebugWindow.hpp"
 #include "entities/windows/CEngineSettingsWindow.hpp"
@@ -61,7 +61,8 @@ void checkOpenGLErrors()
             message = "error in some GL extension (framebuffers, shaders, etc)";
             break;
         }
-        trc_error("OpenGL error: %s", message.c_str());
+
+        spdlog::error("OpenGL error: {}", message.c_str());
     }
 }
 
@@ -74,14 +75,14 @@ void GLAPIENTRY DebugOutputCallback(GLenum /*source*/, GLenum type, GLuint id, G
     {
         return;
     }
-    std::string formatted = "OpenGL error #" + std::to_string(id) + ": " + message;
-    std::cerr << formatted << std::endl;
+
+    spdlog::error("OpenGL error #{}: {}", id, message);
 }
 
 void setupOpenGlDebug()
 {
-    gl::Enable(GL_DEBUG_OUTPUT);
-    gl::Enable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+    gl::enable(GL_DEBUG_OUTPUT);
+    gl::enable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
     glDebugMessageCallback(DebugOutputCallback, nullptr);
     glDebugMessageControl(GL_DONT_CARE, GL_DEBUG_TYPE_ERROR, GL_DONT_CARE, 0, nullptr, GL_TRUE);
 }
@@ -90,8 +91,7 @@ void setupOpenGlDebug()
 
 
 CEngine::CEngine()
-    : mResourceLoader(nullptr)
-    , mMainWindow(nullptr)
+    : mMainWindow(nullptr)
     , mInputManager(nullptr)
     , m2dRenderSystem(nullptr)
     , m3dRenderSystem(nullptr)
@@ -112,11 +112,20 @@ CEngine::~CEngine()
 
 void CEngine::initialize()
 {
-    trc_debug("Initialize:");
+    spdlog::debug("Engine.initialize()");
+
     initializeVideo();
+
     initializeInput();
 
+    // Shaders manager
     mShaderManager.reset(new CShaderManager("resources/shaders"));
+    mShaderManager->initialize();
+
+    // Textures
+
+    // Engine settings
+    mSettings.mVersion = {0, 4};
 
     mSettings.mBlend = false;
     mSettings.mCullFace = false;
@@ -128,22 +137,21 @@ void CEngine::initialize()
     mSettings.mPolygonMode.mItems = {GL_POINT, GL_LINE, GL_FILL};
     mSettings.mPolygonMode.mItemsNames = {"GL_POINT", "GL_LINE", "GL_FILL"};
 
+    spdlog::debug("settings.version = {}.{}", mSettings.mVersion.x, mSettings.mVersion.y);
+
 
     CRegistry::set("settings", &mSettings);
     CRegistry::set("mouse/position", mSettings.mWindowSize / 2);
-
-    // Load shaders
-    mShaderManager->initialize();
 }
 
 void CEngine::initializeVideo()
 {
-    trc_debug(" - video");
+    spdlog::debug("Engine.initializeVideo()");
 
-    mMainWindow.reset(new CMainWindow);
+    mMainWindow.reset(new CMainWindow());
 
     mMainWindow->setSize(mSettings.mWindowSize);
-    mMainWindow->setTitle("F.O.S.S (0.3.5)");
+    mMainWindow->setTitle("wtf.e");
     mMainWindow->setFlags(SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN);
 
     std::map<SDL_GLattr, int> attributes = {
@@ -165,7 +173,7 @@ void CEngine::initializeVideo()
 
 void CEngine::initializeInput()
 {
-    trc_debug(" - input");
+    spdlog::debug(" - input");
     mInputManager.reset(new CInputEventManager);
 
     mInputManager->addListener(new CEngineListener(*this));
@@ -174,6 +182,10 @@ void CEngine::initializeInput()
 
 void CEngine::run()
 {
+    spdlog::set_level(spdlog::level::debug);
+
+    spdlog::info("Engine.run()");
+
     initialize();
     prepare();
     loop();
@@ -189,8 +201,9 @@ void CEngine::prepare()
 {
     srand(SDL_GetTicks());
 
-    trc_debug("prepare: ");
-    auto skyboxTexture = mResourceLoader->getCubeMap("resources/skybox/purple-nebula", 1024 * 4);
+    spdlog::debug("prepare: ");
+    auto skyboxTexture = resources::get_texture("resources/skybox/purple-nebula/4096",
+                                                resources::ETextureType::CUBE_MAP_TEXTURE);
 
     CRegistry::set("camera", &mCamera);
     CRegistry::set("texture/skybox", skyboxTexture);
@@ -215,7 +228,7 @@ void CEngine::prepare()
     mParticleUpdateSystem.reset(new CParticleUpdateSystem(mEntityManager));
 
 
-    CStaticModelLoader modelLoader(*mResourceLoader);
+    CStaticModelLoader modelLoader;
     auto rockModel = modelLoader.load("resources/models/rock/rock.obj");
     auto cubeModel = modelLoader.load("resources/models/cube/cube.obj");
 
@@ -282,7 +295,7 @@ void CEngine::prepare()
     auto pSystem = std::make_shared<CParticleSystem>();
 
     psTransform.mScale = glm::vec3(0.5);
-    psTransform.mPosition = glm::vec3(0, 0, 0);
+    psTransform.mPosition = glm::vec3(10, 0, 0);
     psTransform.mOrientation = glm::quat(glm::vec3(0));
     pSystem->setGravity(-glm::vec3(0, 0, 0));
 
@@ -291,18 +304,19 @@ void CEngine::prepare()
     // psTransform.mOrientation = glm::quat(glm::vec3(0));
     // pSystem->setGravity(glm::vec3(0, -0.2, 0));
 
-
-    pSystem->setParticleTexture(CResourceLoader::getTexture("resources/textures/orange.png"));
+    pSystem->setParticleTexture(resources::get_texture("resources/textures/orange.png",
+                                                       resources::ETextureType::TEXTURE_2D));
 
     auto createEmitter = []() -> std::unique_ptr<CParticleEmitter> {
         auto pEmitter = std::make_unique<CParticleEmitter>();
         pEmitter->setPosition(glm::vec3(0, 0, 0));
         pEmitter->setDirection(glm::vec3(0, -1, 0));
         pEmitter->setMaxDeviationAngle(3.14f);
-        pEmitter->setDistanceRange(10, 10.1);
+        pEmitter->setDistanceRange(10, 12.1);
         pEmitter->setEmitIntervalRange(0.0003, 0.0004);
-        pEmitter->setLifetimeRange(0.8, 0.9);
-        pEmitter->setSpeedRange(0.5, 0.6);
+        pEmitter->setLifetimeRange(1.8, 1.9);
+        pEmitter->setSpeedRange(3.5, 3.6);
+
 
         // pEmitter->setPosition(glm::vec3(0, 0, 0));
         // pEmitter->setDirection(glm::vec3(1, -0.5, 0));
@@ -392,8 +406,8 @@ void CEngine::onUpdate(double delta)
 
 void CEngine::onClear()
 {
-    gl::ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-    gl::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    gl::clear_color(0.2f, 0.3f, 0.3f, 1.0f);
+    gl::clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void CEngine::onDraw()

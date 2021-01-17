@@ -6,8 +6,7 @@
  * key-value.
  * */
 
-#include <boost/any.hpp>
-#include <boost/noncopyable.hpp>
+#include <any>
 #include <iostream>
 #include <map>
 
@@ -34,7 +33,7 @@ public:
      * @param key - Registry key
      * @param value - The value which can be any type
      * */
-    inline static void set(const std::string& key, boost::any value)
+    inline static void set(const std::string& key, std::any value)
     {
         CRegistry::registry[key] = value;
     }
@@ -44,9 +43,10 @@ public:
      * @param key - Registry key
      * @return The value which is stored in the registry
      * */
-    template <typename Type> inline static Type get(const std::string& key)
+    template <typename Type>
+    inline static Type get(const std::string& key)
     {
-        return boost::any_cast<Type>(CRegistry::registry[key]);
+        return std::any_cast<Type>(CRegistry::registry[key]);
     }
 
 
@@ -54,5 +54,5 @@ private:
     /*!
      * @brief Keeps pairs key-value.
      * */
-    static std::map<std::string, boost::any> registry;
+    static std::map<std::string, std::any> registry;
 };

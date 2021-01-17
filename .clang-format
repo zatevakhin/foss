@@ -20,6 +20,7 @@ AlignOperands: true
 AccessModifierOffset: -4
 BreakInheritanceList: BeforeComma
 BreakConstructorInitializers: BeforeComma
+AlwaysBreakTemplateDeclarations: Yes
 # InsertTrailingCommas: Wrapped
 
 IndentWidth: 4

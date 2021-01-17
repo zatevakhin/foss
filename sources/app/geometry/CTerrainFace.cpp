@@ -53,7 +53,7 @@ void CTerrainFace::buildMesh()
     mMesh.setVertices(glm::value_ptr(vertices[0]), size);
     mMesh.setIndices(indices, index);
 
-    gl::VertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    gl::vertex_attrib_pointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
     mMesh.unbind();
 }

@@ -1,10 +1,10 @@
 
 #include "CShaderManager.hpp"
-#include "CResourceLoader.hpp"
 #include "app/auxiliary/opengl.hpp"
 #include "app/auxiliary/trace.hpp"
 #include "app/shading/CBasicProgram.hpp"
 #include "app/shading/EShaderType.hpp"
+#include "resources.hpp"
 
 #include <filesystem>
 #include <iostream>
@@ -134,8 +134,8 @@ void load(GLuint& programId, std::vector<GLuint>& shaderIds, std::string& shader
     {
         if (std::filesystem::exists(shaderPath + e.first))
         {
-            const auto& source = CResourceLoader::getFileAsString(shaderPath + e.first);
-            compile(programId, shaderIds, source, e.second);
+            const auto source = resources::get_content_from(shaderPath + e.first);
+            compile(programId, shaderIds, source.str(), e.second);
         }
     }
 
@@ -195,7 +195,7 @@ void CShaderManager::initialize()
         auto [programId, shaderIds] = getShaderByPath(e.c_str());
         mPrograms.emplace(e, new CBasicProgram(programId, shaderIds));
 
-        trc_debug("Shader [%s] loaded at (%u).", e.c_str(), programId);
+        spdlog::debug("Shader [{}] loaded at ({}).", e.c_str(), programId);
     }
 }
 
@@ -216,8 +216,8 @@ void CShaderManager::reloadByName(const char* shaderName)
     auto& shaderPtr = mPrograms.at(shaderName);
     auto [programId, shaderIds] = getShaderByPath(shaderName);
 
-    trc_debug("Reloading shader [%s] reloaded (%u) -> (%u).", shaderName, shaderPtr->id(),
-              programId);
+    spdlog::debug("Reloading shader [{}] reloaded ({}) -> ({}).", shaderName, shaderPtr->id(),
+                  programId);
 
     shaderPtr->replace(programId, shaderIds);
 }

@@ -38,13 +38,13 @@ CVertexBufferObject::CVertexBufferObject(EBufferType type, EBufferUsage usage)
     , mUsage(usage)
 {
     glGenBuffers(1, &mId);
-    trc_debug("ctor: CVertexBufferObject(%u)", mId);
+    spdlog::debug("ctor: CVertexBufferObject({})", mId);
 }
 
 
 CVertexBufferObject::~CVertexBufferObject()
 {
-    trc_debug("dtor: CVertexBufferObject(%u)", mId);
+    spdlog::debug("dtor: CVertexBufferObject({})", mId);
     glDeleteBuffers(1, &mId);
 }
 

@@ -14,7 +14,7 @@ CBasicProgram::CBasicProgram(unsigned int programId, std::vector<unsigned int> s
 
 CBasicProgram::~CBasicProgram()
 {
-    trc_debug("CBasicProgram::dtor(%u)", mProgramId);
+    spdlog::debug("CBasicProgram::dtor({})", mProgramId);
     deleteProgram();
 }
 
@@ -37,7 +37,7 @@ void CBasicProgram::use() const
 
 void CBasicProgram::replace(unsigned int programId, std::vector<unsigned int>& shaderIds)
 {
-    trc_debug("CBasicProgram::replace(%u -> %u)", mProgramId, programId);
+    spdlog::debug("CBasicProgram::replace({} -> {})", mProgramId, programId);
     deleteProgram();
 
     mProgramId = programId;

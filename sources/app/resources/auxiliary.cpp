@@ -1,15 +1,12 @@
 
 #include "auxiliary.hpp"
-#include "CResourceLoader.hpp"
 #include "SPhongMaterial.hpp"
+#include "resources.hpp"
 
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
 #include <assimp/types.h>
-
-
-using boost::filesystem::path;
 
 
 namespace
@@ -34,11 +31,9 @@ bool canBePhongShaded(unsigned shadingMode)
 class CMaterialReader
 {
 public:
-    CMaterialReader(const aiMaterial& srcMat, const path& resourceDir,
-                    CResourceLoader& resourceLoader)
+    CMaterialReader(const aiMaterial& srcMat, const std::filesystem::path& resourceDir)
         : m_srcMat(srcMat)
         , m_resourceDir(resourceDir)
-        , mResourceLoader(resourceLoader)
     {
     }
 
@@ -78,16 +73,15 @@ public:
         aiString filename;
         if (AI_SUCCESS == m_srcMat.Get(key, type, index, filename))
         {
-            path abspath = m_resourceDir / filename.data;
-            return mResourceLoader.loadTexture(abspath);
+            const auto abspath = m_resourceDir / filename.data;
+            return resources::get_texture(abspath.c_str(), resources::ETextureType::TEXTURE_2D);
         }
         return nullptr;
     }
 
 private:
     const aiMaterial& m_srcMat;
-    path m_resourceDir;
-    CResourceLoader& mResourceLoader;
+    std::filesystem::path m_resourceDir;
 };
 
 } // namespace
@@ -96,7 +90,7 @@ private:
 namespace resources
 {
 
-void loadMaterials(const path& resourceDir, CResourceLoader& resourceLoader, const aiScene& scene,
+void loadMaterials(const std::filesystem::path& resourceDir, const aiScene& scene,
                    std::vector<SPhongMaterial>& materials)
 {
     const auto DEFAULT_SHININESS = 30.f;
@@ -104,7 +98,7 @@ void loadMaterials(const path& resourceDir, CResourceLoader& resourceLoader, con
     materials.resize(scene.mNumMaterials);
     for (auto mi = 0U; mi < scene.mNumMaterials; ++mi)
     {
-        CMaterialReader reader(*(scene.mMaterials[mi]), resourceDir, resourceLoader);
+        CMaterialReader reader(*(scene.mMaterials[mi]), resourceDir);
         SPhongMaterial& material = materials[mi];
 
         const unsigned int shadingMode = reader.getUnsigned(AI_MATKEY_SHADING_MODEL);

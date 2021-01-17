@@ -10,16 +10,19 @@
 #include <assimp/scene.h>
 #include <assimp/types.h>
 
+#include <filesystem>
 #include <unordered_map>
 
 namespace
 {
-template <class T> size_t getBytesCount(const std::vector<T>& data)
+template <class T>
+size_t getBytesCount(const std::vector<T>& data)
 {
     return sizeof(T) * data.size();
 }
 
-template <class T> T* addItemsToWrite(std::vector<T>& data, size_t count)
+template <class T>
+T* addItemsToWrite(std::vector<T>& data, size_t count)
 {
     const size_t oldSize = data.size();
     data.resize(oldSize + count);
@@ -249,17 +252,14 @@ private:
 };
 } // namespace
 
-CStaticModelLoader::CStaticModelLoader(CResourceLoader& resourceLoader)
-    : mResourceLoader(resourceLoader)
+CStaticModelLoader::CStaticModelLoader()
 {
 }
 
-SStaticModel3DPtr CStaticModelLoader::load(const boost::filesystem::path& path)
+SStaticModel3DPtr CStaticModelLoader::load(const std::filesystem::path& path)
 {
-    const boost::filesystem::path absPath = CResourceLoader::getAbsolute(path);
-
     Assimp::Importer importer;
-    const aiScene& scene = openScene(absPath, importer);
+    const aiScene& scene = openScene(path, importer);
 
     CMeshAccumulator accumulator;
     accumulator.collectBoundingBox(scene);
@@ -274,12 +274,12 @@ SStaticModel3DPtr CStaticModelLoader::load(const boost::filesystem::path& path)
     model->mMeshes = accumulator.takeMeshes();
     model->mGeometry = accumulator.makeGeometry();
 
-    resources::loadMaterials(absPath.parent_path(), mResourceLoader, scene, model->mMaterials);
+    resources::loadMaterials(path.parent_path(), scene, model->mMaterials);
 
     return model;
 }
 
-const aiScene& CStaticModelLoader::openScene(const boost::filesystem::path& path,
+const aiScene& CStaticModelLoader::openScene(const std::filesystem::path& path,
                                              Assimp::Importer& importer, SceneImportQuality quality)
 {
     auto importFlags = 0U;

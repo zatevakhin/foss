@@ -30,12 +30,12 @@ CParticleSystem::CParticleSystem()
     mParticlesVao.bind();
 
     mParticlePositions.bind();
-    gl::VertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vec3), 0);
+    gl::vertex_attrib_pointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vec3), 0);
     mParticlePositions.unbind();
 
     glVertexAttribDivisor(0, 1);
     mSpriteGeometry.copy(SPRITE_VERTECIES, sizeof(SPRITE_VERTECIES));
-    gl::VertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(vec2), 0);
+    gl::vertex_attrib_pointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(vec2), 0);
 
     mParticlesVao.unbind();
 }
@@ -85,8 +85,9 @@ void CParticleSystem::draw(const glm::mat4& worldView)
 {
     if (!mTexture)
     {
-        trc_error("No texture set for particle system");
+        spdlog::error("No texture set for particle system");
     }
+
     mTexture->bind();
 
     if (m_isDirty)

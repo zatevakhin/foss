@@ -5,6 +5,7 @@
 #include "app/geometry/SGeometryLayout.hpp"
 #include "app/resources/SPhongMaterial.hpp"
 
+
 #include <memory>
 
 struct SStaticModel3D;

@@ -6,6 +6,7 @@
 
 struct SEngineSettings
 {
+    glm::ivec2 mVersion;
     glm::ivec2 mWindowSize;
 
     struct SComboBoxData
