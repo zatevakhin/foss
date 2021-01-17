@@ -1,7 +1,6 @@
 #include "resources.hpp"
 #include "app/auxiliary/opengl.hpp"
 #include "app/auxiliary/trace.hpp"
-#include "nlohmann/json.hpp"
 
 #include "app/textures/CTexture2D.hpp"
 #include "app/textures/CTextureCubeMap.hpp"
@@ -34,18 +33,6 @@ CTextureSharedPtr get_texture_2d(const std::filesystem::path path)
 
 CTextureSharedPtr get_texture_cube_map(const std::filesystem::path path)
 {
-    // std::string file = path.stem();
-    // const auto size = std::stoi(file);
-
-    auto new_path = path;
-    new_path.replace_filename(std::filesystem::path("skyboxset.json"));
-
-    std::ifstream cube_map_json(new_path);
-    nlohmann::json cube_map_obj;
-    cube_map_json >> cube_map_obj;
-
-
-    const auto type = cube_map_obj.at("filetype").get<std::string>();
     auto texture = std::make_shared<CTextureCubeMap>();
 
     texture->bind();
@@ -53,9 +40,9 @@ CTextureSharedPtr get_texture_cube_map(const std::filesystem::path path)
                          textures::ETextureWrapMode::eClampToEdge,
                          textures::ETextureWrapMode::eClampToEdge);
 
-    for (auto i = 0U; i < cube_map_obj["files"].get<int>(); ++i)
+    for (auto i = 0U; i < 6; ++i)
     {
-        std::string file(fmt::format("{}.{}.{}", path.string(), i + 1, type));
+        std::string file(fmt::format("{}.{}.png", path.string(), i + 1));
 
         const auto [surface, is_alpha] = resources::get_image(file);
         const GLenum format = is_alpha ? GL_RGBA : GL_RGB;
