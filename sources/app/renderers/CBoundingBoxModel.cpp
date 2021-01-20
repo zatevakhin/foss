@@ -11,25 +11,21 @@ constexpr int AABB_INDECIES[] = {
 };
 
 CBoundingBoxModel::CBoundingBoxModel()
-    : mVerteciesVbo(EBufferType::eArrayBuffer)
-    , mIndeciesVbo(EBufferType::eElementArrayBuffer)
-    , mVao()
+    : mMesh()
 {
-    mVao.bind();
-    mVerteciesVbo.copy(AABB_VERTECIES, sizeof(AABB_VERTECIES));
-    mIndeciesVbo.copy(AABB_INDECIES, sizeof(AABB_INDECIES));
-
+    mMesh.bind();
+    mMesh.setVertices(AABB_VERTECIES, sizeof(AABB_VERTECIES));
+    mMesh.setIndices(AABB_INDECIES, sizeof(AABB_INDECIES));
     gl::vertex_attrib_pointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-    mVao.unbind();
+    mMesh.unbind();
 }
 
 void CBoundingBoxModel::bind() const
 {
-    mVao.bind();
+    mMesh.bind();
 }
 
 void CBoundingBoxModel::unbind() const
 {
-    mVao.unbind();
+    mMesh.unbind();
 }

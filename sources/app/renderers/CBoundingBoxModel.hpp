@@ -1,7 +1,6 @@
 #pragma once
 
-#include "app/scene/CVertexArrayObject.hpp"
-#include "app/scene/CVertexBufferObject.hpp"
+#include "app/geometry/CMesh.hpp"
 
 
 class CBoundingBoxModel
@@ -17,7 +16,5 @@ public:
     void unbind() const;
 
 private:
-    CVertexArrayObject mVao;
-    CVertexBufferObject mIndeciesVbo;
-    CVertexBufferObject mVerteciesVbo;
+    CMesh mMesh;
 };
