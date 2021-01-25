@@ -34,4 +34,16 @@ void CEngineDebugWindow::draw()
     draw_list->AddCircle(ImVec2(1920 / 2, 1080 / 2), 5.f, IM_COL32(255, 0, 255, 255), 12);
     draw_list->AddCircle(ImVec2(mouse.x, mouse.y), 5.f, IM_COL32(255, 255, 0, 255), 12);
     draw_list->PopClipRect();
+
+    ImGui::Begin("ENGINE CONTROLS");
+
+    if (ImGui::Button("EXIT"))
+    {
+        SDL_Event e;
+        e.type = SDL_QUIT;
+
+        SDL_PushEvent(&e);
+    }
+
+    ImGui::End();
 }
