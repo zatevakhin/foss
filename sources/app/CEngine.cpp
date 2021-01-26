@@ -8,6 +8,7 @@
 
 #include "components/C3DModelComponent.hpp"
 #include "components/C3dObjectComponent.hpp"
+#include "components/CEditableComponent.hpp"
 #include "components/CMeshObjectComponent.hpp"
 #include "components/CParticleSystemComponent.hpp"
 #include "components/CSkyboxComponent.hpp"
@@ -23,6 +24,7 @@
 
 #include "entities/windows/CEngineDebugWindow.hpp"
 #include "entities/windows/CEngineSettingsWindow.hpp"
+#include "entities/windows/CEntityManagerWindow.hpp"
 #include "entities/windows/CFboDebugWindow.hpp"
 #include "entities/windows/CShaderManagerWindow.hpp"
 
@@ -244,6 +246,8 @@ void CEngine::prepare()
 
     {
         auto e = mEntityManager.createEntity();
+        mEntityManager.addComponent<CEditableComponent>(e, "Skybox");
+
         mEntityManager.addComponent<CSkyboxComponent>(e);
         auto& m = mEntityManager.addComponent<C3DModelComponent>(e);
         m.mModel = cubeModel;
@@ -252,6 +256,8 @@ void CEngine::prepare()
 
     {
         auto e = mEntityManager.createEntity();
+        mEntityManager.addComponent<CEditableComponent>(e, "Rock");
+
         auto& m = mEntityManager.addComponent<C3DModelComponent>(e);
         auto& o = mEntityManager.addComponent<C3dObjectComponent>(e);
         auto& t = mEntityManager.addComponent<CTransform3DComponent>(e);
@@ -267,6 +273,8 @@ void CEngine::prepare()
 
     {
         auto e = mEntityManager.createEntity();
+        mEntityManager.addComponent<CEditableComponent>(e, "Sphere");
+
         auto& m = mEntityManager.addComponent<CMeshObjectComponent>(e);
         auto& o = mEntityManager.addComponent<C3dObjectComponent>(e);
         auto& t = mEntityManager.addComponent<CTransform3DComponent>(e);
@@ -300,9 +308,17 @@ void CEngine::prepare()
         w.mWindow = std::make_shared<CShaderManagerWindow>(shader_manager);
     }
 
+    {
+        auto e = mEntityManager.createEntity();
+        auto& w = mEntityManager.addComponent<CWindowComponent>(e);
+        w.mWindow = std::make_shared<CEntityManagerWindow>(mEntityManager);
+    }
+
 
     {
         auto e = mEntityManager.createEntity();
+        mEntityManager.addComponent<CEditableComponent>(e, "ParticleSystem");
+
         auto& p = mEntityManager.addComponent<CParticleSystemComponent>(e);
         auto& t = mEntityManager.addComponent<CTransform3DComponent>(e);
 
@@ -334,6 +350,8 @@ void CEngine::prepare()
 
     {
         auto e = mEntityManager.createEntity();
+        mEntityManager.addComponent<CEditableComponent>(e, "Rock");
+
         auto& m = mEntityManager.addComponent<MeshComponent>(e);
         auto& t = mEntityManager.addComponent<CTransform3DComponent>(e);
 
