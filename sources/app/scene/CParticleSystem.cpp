@@ -2,6 +2,7 @@
 #include "app/auxiliary/glm.hpp"
 #include "app/auxiliary/opengl.hpp"
 #include "app/auxiliary/trace.hpp"
+#include "app/shading/CUniform.hpp"
 #include "app/shading/CVertexAttribute.hpp"
 #include <algorithm>
 
@@ -30,10 +31,11 @@ CParticleSystem::CParticleSystem()
     mParticlesVao.bind();
 
     mParticlePositions.bind();
-    gl::vertex_attrib_pointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vec3), 0);
+    gl::vertex_attrib_pointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(glm::vec4), 0);
     mParticlePositions.unbind();
 
     glVertexAttribDivisor(0, 1);
+
     mSpriteGeometry.copy(SPRITE_VERTECIES, sizeof(SPRITE_VERTECIES));
     gl::vertex_attrib_pointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(vec2), 0);
 
@@ -54,7 +56,7 @@ void CParticleSystem::setGravity(const vec3& gravity)
     mGravity = gravity;
 }
 
-void CParticleSystem::setParticleTexture(const CTextureSharedPtr& pTexture)
+void CParticleSystem::setParticleTexture(const TTextureSharedPtr& pTexture)
 {
     mTexture = pTexture;
 }
@@ -81,7 +83,7 @@ void CParticleSystem::advance(float dt)
     m_isDirty = true;
 }
 
-void CParticleSystem::draw(const glm::mat4& worldView)
+void CParticleSystem::draw(TProgramSharedPtr program, const glm::mat4& worldView)
 {
     if (!mTexture)
     {
@@ -106,14 +108,17 @@ void CParticleSystem::draw(const glm::mat4& worldView)
 
 void CParticleSystem::updateParticlePositions(const glm::mat4& worldView)
 {
-    std::vector<vec3> positions(mParticles.size());
+    std::vector<glm::vec4> positions(mParticles.size());
+
     std::transform(mParticles.begin(), mParticles.end(), positions.begin(),
-                   [](const CParticle& particle) { return particle.getPosition(); });
+                   [](const CParticle& particle) {
+                       return glm::vec4(particle.getPosition(), particle.getAlphaValue());
+                   });
 
     /// Sort particles in order of distance from the camera.
-    std::sort(positions.begin(), positions.end(), [&](const vec3& a, vec3& b) {
-        const vec3 viewA = vec3(worldView * vec4(a, 1.0));
-        const vec3 viewB = vec3(worldView * vec4(b, 1.0));
+    std::sort(positions.begin(), positions.end(), [&](const glm::vec4& a, const glm::vec4& b) {
+        const vec3 viewA = vec3(worldView * vec4(a.x, a.y, a.z, 1.0));
+        const vec3 viewB = vec3(worldView * vec4(b.x, b.y, b.z, 1.0));
         return viewA.z < viewB.z;
     });
 

@@ -1,5 +1,6 @@
 #define _USE_MATH_DEFINES
 #include "CParticleEmitter.hpp"
+#include "app/auxiliary/glm.hpp"
 
 #include <glm/gtx/rotate_vector.hpp>
 
@@ -9,11 +10,31 @@ CParticle::CParticle(const vec3& position, const vec3& velocity, float lifetime)
     : mPosition(position)
     , mVelocity(velocity)
     , mLifetime(lifetime)
+    , mLifetimeInitial(lifetime)
+    , mAlphaValue(0.f)
 {
 }
 
 void CParticle::advance(float deltaSeconds, const glm::vec3& acceleration)
 {
+    float fp = (mLifetime / mLifetimeInitial);
+    float fp10 = 0.1;
+    float fp90 = 0.9;
+
+    if (fp <= fp10)
+    {
+        mAlphaValue = glm::mix(0.f, 1.f, fp * 10);
+    }
+    else if (fp >= fp90)
+    {
+        mAlphaValue = glm::mix(1.f, 0.f, (fp - 0.9f) * 10);
+    }
+    else
+    {
+        mAlphaValue = 1.f;
+    }
+
+
     mLifetime -= deltaSeconds;
     mVelocity += acceleration * deltaSeconds;
     mPosition += mVelocity * deltaSeconds;
@@ -22,6 +43,12 @@ void CParticle::advance(float deltaSeconds, const glm::vec3& acceleration)
 glm::vec3 CParticle::getPosition() const
 {
     return mPosition;
+}
+
+
+float CParticle::getAlphaValue() const
+{
+    return mAlphaValue;
 }
 
 bool CParticle::isAlive() const

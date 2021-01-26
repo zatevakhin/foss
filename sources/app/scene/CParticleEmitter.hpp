@@ -12,12 +12,15 @@ public:
     void advance(float deltaSeconds, const glm::vec3& acceleration);
 
     glm::vec3 getPosition() const;
+    float getAlphaValue() const;
     bool isAlive() const;
 
 private:
     glm::vec3 mPosition;
     glm::vec3 mVelocity;
+    float mAlphaValue = 0;
     float mLifetime = 0;
+    float mLifetimeInitial = 0;
 };
 
 // Based on http://stackoverflow.com/questions/28618900

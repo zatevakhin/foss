@@ -4,6 +4,7 @@
 #include "app/auxiliary/glm.hpp"
 #include "app/scene/CVertexArrayObject.hpp"
 #include "app/scene/CVertexBufferObject.hpp"
+#include "app/shading/IShaderProgram.hpp"
 #include "app/textures/CTexture2D.hpp"
 #include <memory>
 
@@ -19,11 +20,11 @@ public:
 
     void setEmitter(std::unique_ptr<CParticleEmitter>&& pEmitter);
     void setGravity(const glm::vec3& gravity);
-    void setParticleTexture(const CTextureSharedPtr& pTexture);
+    void setParticleTexture(const TTextureSharedPtr& pTexture);
 
     void advance(float dt);
 
-    void draw(const glm::mat4& worldView);
+    void draw(TProgramSharedPtr program, const glm::mat4& worldView);
 
 private:
     void updateParticlePositions(const glm::mat4& worldView);
@@ -33,7 +34,7 @@ private:
     glm::vec3 mGravity;
 
     bool m_isDirty = false;
-    CTextureSharedPtr mTexture;
+    TTextureSharedPtr mTexture;
     CVertexArrayObject mParticlesVao;
     CVertexBufferObject mSpriteGeometry;
     CVertexBufferObject mParticlePositions;
