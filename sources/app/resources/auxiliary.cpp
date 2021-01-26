@@ -68,7 +68,7 @@ public:
         return 0;
     }
 
-    CTextureSharedPtr getTexture(const char* key, unsigned int type, unsigned int index)
+    TTextureSharedPtr getTexture(const char* key, unsigned int type, unsigned int index)
     {
         aiString filename;
         if (AI_SUCCESS == m_srcMat.Get(key, type, index, filename))

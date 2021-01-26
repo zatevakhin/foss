@@ -7,11 +7,11 @@
 class CShaderManagerWindow : public IWindow
 {
 public:
-    CShaderManagerWindow(CShaderManager& shaderManager);
+    CShaderManagerWindow(TShaderManagerPtr shader_manager);
     ~CShaderManagerWindow() = default;
 
     void draw() override;
 
 private:
-    CShaderManager& mShaderManager;
+    TShaderManagerPtr m_shader_manager;
 };

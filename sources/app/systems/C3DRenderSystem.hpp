@@ -8,17 +8,20 @@
 #include "app/scene/CCompleteFbo.hpp"
 #include "app/scene/ICamera.hpp"
 #include "app/textures/CTexture2D.hpp"
-
 #include "ecs/EntityManager.hpp"
+
+#include <memory>
 
 
 class CShaderManager;
+
+using TShaderManagerPtr = std::shared_ptr<CShaderManager>;
 
 
 class C3DRenderSystem
 {
 public:
-    C3DRenderSystem(ecs::EntityManager& entityManager, CShaderManager& shaderManager);
+    C3DRenderSystem(ecs::EntityManager& entityManager, TShaderManagerPtr shader_manager);
     void render(const glm::mat4& view, const glm::mat4& projection);
     void prepare(const ICamera* camera);
 
@@ -35,7 +38,7 @@ private:
     CParticleSystemRenderer mParticleSystemRenderer;
 
     ecs::EntityManager& mEntityManager;
-    CShaderManager& mShaderManager;
+    TShaderManagerPtr m_shader_manager;
 
     CCompleteFbo mFbo;
 

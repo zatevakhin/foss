@@ -21,15 +21,15 @@ static auto vector_getter = [](void* vec, int idx, const char** out_text) {
 } // namespace
 
 
-CShaderManagerWindow::CShaderManagerWindow(CShaderManager& shaderManager)
-    : mShaderManager(shaderManager)
+CShaderManagerWindow::CShaderManagerWindow(TShaderManagerPtr shader_manager)
+    : m_shader_manager(shader_manager)
 {
 }
 
 void CShaderManagerWindow::draw()
 {
     static int currentProgrmName = 1;
-    const auto programs = mShaderManager.getProgramsList();
+    const auto programs = m_shader_manager->getProgramsList();
 
     std::vector<std::string> programsNames;
     programsNames.reserve(programs.size());
@@ -46,7 +46,7 @@ void CShaderManagerWindow::draw()
     if (ImGui::Button("Reload"))
     {
         ImGui::Text("Reloading: %s", programsNames[currentProgrmName].c_str());
-        mShaderManager.reloadByName(programs[currentProgrmName].first.c_str());
+        m_shader_manager->reloadByName(programs[currentProgrmName].first.c_str());
     }
 
     ImGui::End();

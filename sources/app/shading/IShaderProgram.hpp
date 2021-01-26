@@ -22,5 +22,5 @@ public:
     virtual unsigned int attributeId(const char* name) = 0;
 };
 
-using CProgramSharedPtr = std::shared_ptr<IShaderProgram>;
-using CProgramWeakPtr = std::weak_ptr<IShaderProgram>;
+using TProgramSharedPtr = std::shared_ptr<IShaderProgram>;
+using TProgramWeakPtr = std::weak_ptr<IShaderProgram>;

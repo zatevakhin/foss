@@ -22,7 +22,7 @@ public:
 
     // void reloadModified(); // check by modification time
     void reloadByName(const char* shaderName);
-    CProgramWeakPtr getByName(const char* shaderName) const;
+    TProgramWeakPtr getByName(const char* shaderName) const;
     void use(const char* shaderName) const;
 
     std::vector<std::pair<std::string, unsigned int>> getProgramsList() const;
@@ -33,6 +33,9 @@ private:
     getShaderByPath(const char* shaderName) const;
 
 private:
-    std::unordered_map<std::string, CProgramSharedPtr> mPrograms;
+    std::unordered_map<std::string, TProgramSharedPtr> mPrograms;
     std::string mShadersDirectory;
 };
+
+
+using TShaderManagerPtr = std::shared_ptr<CShaderManager>;

@@ -5,8 +5,8 @@
 
 class ITexture;
 
-using CTextureSharedPtr = std::shared_ptr<ITexture>;
-using CTextureWeakPtr = std::weak_ptr<ITexture>;
+using TTextureSharedPtr = std::shared_ptr<ITexture>;
+using TTextureWeakPtr = std::weak_ptr<ITexture>;
 
 
 class ITexture

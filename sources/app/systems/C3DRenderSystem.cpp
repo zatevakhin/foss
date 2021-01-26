@@ -11,6 +11,7 @@
 #include "app/components/CParticleSystemComponent.hpp"
 #include "app/components/CSkyboxComponent.hpp"
 #include "app/components/CTransform3DComponent.hpp"
+#include "app/components/MeshComponent.hpp"
 #include "app/geometry/CBoundingBox.hpp"
 #include "app/renderers/CBoundingBox3DRenderer.hpp"
 #include "app/renderers/CCubeMapRenderer.hpp"
@@ -30,9 +31,10 @@
 #define GL_SWITCH_OPTION(expression, option) (((expression) ? gl::enable : gl::disable)(option))
 
 
-C3DRenderSystem::C3DRenderSystem(ecs::EntityManager& entityManager, CShaderManager& shaderManager)
+C3DRenderSystem::C3DRenderSystem(ecs::EntityManager& entityManager,
+                                 TShaderManagerPtr shader_manager)
     : mEntityManager(entityManager)
-    , mShaderManager(shaderManager)
+    , m_shader_manager(shader_manager)
     , mMeshRenderer()
     , mBBoxRenderer()
     , mCubeMapRenderer()
@@ -88,10 +90,10 @@ C3DRenderSystem::C3DRenderSystem(ecs::EntityManager& entityManager, CShaderManag
     q_vbo.unbind();
     mScreenQuad.unbind();
 
-    mCubeMapRenderer.setProgram(mShaderManager.getByName("skybox"));
-    mStaticModelRenderer.setProgram(mShaderManager.getByName("phong"));
-    mMeshRenderer.setProgram(mShaderManager.getByName("m3d"));
-    mBBoxRenderer.setProgram(mShaderManager.getByName("m3d"));
+    mCubeMapRenderer.setProgram(m_shader_manager->getByName("skybox"));
+    mStaticModelRenderer.setProgram(m_shader_manager->getByName("phong"));
+    mMeshRenderer.setProgram(m_shader_manager->getByName("m3d"));
+    mBBoxRenderer.setProgram(m_shader_manager->getByName("m3d"));
 }
 
 void C3DRenderSystem::prepare(const ICamera* camera)
@@ -148,7 +150,7 @@ void C3DRenderSystem::render(const glm::mat4& view, const glm::mat4& projection)
     auto& colorTexture = mFbo.getColorTexture();
     auto& depthTexture = mFbo.getDepthTexture();
 
-    mShaderManager.use("screen");
+    m_shader_manager->use("screen");
     mScreenQuad.bind();
     colorTexture.bind();
     glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -156,7 +158,7 @@ void C3DRenderSystem::render(const glm::mat4& view, const glm::mat4& projection)
     mScreenQuad.unbind();
 
     gl::viewport(0, 200, 320, 200);
-    mShaderManager.use("depth");
+    m_shader_manager->use("depth");
     mScreenQuad.bind();
     depthTexture.bind();
     glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -216,6 +218,20 @@ void C3DRenderSystem::renderForeground(const glm::mat4& view, const glm::mat4& p
             mMeshRenderer.draw(*mesh.mMeshObject);
         }
     }
+
+    auto prog = m_shader_manager->getByName("mesh").lock();
+
+    prog->use();
+    prog->uniform("projection") = projection;
+
+    for (auto [entity, components] :
+         mEntityManager.getEntitySet<MeshComponent, CTransform3DComponent>())
+    {
+        auto [mesh, transform] = components;
+
+        prog->uniform("view") = view * transform.toMat4();
+        mesh.mMesh->draw(prog);
+    }
 }
 
 void C3DRenderSystem::renderBoundingBoxes(const glm::mat4& view, const glm::mat4& projection)
@@ -257,7 +273,7 @@ void C3DRenderSystem::renderInstanced(const glm::mat4& view, const glm::mat4& pr
     // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // More real alpha blend.
     // glDepthMask(GL_FALSE); // Don't write to depth buffer.
 
-    auto program = mShaderManager.getByName("particles").lock();
+    auto program = m_shader_manager->getByName("particles").lock();
 
     program->use();
     program->uniform("projection") = projection;
@@ -271,7 +287,7 @@ void C3DRenderSystem::renderInstanced(const glm::mat4& view, const glm::mat4& pr
         program->uniform("modelView") = modelView;
         program->uniform("sizeScale") = t.mScale;
 
-        c.mParticleSystem->draw(modelView);
+        c.mParticleSystem->draw(program, modelView);
     }
 
     glDepthMask(GL_TRUE);

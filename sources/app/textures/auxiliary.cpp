@@ -22,7 +22,7 @@ unsigned int mapTextureWrapMode(ETextureWrapMode mode)
     return textureWrapModeMap.at(mode);
 }
 
-void tryBindTexture(const CTextureSharedPtr& texture, const unsigned int textureId,
+void tryBindTexture(const TTextureSharedPtr& texture, const unsigned int textureId,
                     const ETextureType type)
 {
     if (nullptr != texture)

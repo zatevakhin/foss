@@ -21,7 +21,7 @@ enum class ETextureType
 
 unsigned int mapTextureWrapMode(ETextureWrapMode mode);
 
-void tryBindTexture(const CTextureSharedPtr& texture, const unsigned int textureId,
+void tryBindTexture(const TTextureSharedPtr& texture, const unsigned int textureId,
                     const ETextureType type);
 
 } // namespace textures

@@ -3,6 +3,8 @@
 #include "app/textures/CTexture2D.hpp"
 #include "auxiliary/sdl.hpp"
 
+#include "app/scene/IMesh.hpp"
+
 #include <filesystem>
 #include <fstream>
 #include <sstream>
@@ -20,11 +22,12 @@ enum class ETextureType
 };
 
 
-CTextureSharedPtr get_texture(const std::filesystem::path path, ETextureType type);
+TTextureSharedPtr get_texture(const std::filesystem::path path, ETextureType type);
 
 std::stringstream get_content_from(const std::filesystem::path path);
 
 std::tuple<std::shared_ptr<SDL_Surface>, bool> get_image(const std::filesystem::path path);
+TMeshPtr load_model(const std::filesystem::path model);
 
 
 } // namespace resources

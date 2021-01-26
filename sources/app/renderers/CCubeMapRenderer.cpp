@@ -19,7 +19,7 @@ void CCubeMapRenderer::draw(SStaticModel3D& model)
     }
 
     // TODO: do something with this!!
-    auto cubeMap = CRegistry::get<CTextureSharedPtr>("texture/skybox");
+    auto cubeMap = CRegistry::get<TTextureSharedPtr>("texture/skybox");
 
     mProgram->uniform("projection") = mProjection;
     mProgram->uniform("view") = mView;

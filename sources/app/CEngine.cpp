@@ -13,6 +13,9 @@
 #include "components/CSkyboxComponent.hpp"
 #include "components/CTransform3DComponent.hpp"
 #include "components/CWindowComponent.hpp"
+#include "components/MeshComponent.hpp"
+
+#include "app/scene/Mesh.hpp"
 
 #include "resources/CRegistry.hpp"
 #include "resources/CStaticModelLoader.hpp"
@@ -101,7 +104,7 @@ CEngine::CEngine()
     , mPickingSystem(nullptr)
     , mIsRunning(false)
     , mIsDebugMode(false)
-    , mShaderManager(nullptr)
+    , mResourceManager(nullptr)
 {
     mSettings.mWindowSize = glm::ivec2(1920, 1080);
 }
@@ -118,9 +121,9 @@ void CEngine::initialize()
 
     initializeInput();
 
-    // Shaders manager
-    mShaderManager.reset(new CShaderManager("resources/shaders"));
-    mShaderManager->initialize();
+    // Resource manager
+    mResourceManager.reset(new CResourceManager());
+    mResourceManager->initialize();
 
     // Textures
 
@@ -202,11 +205,17 @@ void CEngine::prepare()
     srand(SDL_GetTicks());
 
     spdlog::debug("prepare: ");
-    auto skyboxTexture = resources::get_texture("resources/skybox/purple-nebula/4096",
+    // auto skyboxTexture = resources::get_texture("resources/skybox/purple-nebula/4096",
+    //                                             resources::ETextureType::CUBE_MAP_TEXTURE);
+    auto skyboxTexture = resources::get_texture("resources/skybox/green-nebula/4096",
                                                 resources::ETextureType::CUBE_MAP_TEXTURE);
+
+    auto orange = resources::get_texture("resources/textures/orange.png",
+                                         resources::ETextureType::TEXTURE_2D);
 
     CRegistry::set("camera", &mCamera);
     CRegistry::set("texture/skybox", skyboxTexture);
+    CRegistry::set("texture/orange", orange);
 
     CRegistry::set("dbg.tex.fbo.rgb", 0);
     CRegistry::set("dbg.tex.fbo.depth", 0);
@@ -221,7 +230,8 @@ void CEngine::prepare()
     style.Colors[ImGuiCol_WindowBg] = ImVec4(0.00f, 0.00f, 0.00f, 0.30f);
 
     m2dRenderSystem.reset(new C2DRenderSystem(mEntityManager));
-    m3dRenderSystem.reset(new C3DRenderSystem(mEntityManager, *mShaderManager.get()));
+    auto shader_manager = mResourceManager->get_shader_manager();
+    m3dRenderSystem.reset(new C3DRenderSystem(mEntityManager, shader_manager));
     mCullingSystem.reset(new CCullingSystem(mEntityManager));
     mPickingSystem.reset(new CPickingSystem(mEntityManager));
     mRotationUpdateSystem.reset(new CRotationUpdateSystem(mEntityManager));
@@ -232,108 +242,108 @@ void CEngine::prepare()
     auto rockModel = modelLoader.load("resources/models/rock/rock.obj");
     auto cubeModel = modelLoader.load("resources/models/cube/cube.obj");
 
-
-    auto skybox = mEntityManager.createEntity();
-    auto& mc1 = mEntityManager.addComponent<C3DModelComponent>(skybox);
-    mEntityManager.addComponent<CSkyboxComponent>(skybox);
-
-    mc1.mModel = cubeModel;
-
-    auto rock = mEntityManager.createEntity();
-    auto& mc2 = mEntityManager.addComponent<C3DModelComponent>(rock);
-    auto& dc2 = mEntityManager.addComponent<C3dObjectComponent>(rock);
-    auto& tc2 = mEntityManager.addComponent<CTransform3DComponent>(rock);
-
-    tc2.mScale = glm::vec3(2);
-    tc2.mPosition = glm::vec3(-10.f, 0.f, -10.f);
-    tc2.mOrientation = glm::quat(glm::vec3(1.f, 2.f, 3.f));
-
-    mc2.mModel = rockModel;
-    dc2.isInCameraView = false;
-
-    auto meshObject = mEntityManager.createEntity();
-    auto& mc3 = mEntityManager.addComponent<CMeshObjectComponent>(meshObject);
-    auto& dc3 = mEntityManager.addComponent<C3dObjectComponent>(meshObject);
-    auto& tc3 = mEntityManager.addComponent<CTransform3DComponent>(meshObject);
+    {
+        auto e = mEntityManager.createEntity();
+        mEntityManager.addComponent<CSkyboxComponent>(e);
+        auto& m = mEntityManager.addComponent<C3DModelComponent>(e);
+        m.mModel = cubeModel;
+    }
 
 
-    tc3.mScale = glm::vec3(5);
-    tc3.mPosition = glm::vec3(0.f, 0.f, -20.f);
-    tc3.mOrientation = glm::quat(glm::vec3(90.f, 0.f, 0.f));
+    {
+        auto e = mEntityManager.createEntity();
+        auto& m = mEntityManager.addComponent<C3DModelComponent>(e);
+        auto& o = mEntityManager.addComponent<C3dObjectComponent>(e);
+        auto& t = mEntityManager.addComponent<CTransform3DComponent>(e);
 
-    auto sphere = new CCubeSphere(40);
+        t.mScale = glm::vec3(2);
+        t.mPosition = glm::vec3(-10.f, 0.f, -10.f);
+        t.mOrientation = glm::quat(glm::vec3(1.f, 2.f, 3.f));
 
-    mc3.mMeshObject.reset(sphere);
-    dc3.isInCameraView = true;
-
-
-    auto debugWindow = mEntityManager.createEntity();
-    auto& window1 = mEntityManager.addComponent<CWindowComponent>(debugWindow);
-    window1.mWindow = std::make_shared<CEngineDebugWindow>(mCamera);
-
-    auto settingsWindow = mEntityManager.createEntity();
-    auto& window2 = mEntityManager.addComponent<CWindowComponent>(settingsWindow);
-    window2.mWindow = std::make_shared<CEngineSettingsWindow>(mSettings, mCamera);
-
-    // auto fboDebug = mEntityManager.createEntity();
-    // auto &window3 = mEntityManager.addComponent<CWindowComponent>(fboDebug);
-    // window3.mWindow = std::make_shared<CFboDebugWindow>();
-
-    auto shaderManager = mEntityManager.createEntity();
-    auto& window4 = mEntityManager.addComponent<CWindowComponent>(shaderManager);
-    window4.mWindow = std::make_shared<CShaderManagerWindow>(*mShaderManager.get());
-
-    // auto asteroids = new CInstancedAsteroidField(mEntityManager);
-    // asteroids->setupModel(rockModel);
-    // asteroids->setupTransform(glm::vec3(1.f, 1.f, 10.f), glm::vec3(1.f),
-    // glm::quat(glm::vec3(0.f, 0.f, 0.f)));
-
-    auto particleSystem = mEntityManager.createEntity();
-    auto& psComponent = mEntityManager.addComponent<CParticleSystemComponent>(particleSystem);
-    auto& psTransform = mEntityManager.addComponent<CTransform3DComponent>(particleSystem);
-
-    auto pSystem = std::make_shared<CParticleSystem>();
-
-    psTransform.mScale = glm::vec3(0.5);
-    psTransform.mPosition = glm::vec3(10, 0, 0);
-    psTransform.mOrientation = glm::quat(glm::vec3(0));
-    pSystem->setGravity(-glm::vec3(0, 0, 0));
-
-    // psTransform.mScale = glm::vec3(0.7);
-    // psTransform.mPosition = glm::vec3(-12, -2, 0);
-    // psTransform.mOrientation = glm::quat(glm::vec3(0));
-    // pSystem->setGravity(glm::vec3(0, -0.2, 0));
-
-    pSystem->setParticleTexture(resources::get_texture("resources/textures/orange.png",
-                                                       resources::ETextureType::TEXTURE_2D));
-
-    auto createEmitter = []() -> std::unique_ptr<CParticleEmitter> {
-        auto pEmitter = std::make_unique<CParticleEmitter>();
-        pEmitter->setPosition(glm::vec3(0, 0, 0));
-        pEmitter->setDirection(glm::vec3(0, -1, 0));
-        pEmitter->setMaxDeviationAngle(3.14f);
-        pEmitter->setDistanceRange(10, 12.1);
-        pEmitter->setEmitIntervalRange(0.0003, 0.0004);
-        pEmitter->setLifetimeRange(1.8, 1.9);
-        pEmitter->setSpeedRange(3.5, 3.6);
+        m.mModel = rockModel;
+        o.isInCameraView = false;
+    }
 
 
-        // pEmitter->setPosition(glm::vec3(0, 0, 0));
-        // pEmitter->setDirection(glm::vec3(1, -0.5, 0));
-        // pEmitter->setMaxDeviationAngle(0.3);
-        // pEmitter->setDistanceRange(0, 2);
-        // pEmitter->setEmitIntervalRange(0.003, 0.005);
-        // pEmitter->setLifetimeRange(2, 3);
-        // pEmitter->setSpeedRange(8, 10);
+    {
+        auto e = mEntityManager.createEntity();
+        auto& m = mEntityManager.addComponent<CMeshObjectComponent>(e);
+        auto& o = mEntityManager.addComponent<C3dObjectComponent>(e);
+        auto& t = mEntityManager.addComponent<CTransform3DComponent>(e);
 
-        return pEmitter;
-    };
+        t.mScale = glm::vec3(5);
+        t.mPosition = glm::vec3(0.f, 0.f, -20.f);
+        t.mOrientation = glm::quat(glm::vec3(90.f, 0.f, 0.f));
+
+        m.mMeshObject.reset(new CCubeSphere(40));
+        o.isInCameraView = true;
+    }
 
 
-    pSystem->setEmitter(createEmitter());
+    {
+        auto e = mEntityManager.createEntity();
+        auto& w = mEntityManager.addComponent<CWindowComponent>(e);
+        w.mWindow = std::make_shared<CEngineDebugWindow>(mCamera);
+    }
 
 
-    psComponent.mParticleSystem = pSystem;
+    {
+        auto e = mEntityManager.createEntity();
+        auto& w = mEntityManager.addComponent<CWindowComponent>(e);
+        w.mWindow = std::make_shared<CEngineSettingsWindow>(mSettings, mCamera);
+    }
+
+
+    {
+        auto e = mEntityManager.createEntity();
+        auto& w = mEntityManager.addComponent<CWindowComponent>(e);
+        w.mWindow = std::make_shared<CShaderManagerWindow>(shader_manager);
+    }
+
+
+    {
+        auto e = mEntityManager.createEntity();
+        auto& p = mEntityManager.addComponent<CParticleSystemComponent>(e);
+        auto& t = mEntityManager.addComponent<CTransform3DComponent>(e);
+
+        t.mScale = glm::vec3(1);
+        t.mPosition = glm::vec3(0.f, 0.f, -20.f);
+        t.mOrientation = glm::quat(glm::vec3(0));
+
+        auto system = std::make_shared<CParticleSystem>();
+        p.mParticleSystem = system;
+
+        system->setGravity(glm::vec3(0));
+        system->setParticleTexture(orange);
+
+        auto createEmitter = []() -> std::unique_ptr<CParticleEmitter> {
+            auto emitter = std::make_unique<CParticleEmitter>();
+            emitter->setPosition(glm::vec3(0, 0, 0));
+            emitter->setDirection(glm::vec3(0, -1, 0));
+            emitter->setMaxDeviationAngle(3.14f);
+            emitter->setDistanceRange(5, 5.1);
+            emitter->setEmitIntervalRange(0.0003, 0.0004);
+            emitter->setLifetimeRange(0.3, 0.4);
+            emitter->setSpeedRange(1.0, 1.1);
+
+            return emitter;
+        };
+
+        system->setEmitter(createEmitter());
+    }
+
+    {
+        auto e = mEntityManager.createEntity();
+        auto& m = mEntityManager.addComponent<MeshComponent>(e);
+        auto& t = mEntityManager.addComponent<CTransform3DComponent>(e);
+
+        t.mScale = glm::vec3(1);
+        t.mPosition = glm::vec3(0, 0, 0);
+        t.mOrientation = glm::quat(glm::vec3(0));
+
+
+        m.mMesh = resources::load_model("resources/models/rock/rock.obj");
+    }
 }
 
 void CEngine::loop()

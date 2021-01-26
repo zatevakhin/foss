@@ -12,7 +12,7 @@ struct SPhongMaterial
 
     float mShininess = 0;
 
-    CTextureSharedPtr mDiffuse;
-    CTextureSharedPtr mSpecular;
-    CTextureSharedPtr mEmissive;
+    TTextureSharedPtr mDiffuse;
+    TTextureSharedPtr mSpecular;
+    TTextureSharedPtr mEmissive;
 };
