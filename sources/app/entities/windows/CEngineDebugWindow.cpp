@@ -21,8 +21,8 @@ void CEngineDebugWindow::draw()
 
     auto mouse = CRegistry::get<glm::ivec2>("mouse/position");
 
-    const glm::vec3& p = mCamera.getPosition();
-    const glm::ivec3& r = glm::degrees(glm::eulerAngles(glm::quat_cast(mCamera.getView())));
+    const glm::vec3& p = mCamera.get_position();
+    const glm::ivec3& r = glm::degrees(glm::eulerAngles(glm::quat_cast(mCamera.get_view())));
 
     ImGui::Text("Camera(x: %.3f, y: %.3f, z: %.3f)", p.x, p.y, p.z);
     ImGui::Text("Rotation(pitch: %d, yaw: %d, roll: %d)", r.x, r.y, r.z);

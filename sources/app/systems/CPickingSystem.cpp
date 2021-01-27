@@ -109,8 +109,8 @@ void CPickingSystem::update(double& delta)
     auto camera = CRegistry::get<CCamera*>("camera");
     auto mouse = CRegistry::get<glm::ivec2>("mouse/position");
 
-    glm::mat4 projection = camera->getProjection();
-    glm::mat4 view = camera->getView();
+    glm::mat4 projection = camera->get_projection();
+    glm::mat4 view = camera->get_view();
 
     const int screen_w = 1920;
     const int screen_h = 1080;

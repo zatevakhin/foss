@@ -8,13 +8,13 @@
 #include <set>
 
 
-enum class ECameraMoveDirection
+enum class ECameraMovingDirection
 {
-    eForward,
-    eBack,
-    eLeft,
-    eRight,
-    eNone
+    FORWARD,
+    BACK,
+    LEFT,
+    RIGHT,
+    NONE
 };
 
 class CCamera : public ICamera
@@ -27,35 +27,35 @@ public:
     CCamera(const CCamera&) = delete;
     CCamera& operator=(const CCamera&) = delete;
 
-    void update(double delta) override;
+    void update(float delta) override;
 
-    glm::mat4 getView() const override;
-    glm::mat4 getProjection() const override;
-    glm::vec3 getPosition() const override;
+    glm::mat4 get_view() const override;
+    glm::mat4 get_projection() const override;
+    glm::vec3 get_position() const override;
 
-    double getMoveSpeed() const;
-    void setMoveSpeed(double speed);
+    float get_moving_speed() const override;
+    void set_moving_speed(float speed) override;
 
-    void setNearAndFar(const glm::dvec2 nf);
-    glm::dvec2 getNearAndFar() const;
+    void set_near_far(const glm::vec2 near_far) override;
+    glm::vec2 get_near_far() const override;
 
-    void setFov(const double fov);
-    double getFov();
+    void set_fov(const float fov) override;
+    float get_fov() override;
 
-    void addMoveDirection(const ECameraMoveDirection& direction);
-    void removeMoveDirection(const ECameraMoveDirection& direction);
-    void mouseMove(const glm::ivec2& delta);
+    void add_moving_direction(const ECameraMovingDirection& direction);
+    void remove_moving_direction(const ECameraMovingDirection& direction);
+    void mouse_move(const glm::ivec2& delta);
 
 
 private:
-    bool mIsActive;
-    double mSpeed;
-    double mFov;
+    bool m_is_active;
+    float m_speed;
+    float m_fov;
 
-    std::set<ECameraMoveDirection> mDirections;
-    glm::vec3 mPosition;
-    glm::vec3 mForward;
-    glm::vec3 mUp;
+    std::set<ECameraMovingDirection> m_directions;
+    glm::vec3 m_position;
+    glm::vec3 m_forward;
+    glm::vec3 m_up;
 
-    glm::dvec2 mNearAndFar;
+    glm::vec2 m_near_far;
 };

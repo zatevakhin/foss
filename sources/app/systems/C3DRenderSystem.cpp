@@ -105,15 +105,18 @@ void C3DRenderSystem::prepare(const ICamera* camera)
     //     t.mPosition = camera->getPosition();
     // }
 
-    mCubeMapRenderer.setViewMatrix(glm::mat4(glm::mat3(camera->getView())));
-    mStaticModelRenderer.setViewMatrix(camera->getView());
-    mMeshRenderer.setViewMatrix(camera->getView());
-    mBBoxRenderer.setViewMatrix(camera->getView());
+    auto view = camera->get_view();
+    auto projection = camera->get_projection();
 
-    mCubeMapRenderer.setProjectionMatrix(camera->getProjection());
-    mStaticModelRenderer.setProjectionMatrix(camera->getProjection());
-    mMeshRenderer.setProjectionMatrix(camera->getProjection());
-    mBBoxRenderer.setProjectionMatrix(camera->getProjection());
+    mCubeMapRenderer.setViewMatrix(glm::mat4(glm::mat3(view)));
+    mStaticModelRenderer.setViewMatrix(view);
+    mMeshRenderer.setViewMatrix(view);
+    mBBoxRenderer.setViewMatrix(view);
+
+    mCubeMapRenderer.setProjectionMatrix(projection);
+    mStaticModelRenderer.setProjectionMatrix(projection);
+    mMeshRenderer.setProjectionMatrix(projection);
+    mBBoxRenderer.setProjectionMatrix(projection);
 }
 
 void C3DRenderSystem::render(const glm::mat4& view, const glm::mat4& projection)

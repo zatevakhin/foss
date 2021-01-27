@@ -23,7 +23,6 @@
 #include "resources/resources.hpp"
 
 #include "entities/windows/CEngineDebugWindow.hpp"
-#include "entities/windows/CEngineSettingsWindow.hpp"
 #include "entities/windows/CEntityManagerWindow.hpp"
 #include "entities/windows/CFboDebugWindow.hpp"
 #include "entities/windows/CShaderManagerWindow.hpp"
@@ -213,7 +212,7 @@ void CEngine::prepare()
                                                 resources::ETextureType::CUBE_MAP_TEXTURE);
 
     auto orange = resources::get_texture("resources/textures/orange.png",
-        resources::ETextureType::TEXTURE_2D);
+                                         resources::ETextureType::TEXTURE_2D);
 
     CRegistry::set("camera", &mCamera);
     CRegistry::set("texture/skybox", skyboxTexture);
@@ -293,14 +292,6 @@ void CEngine::prepare()
         auto& w = mEntityManager.addComponent<CWindowComponent>(e);
         w.mWindow = std::make_shared<CEngineDebugWindow>(mCamera);
     }
-
-
-    {
-        auto e = mEntityManager.createEntity();
-        auto& w = mEntityManager.addComponent<CWindowComponent>(e);
-        w.mWindow = std::make_shared<CEngineSettingsWindow>(mSettings, mCamera);
-    }
-
 
     {
         auto e = mEntityManager.createEntity();
@@ -418,8 +409,8 @@ void CEngine::onEvent()
 
 void CEngine::onUpdate(double delta)
 {
-    const auto& projection = mCamera.getProjection();
-    const auto& view = mCamera.getView();
+    const auto& projection = mCamera.get_projection();
+    const auto& view = mCamera.get_view();
 
     mCullingSystem->setProjectionMatrix(projection);
     mCullingSystem->setViewMatrix(view);
@@ -442,8 +433,8 @@ void CEngine::onClear()
 
 void CEngine::onDraw()
 {
-    const glm::mat4 view = mCamera.getView();
-    const glm::mat4 projection = mCamera.getProjection();
+    const glm::mat4 view = mCamera.get_view();
+    const glm::mat4 projection = mCamera.get_projection();
 
     m3dRenderSystem->prepare(&mCamera);
 

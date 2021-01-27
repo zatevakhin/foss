@@ -6,25 +6,25 @@
 namespace
 {
 
-inline ECameraMoveDirection getDirection(const CInputEvent& event)
+inline ECameraMovingDirection getDirection(const CInputEvent& event)
 {
-    ECameraMoveDirection direction;
+    ECameraMovingDirection direction;
     switch (event.event().key.keysym.sym)
     {
     case SDLK_w:
-        direction = ECameraMoveDirection::eForward;
+        direction = ECameraMovingDirection::FORWARD;
         break;
     case SDLK_s:
-        direction = ECameraMoveDirection::eBack;
+        direction = ECameraMovingDirection::BACK;
         break;
     case SDLK_a:
-        direction = ECameraMoveDirection::eLeft;
+        direction = ECameraMovingDirection::LEFT;
         break;
     case SDLK_d:
-        direction = ECameraMoveDirection::eRight;
+        direction = ECameraMovingDirection::RIGHT;
         break;
     default:
-        direction = ECameraMoveDirection::eNone;
+        direction = ECameraMovingDirection::NONE;
         break;
     }
 
@@ -81,27 +81,27 @@ void CCameraListener::onMouseMotion(const CInputEvent& event)
 
     if (event.isKeyPressed(SDL_BUTTON_RIGHT))
     {
-        mCamera->mouseMove(glm::ivec2(motion.xrel, motion.yrel));
+        mCamera->mouse_move(glm::ivec2(motion.xrel, motion.yrel));
     }
 }
 
 void CCameraListener::onKeyDown(const CInputEvent& event)
 {
-    ECameraMoveDirection direction = getDirection(event);
+    ECameraMovingDirection direction = getDirection(event);
 
-    if (ECameraMoveDirection::eNone != direction)
+    if (ECameraMovingDirection::NONE != direction)
     {
-        mCamera->addMoveDirection(direction);
+        mCamera->add_moving_direction(direction);
     }
 }
 
 void CCameraListener::onKeyUp(const CInputEvent& event)
 {
-    ECameraMoveDirection direction = getDirection(event);
+    ECameraMovingDirection direction = getDirection(event);
 
-    if (ECameraMoveDirection::eNone != direction)
+    if (ECameraMovingDirection::NONE != direction)
     {
-        mCamera->removeMoveDirection(direction);
+        mCamera->remove_moving_direction(direction);
     }
 }
 

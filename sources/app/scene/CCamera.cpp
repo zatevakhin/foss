@@ -23,22 +23,24 @@ constexpr double CAMERA_FAR = 1000.0;
 constexpr double CAMERA_RADIANS_IN_PIXEL = 1.0 / 3000.0;
 
 
-glm::vec3 getMoveDirection(const std::set<ECameraMoveDirection>& directions)
+glm::vec3 get_moving_direction(const std::set<ECameraMovingDirection>& directions)
 {
     glm::vec3 direction(0.f);
 
-    if (directions.count(ECameraMoveDirection::eForward))
+    if (directions.count(ECameraMovingDirection::FORWARD))
     {
         direction.z = +1.f;
-    } else if (directions.count(ECameraMoveDirection::eBack))
+    }
+    else if (directions.count(ECameraMovingDirection::BACK))
     {
         direction.z = -1.f;
     }
 
-    if (directions.count(ECameraMoveDirection::eRight))
+    if (directions.count(ECameraMovingDirection::RIGHT))
     {
         direction.x = -1.f;
-    } else if (directions.count(ECameraMoveDirection::eLeft))
+    }
+    else if (directions.count(ECameraMovingDirection::LEFT))
     {
         direction.x = +1.f;
     }
@@ -55,103 +57,104 @@ glm::vec3 getMoveDirection(const std::set<ECameraMoveDirection>& directions)
 
 
 CCamera::CCamera()
-    : mForward(glm::normalize(CAMERA_AT - CAMERA_EYE))
-    , mPosition(CAMERA_AT)
-    , mUp(CAMERA_UP)
-    , mSpeed(CAMERA_DEFAULT_SPEED)
-    , mIsActive(true)
-    , mDirections()
-    , mFov(CAMERA_FOV)
-    , mNearAndFar(CAMERA_NEAR, CAMERA_FAR)
+    : m_forward(glm::normalize(CAMERA_AT - CAMERA_EYE))
+    , m_position(CAMERA_AT)
+    , m_up(CAMERA_UP)
+    , m_speed(CAMERA_DEFAULT_SPEED)
+    , m_is_active(true)
+    , m_directions()
+    , m_fov(CAMERA_FOV)
+    , m_near_far(CAMERA_NEAR, CAMERA_FAR)
 {
-    const glm::vec3 right = glm::normalize(glm::cross(CAMERA_UP, mForward));
-    mUp = glm::normalize(glm::cross(mForward, right));
+    const glm::vec3 right = glm::normalize(glm::cross(CAMERA_UP, m_forward));
+    m_up = glm::normalize(glm::cross(m_forward, right));
 }
 
 
-void CCamera::update(double delta)
+void CCamera::update(float delta)
 {
-    const glm::vec3 direction = getMoveDirection(mDirections);
-    const glm::vec3 right = glm::normalize(glm::cross(mUp, mForward));
-    const glm::vec3 orientedDir = right * direction.x + mUp * direction.y + mForward * direction.z;
+    const glm::vec3 direction = get_moving_direction(m_directions);
+    const glm::vec3 right = glm::normalize(glm::cross(m_up, m_forward));
+    const glm::vec3 orientedDir =
+        right * direction.x + m_up * direction.y + m_forward * direction.z;
 
-    mPosition += float(mSpeed) * float(delta) * orientedDir;
+    m_position += float(m_speed) * float(delta) * orientedDir;
 }
 
 
-glm::mat4 CCamera::getView() const
+glm::mat4 CCamera::get_view() const
 {
-    return glm::lookAt(mPosition, mPosition + mForward, mUp);
+    return glm::lookAt(m_position, m_position + m_forward, m_up);
 }
 
-glm::mat4 CCamera::getProjection() const
+glm::mat4 CCamera::get_projection() const
 {
-    const double fov = glm::radians(mFov);
-    const double ratio = static_cast<double>(VIEW_PORT.x) / static_cast<double>(VIEW_PORT.y);
-    return glm::perspective(fov, ratio, mNearAndFar.x, mNearAndFar.y);
-}
-
-
-glm::vec3 CCamera::getPosition() const
-{
-    return mPosition;
+    const float fov = glm::radians(m_fov);
+    const float ratio = static_cast<float>(VIEW_PORT.x) / static_cast<float>(VIEW_PORT.y);
+    return glm::perspective(fov, ratio, m_near_far.x, m_near_far.y);
 }
 
 
-double CCamera::getMoveSpeed() const
+glm::vec3 CCamera::get_position() const
 {
-    return mSpeed;
+    return m_position;
 }
 
 
-void CCamera::setMoveSpeed(double speed)
+float CCamera::get_moving_speed() const
 {
-    mSpeed = speed;
+    return m_speed;
 }
 
 
-void CCamera::setNearAndFar(const glm::dvec2 nf)
+void CCamera::set_moving_speed(float speed)
 {
-    mNearAndFar = nf;
-}
-
-glm::dvec2 CCamera::getNearAndFar() const
-{
-    return mNearAndFar;
-}
-
-void CCamera::setFov(const double fov)
-{
-    mFov = fov;
-}
-
-double CCamera::getFov()
-{
-    return mFov;
-}
-
-void CCamera::addMoveDirection(const ECameraMoveDirection& direction)
-{
-    mDirections.insert(direction);
+    m_speed = speed;
 }
 
 
-void CCamera::removeMoveDirection(const ECameraMoveDirection& direction)
+void CCamera::set_near_far(const glm::vec2 nf)
 {
-    mDirections.erase(direction);
+    m_near_far = nf;
 }
 
-void CCamera::mouseMove(const glm::ivec2& delta)
+glm::vec2 CCamera::get_near_far() const
 {
-    if (mIsActive)
+    return m_near_far;
+}
+
+void CCamera::set_fov(const float fov)
+{
+    m_fov = fov;
+}
+
+float CCamera::get_fov()
+{
+    return m_fov;
+}
+
+void CCamera::add_moving_direction(const ECameraMovingDirection& direction)
+{
+    m_directions.insert(direction);
+}
+
+
+void CCamera::remove_moving_direction(const ECameraMovingDirection& direction)
+{
+    m_directions.erase(direction);
+}
+
+void CCamera::mouse_move(const glm::ivec2& delta)
+{
+    if (m_is_active)
     {
-        const double deltaYaw = -delta.x * CAMERA_RADIANS_IN_PIXEL;
-        const double deltaRoll = -delta.y * CAMERA_RADIANS_IN_PIXEL;
+        const float delta_yaw = -delta.x * CAMERA_RADIANS_IN_PIXEL;
+        const float delta_roll = -delta.y * CAMERA_RADIANS_IN_PIXEL;
 
-        mForward = glm::normalize(glm::rotate(mForward, float(deltaYaw), mUp));
+        m_forward = glm::normalize(glm::rotate(m_forward, float(delta_yaw), m_up));
 
-        const glm::vec3 right = glm::normalize(glm::cross(mForward, mUp));
-        mUp = glm::normalize(glm::rotate(mUp, float(deltaRoll), right));
-        mForward = glm::normalize(glm::cross(mUp, right));
+        const glm::vec3 right = glm::normalize(glm::cross(m_forward, m_up));
+        m_up = glm::normalize(glm::rotate(m_up, float(delta_roll), right));
+        m_forward = glm::normalize(glm::cross(m_up, right));
     }
 }
