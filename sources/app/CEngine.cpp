@@ -213,7 +213,7 @@ void CEngine::prepare()
                                                 resources::ETextureType::CUBE_MAP_TEXTURE);
 
     auto orange = resources::get_texture("resources/textures/orange.png",
-                                         resources::ETextureType::TEXTURE_2D);
+        resources::ETextureType::TEXTURE_2D);
 
     CRegistry::set("camera", &mCamera);
     CRegistry::set("texture/skybox", skyboxTexture);
@@ -332,8 +332,8 @@ void CEngine::prepare()
         system->setGravity(glm::vec3(0));
         system->setParticleTexture(orange);
 
-        auto createEmitter = []() -> std::unique_ptr<CParticleEmitter> {
-            auto emitter = std::make_unique<CParticleEmitter>();
+        auto createEmitter = []() -> std::shared_ptr<CParticleEmitter> {
+            auto emitter = std::make_shared<CParticleEmitter>();
             emitter->setPosition(glm::vec3(0, 0, 0));
             emitter->setDirection(glm::vec3(0, -1, 0));
             emitter->setMaxDeviationAngle(3.14f);
@@ -345,7 +345,9 @@ void CEngine::prepare()
             return emitter;
         };
 
-        system->setEmitter(createEmitter());
+        p.m_particle_emitter = createEmitter();
+
+        system->set_emitter(p.m_particle_emitter);
     }
 
     {

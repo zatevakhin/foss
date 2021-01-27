@@ -8,18 +8,18 @@ out float alpha_value;
 
 uniform mat4 modelView;
 uniform mat4 projection;
-uniform vec3 sizeScale;
+uniform vec2 particle_scale;
 
 void main(void)
 {
     // Particle should be always oriented to viewer,
     //  but particle system size scale still applies.
-    vec4 particleCenter = modelView * vec4(particlePosition.xyz, 1.0);
-    vec2 offset = textureUV * sizeScale.xy;
-    vec4 vertexPos = particleCenter + vec4(offset.x, offset.y, 0.0, 0.0);
+    vec4 particle_center = modelView * vec4(particlePosition.xyz, 1.0);
+    vec2 offset = textureUV * particle_scale;
+    vec4 vertexPos = particle_center + vec4(offset.x, offset.y, 0.0, 0.0);
 
     // Normalize UV from [-1..1] to [0..1]
-    fragTextureUV = 0.5 * textureUV + vec2(0.5);
+    fragTextureUV = 1.0 - /* v-flip */ (0.5 * textureUV + vec2(0.5));
 
     alpha_value = particlePosition.w;
 

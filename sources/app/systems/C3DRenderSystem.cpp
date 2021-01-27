@@ -281,13 +281,11 @@ void C3DRenderSystem::renderInstanced(const glm::mat4& view, const glm::mat4& pr
     for (auto [entity, component] :
          mEntityManager.getEntitySet<CParticleSystemComponent, CTransform3DComponent>())
     {
-        auto [c, t] = component;
+        auto [p, t] = component;
 
         const auto& modelView = view * t.toMat4();
         program->uniform("modelView") = modelView;
-        program->uniform("sizeScale") = t.mScale;
-
-        c.mParticleSystem->draw(program, modelView);
+        p.mParticleSystem->draw(program, modelView);
     }
 
     glDepthMask(GL_TRUE);

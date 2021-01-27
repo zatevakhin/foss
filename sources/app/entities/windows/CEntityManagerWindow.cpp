@@ -1,5 +1,6 @@
 
 #include "app/components/CEditableComponent.hpp"
+#include "app/components/CParticleSystemComponent.hpp"
 #include "app/components/CTransform3DComponent.hpp"
 
 #include "CEntityManagerWindow.hpp"
@@ -37,13 +38,11 @@ void CEntityManagerWindow::draw()
     static int current_entity = 1;
     TNamedEntityList editable_entity_list;
 
-    for (auto [e, c] : m_entity_manager.getEntitySet<CEditableComponent>())
+    for (auto [entity, c] : m_entity_manager.getEntitySet<CEditableComponent>())
     {
         auto [editable] = c;
-        auto entity = static_cast<size_t>(e);
-
-        auto name = editable.get_name() + " (" + std::to_string(entity) + ")";
-        editable_entity_list.emplace_back(name, e);
+        auto name = fmt::format("{} ({})", editable.get_name(), static_cast<size_t>(entity));
+        editable_entity_list.emplace_back(name, entity);
     }
 
     ImGui::Begin("Entity manager");
@@ -56,25 +55,99 @@ void CEntityManagerWindow::draw()
     {
         auto& component = m_entity_manager.getComponent<CTransform3DComponent>(entity);
 
-        auto transform = fmt::format("Transform ({})", static_cast<size_t>(entity));
-        if (ImGui::CollapsingHeader(transform.c_str()))
+        auto title = fmt::format("Transform ({})", static_cast<size_t>(entity));
+        if (ImGui::CollapsingHeader(title.c_str()))
         {
-            auto orientation =
-                glm::degrees(glm::eulerAngles(glm::normalize(component.mOrientation)));
+            {
+                auto& position = component.mPosition;
+                ImGui::InputFloat3("Position", &position[0]);
+            }
 
-            ImGui::InputFloat("Position.x", &component.mPosition.x, 0.01f, 1.0f);
-            ImGui::InputFloat("Position.y", &component.mPosition.y, 0.01f, 1.0f);
-            ImGui::InputFloat("Position.z", &component.mPosition.z, 0.01f, 1.0f);
-            ImGui::Separator();
-            ImGui::InputFloat("Scale.x", &component.mScale.x, 0.01f, 1.0f);
-            ImGui::InputFloat("Scale.y", &component.mScale.y, 0.01f, 1.0f);
-            ImGui::InputFloat("Scale.z", &component.mScale.z, 0.01f, 1.0f);
-            ImGui::Separator();
-            ImGui::InputFloat("Orientation.x", &orientation.x, 0.01f, 1.0f);
-            ImGui::InputFloat("Orientation.y", &orientation.y, 0.01f, 1.0f);
-            ImGui::InputFloat("Orientation.z", &orientation.z, 0.01f, 1.0f);
+            {
+                auto scale = component.mScale;
+                ImGui::InputFloat3("Scale", &scale[0]);
+            }
 
-            component.mOrientation = glm::quat(glm::radians(orientation));
+            {
+                // v - radians
+                auto v = glm::eulerAngles(glm::normalize(component.mOrientation));
+                ImGui::SliderAngle("Orientation.x", &v.x, -180.f, 180.f);
+                ImGui::SliderAngle("Orientation.y", &v.y, -89.f, 89.f);
+                ImGui::SliderAngle("Orientation.z", &v.z, -180.f, 180.f);
+                component.mOrientation = glm::quat(v);
+            }
+        }
+    }
+
+    if (m_entity_manager.hasComponent<CParticleSystemComponent>(entity))
+    {
+        auto& component = m_entity_manager.getComponent<CParticleSystemComponent>(entity);
+        auto title = fmt::format("Particle system ({})", static_cast<size_t>(entity));
+        if (ImGui::CollapsingHeader(title.c_str()))
+        {
+            {
+                auto scale = component.mParticleSystem->get_particle_scale();
+                ImGui::InputFloat2("Particle scale", &scale[0]);
+                component.mParticleSystem->set_particle_scale(scale);
+            }
+
+            {
+                auto gravity = component.mParticleSystem->get_gravity();
+                ImGui::InputFloat3("Gravity", &gravity[0]);
+                component.mParticleSystem->setGravity(gravity);
+            }
+        }
+
+        auto title2 = fmt::format("Particle emitter ({})", static_cast<size_t>(entity));
+        if (ImGui::CollapsingHeader(title2.c_str()))
+        {
+            {
+                ImVec4 text_color(1.f, 1.f, 0.f, 1.f);
+                auto count = component.mParticleSystem->get_patricles_count();
+                ImGui::TextColored(text_color, "Particles count: %lu", count);
+            }
+
+            // {
+            //     auto position = component.m_particle_emitter->get_position();
+            //     ImGui::InputFloat3("Position", &position[0]);
+            //     component.m_particle_emitter->setPosition(position);
+            // }
+
+            // {
+            //     auto direction = component.m_particle_emitter->get_direction();
+            //     ImGui::InputFloat3("Direction", &direction[0]);
+            //     component.m_particle_emitter->setDirection(direction);
+            // }
+
+            {
+                auto range = component.m_particle_emitter->get_distance_range();
+                ImGui::InputFloat2("Distance range", &range[0]);
+                component.m_particle_emitter->setDistanceRange(range.x, range.y);
+            }
+
+            {
+                auto range = component.m_particle_emitter->get_emit_interval_range();
+                ImGui::SliderFloat2("Emit interval", &range[0], 0.00001f, 2.0f, "%.5f", 3.f);
+                component.m_particle_emitter->setEmitIntervalRange(range.x, range.y);
+            }
+
+            {
+                auto range = component.m_particle_emitter->get_lifetime_range();
+                ImGui::SliderFloat2("Lifetime range", &range[0], 0.0001f, 100.0f, "%.4f", 3.f);
+                component.m_particle_emitter->setLifetimeRange(range.x, range.y);
+            }
+
+            {
+                auto range = component.m_particle_emitter->get_speed_range();
+                ImGui::SliderFloat2("Speed range", &range[0], -100.f, 100.0f, "%.3f", 3.f);
+                component.m_particle_emitter->setSpeedRange(range.x, range.y);
+            }
+
+            {
+                auto angle = component.m_particle_emitter->get_max_deviation_angle();
+                ImGui::SliderAngle("Deviation angle", &angle, -180.f, 180.f);
+                component.m_particle_emitter->setMaxDeviationAngle(angle);
+            }
         }
     }
 

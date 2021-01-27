@@ -27,6 +27,7 @@ CParticleSystem::CParticleSystem()
     : mSpriteGeometry(EBufferType::eArrayBuffer, EBufferUsage::eStaticDraw)
     , mParticlePositions(EBufferType::eArrayBuffer, EBufferUsage::eStreamDraw)
     , mParticlesVao()
+    , m_particle_scale(1.f)
 {
     mParticlesVao.bind();
 
@@ -46,14 +47,19 @@ CParticleSystem::~CParticleSystem()
 {
 }
 
-void CParticleSystem::setEmitter(std::unique_ptr<CParticleEmitter>&& pEmitter)
+void CParticleSystem::set_emitter(std::shared_ptr<CParticleEmitter> emitter)
 {
-    mEmitter = std::move(pEmitter);
+    m_emitter = emitter;
 }
 
 void CParticleSystem::setGravity(const vec3& gravity)
 {
-    mGravity = gravity;
+    m_gravity = gravity;
+}
+
+glm::vec3 CParticleSystem::get_gravity() const
+{
+    return m_gravity;
 }
 
 void CParticleSystem::setParticleTexture(const TTextureSharedPtr& pTexture)
@@ -61,18 +67,33 @@ void CParticleSystem::setParticleTexture(const TTextureSharedPtr& pTexture)
     mTexture = pTexture;
 }
 
+void CParticleSystem::set_particle_scale(const glm::vec2& scale)
+{
+    m_particle_scale = scale;
+}
+
+glm::vec2 CParticleSystem::get_particle_scale() const
+{
+    return m_particle_scale;
+}
+
+size_t CParticleSystem::get_patricles_count() const
+{
+    return mParticles.size();
+}
+
 void CParticleSystem::advance(float dt)
 {
-    mEmitter->advance(dt);
+    m_emitter->advance(dt);
 
-    while (mEmitter->isEmitReady())
+    while (m_emitter->isEmitReady())
     {
-        mParticles.emplace_back(mEmitter->emit());
+        mParticles.emplace_back(m_emitter->emit());
     }
 
     for (auto& particle : mParticles)
     {
-        particle.advance(dt, mGravity);
+        particle.advance(dt, m_gravity);
     }
 
     auto newEnd = std::remove_if(mParticles.begin(), mParticles.end(),
@@ -97,6 +118,8 @@ void CParticleSystem::draw(TProgramSharedPtr program, const glm::mat4& worldView
         updateParticlePositions(worldView);
         m_isDirty = false;
     }
+
+    program->uniform("particle_scale") = m_particle_scale;
 
     const GLsizei vertexCount = GLsizei(SPRITE_VERTEX_COUNT);
     const GLsizei instanceCount = GLsizei(mParticles.size());

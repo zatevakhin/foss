@@ -89,9 +89,19 @@ void CParticleEmitter::setPosition(const glm::vec3& value)
     mPosition = value;
 }
 
+glm::vec3 CParticleEmitter::get_position() const
+{
+    return mPosition;
+}
+
 void CParticleEmitter::setDistanceRange(float minValue, float maxValue)
 {
     mDistanceRange.param(linear_random_float::param_type(minValue, maxValue));
+}
+
+glm::vec2 CParticleEmitter::get_distance_range() const
+{
+    return glm::vec2(mDistanceRange.min(), mDistanceRange.max());
 }
 
 void CParticleEmitter::setDirection(const glm::vec3& value)
@@ -99,25 +109,51 @@ void CParticleEmitter::setDirection(const glm::vec3& value)
     mDirection = glm::normalize(value);
 }
 
+glm::vec3 CParticleEmitter::get_direction() const
+{
+    return mDirection;
+}
+
 void CParticleEmitter::setMaxDeviationAngle(float value)
 {
     mDeviationAngleRange.param(linear_random_float::param_type(0.f, value));
 }
 
+float CParticleEmitter::get_max_deviation_angle() const
+{
+    return mDeviationAngleRange.max();
+}
+
 void CParticleEmitter::setLifetimeRange(float minValue, float maxValue)
 {
-    mLifetimeRange.param(minValue, maxValue);
+    mLifetimeRange.param(linear_random_float::param_type(minValue, maxValue));
+}
+
+glm::vec2 CParticleEmitter::get_lifetime_range() const
+{
+    return glm::vec2(mLifetimeRange.min(), mLifetimeRange.max());
 }
 
 void CParticleEmitter::setEmitIntervalRange(float minValue, float maxValue)
 {
-    mEmitIntervalRange.param(minValue, maxValue);
+    mEmitIntervalRange.param(linear_random_float::param_type(minValue, maxValue));
+}
+
+glm::vec2 CParticleEmitter::get_emit_interval_range() const
+{
+    return glm::vec2(mEmitIntervalRange.min(), mEmitIntervalRange.max());
 }
 
 void CParticleEmitter::setSpeedRange(float minValue, float maxValue)
 {
-    mSpeedRange.param(minValue, maxValue);
+    mSpeedRange.param(linear_random_float::param_type(minValue, maxValue));
 }
+
+glm::vec2 CParticleEmitter::get_speed_range() const
+{
+    return glm::vec2(mSpeedRange.min(), mSpeedRange.max());
+}
+
 
 glm::vec3 CParticleEmitter::MakeRandomDirection()
 {

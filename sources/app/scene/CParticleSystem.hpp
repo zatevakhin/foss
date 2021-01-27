@@ -18,9 +18,17 @@ public:
     CParticleSystem(const CParticleSystem&) = delete;
     CParticleSystem& operator=(const CParticleSystem&) = delete;
 
-    void setEmitter(std::unique_ptr<CParticleEmitter>&& pEmitter);
+    void set_emitter(std::shared_ptr<CParticleEmitter> emitter);
+
     void setGravity(const glm::vec3& gravity);
+    glm::vec3 get_gravity() const;
+
     void setParticleTexture(const TTextureSharedPtr& pTexture);
+
+    void set_particle_scale(const glm::vec2& scale);
+    glm::vec2 get_particle_scale() const;
+
+    size_t get_patricles_count() const;
 
     void advance(float dt);
 
@@ -29,9 +37,10 @@ public:
 private:
     void updateParticlePositions(const glm::mat4& worldView);
 
-    std::unique_ptr<CParticleEmitter> mEmitter;
+    std::shared_ptr<CParticleEmitter> m_emitter;
     std::vector<CParticle> mParticles;
-    glm::vec3 mGravity;
+    glm::vec3 m_gravity;
+    glm::vec2 m_particle_scale;
 
     bool m_isDirty = false;
     TTextureSharedPtr mTexture;

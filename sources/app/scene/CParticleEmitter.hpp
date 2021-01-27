@@ -31,6 +31,16 @@ class CClampedNormalDistribution
     float mMax = 0.f;
 
 public:
+    float min() const
+    {
+        return mMin;
+    }
+
+    float max() const
+    {
+        return mMax;
+    }
+
     // m_distribution requires two parameters:
     // `mean`, those. median value and at the same time mathematical expectation
     // `stddev`, those. standard deviation (variance)
@@ -74,18 +84,25 @@ public:
     CParticle emit();
 
     void setPosition(const glm::vec3& value);
+    glm::vec3 get_position() const;
 
     void setDistanceRange(float minValue, float maxValue);
+    glm::vec2 get_distance_range() const;
 
     void setDirection(const glm::vec3& value);
+    glm::vec3 get_direction() const;
 
     void setMaxDeviationAngle(float value);
+    float get_max_deviation_angle() const;
 
     void setLifetimeRange(float minValue, float maxValue);
+    glm::vec2 get_lifetime_range() const;
 
     void setEmitIntervalRange(float minValue, float maxValue);
+    glm::vec2 get_emit_interval_range() const;
 
     void setSpeedRange(float minValue, float maxValue);
+    glm::vec2 get_speed_range() const;
 
 private:
     using linear_random_float = std::uniform_real_distribution<float>;
@@ -99,8 +116,8 @@ private:
     glm::vec3 mDirection = glm::vec3(0, 1, 0);
     linear_random_float mDistanceRange;
     linear_random_float mDeviationAngleRange;
-    normal_random_float mLifetimeRange;
-    normal_random_float mEmitIntervalRange;
-    normal_random_float mSpeedRange;
+    linear_random_float mLifetimeRange;
+    linear_random_float mEmitIntervalRange;
+    linear_random_float mSpeedRange;
     std::mt19937 mRandom;
 };
