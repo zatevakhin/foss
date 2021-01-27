@@ -5,7 +5,7 @@
 #include "app/renderers/auxiliary.hpp"
 #include "app/resources/CRegistry.hpp"
 #include "app/resources/SPhongMaterial.hpp"
-#include "app/scene/CCamera.hpp"
+#include "app/scene/CFreeCamera.hpp"
 #include "app/scene/SStaticModel3D.hpp"
 #include "app/shading/CUniform.hpp"
 #include "app/shading/CVertexAttribute.hpp"

@@ -5,7 +5,7 @@
 #include "app/components/C3dObjectComponent.hpp"
 #include "app/components/CTransform3DComponent.hpp"
 #include "app/resources/CRegistry.hpp"
-#include "app/scene/CCamera.hpp"
+#include "app/scene/CFreeCamera.hpp"
 #include <glm/gtc/matrix_access.hpp>
 #include <glm/gtx/intersect.hpp>
 #include <glm/gtx/quaternion.hpp>
@@ -106,7 +106,7 @@ CPickingSystem::CPickingSystem(ecs::EntityManager& entityManager)
 
 void CPickingSystem::update(double& delta)
 {
-    auto camera = CRegistry::get<CCamera*>("camera");
+    auto camera = CRegistry::get<CFreeCamera*>("camera");
     auto mouse = CRegistry::get<glm::ivec2>("mouse/position");
 
     glm::mat4 projection = camera->get_projection();

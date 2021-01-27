@@ -1,8 +1,8 @@
 
 #include "CCameraListener.hpp"
 #include "CInputEvent.hpp"
-#include "app/scene/CCamera.hpp"
 #include "resources/CRegistry.hpp"
+
 namespace
 {
 
@@ -33,7 +33,7 @@ inline ECameraMovingDirection getDirection(const CInputEvent& event)
 
 } // namespace
 
-CCameraListener::CCameraListener(CCamera* camera)
+CCameraListener::CCameraListener(const TFreeCameraPtr& camera)
     : mCamera(camera)
 {
     mAcceptable = {

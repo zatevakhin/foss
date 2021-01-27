@@ -1,21 +1,18 @@
 #pragma once
 
 #include "IEventListener.hpp"
-
+#include "app/scene/CFreeCamera.hpp"
 #include <set>
-
-
-class CCamera;
 
 class CCameraListener : public IEventListener
 {
 public:
-    explicit CCameraListener(CCamera* camera);
+    explicit CCameraListener(const TFreeCameraPtr& camera);
     bool isAcceptable(int type) override;
     void accept(const CInputEvent& event) override;
 
 private:
-    CCamera* mCamera;
+    TFreeCameraPtr mCamera;
     std::set<int> mAcceptable;
 
 private:

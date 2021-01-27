@@ -12,7 +12,7 @@
 
 #include "app/resources/CResourceManager.hpp"
 #include "app/resources/CShaderManager.hpp"
-#include "app/scene/CCamera.hpp"
+#include "app/scene/CFreeCamera.hpp"
 
 
 #include "SEngineSettings.hpp"
@@ -53,7 +53,7 @@ private:
 
 private:
     CChronometer mChronometer;
-    CCamera mCamera;
+    TFreeCameraPtr m_camera;
 
     ecs::EntityManager mEntityManager;
 

@@ -106,6 +106,7 @@ CEngine::CEngine()
     , mIsRunning(false)
     , mIsDebugMode(false)
     , mResourceManager(nullptr)
+    , m_camera(new CFreeCamera())
 {
     mSettings.mWindowSize = glm::ivec2(1920, 1080);
 }
@@ -181,7 +182,7 @@ void CEngine::initializeInput()
     mInputManager.reset(new CInputEventManager);
 
     mInputManager->addListener(new CEngineListener(*this));
-    mInputManager->addListener(new CCameraListener(&mCamera));
+    mInputManager->addListener(new CCameraListener(m_camera));
 }
 
 void CEngine::run()
@@ -214,7 +215,7 @@ void CEngine::prepare()
     auto orange = resources::get_texture("resources/textures/orange.png",
                                          resources::ETextureType::TEXTURE_2D);
 
-    CRegistry::set("camera", &mCamera);
+    CRegistry::set("camera", m_camera.get());
     CRegistry::set("texture/skybox", skyboxTexture);
     CRegistry::set("texture/orange", orange);
 
@@ -290,7 +291,7 @@ void CEngine::prepare()
     {
         auto e = mEntityManager.createEntity();
         auto& w = mEntityManager.addComponent<CWindowComponent>(e);
-        w.mWindow = std::make_shared<CEngineDebugWindow>(mCamera);
+        w.mWindow = std::make_shared<CEngineDebugWindow>(m_camera);
     }
 
     {
@@ -409,8 +410,8 @@ void CEngine::onEvent()
 
 void CEngine::onUpdate(double delta)
 {
-    const auto& projection = mCamera.get_projection();
-    const auto& view = mCamera.get_view();
+    const auto& projection = m_camera->get_projection();
+    const auto& view = m_camera->get_view();
 
     mCullingSystem->setProjectionMatrix(projection);
     mCullingSystem->setViewMatrix(view);
@@ -422,7 +423,7 @@ void CEngine::onUpdate(double delta)
     // add ignore rotation on invisible objects
     mRotationUpdateSystem->update(delta);
 
-    mCamera.update(delta);
+    m_camera->update(delta);
 }
 
 void CEngine::onClear()
@@ -433,10 +434,10 @@ void CEngine::onClear()
 
 void CEngine::onDraw()
 {
-    const glm::mat4 view = mCamera.get_view();
-    const glm::mat4 projection = mCamera.get_projection();
+    const glm::mat4 view = m_camera->get_view();
+    const glm::mat4 projection = m_camera->get_projection();
 
-    m3dRenderSystem->prepare(&mCamera);
+    m3dRenderSystem->prepare(m_camera.get());
 
     m3dRenderSystem->render(view, projection);
 

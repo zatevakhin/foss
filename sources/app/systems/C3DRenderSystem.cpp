@@ -18,7 +18,7 @@
 #include "app/renderers/CStaticModel3DRenderer.hpp"
 #include "app/resources/CRegistry.hpp"
 #include "app/resources/CShaderManager.hpp"
-#include "app/scene/CCamera.hpp"
+#include "app/scene/CFreeCamera.hpp"
 #include "app/shading/CUniform.hpp"
 #include "app/shading/CVertexAttribute.cpp"
 
@@ -42,7 +42,6 @@ C3DRenderSystem::C3DRenderSystem(ecs::EntityManager& entityManager,
     , mParticleSystemRenderer()
     , mFbo({1920, 1080})
     , mScreenQuad()
-    , mParticlesVao()
 {
 
     std::vector<float> vtx({-1.0f, 1.0f,  0.0f, 1.0f, -1.0f, -1.0f, 0.0f, 0.0f,
@@ -50,34 +49,6 @@ C3DRenderSystem::C3DRenderSystem(ecs::EntityManager& entityManager,
                             1.0f,  -1.0f, 1.0f, 0.0f, 1.0f,  1.0f,  1.0f, 1.0f});
 
     std::vector<glm::vec3> vtxParticles;
-
-    unsigned int amount = 1000;
-    float radius = 50.0;
-    float offset = 10.f;
-
-    for (size_t i = 0; i < amount; ++i)
-    {
-        float angle = i / amount * 360.0f;
-
-        float displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
-        float x = sin(angle) * radius + displacement;
-        displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
-        float y = displacement * 0.4f;
-        displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
-        float z = cos(angle) * radius + displacement;
-
-
-        vtxParticles.push_back(glm::vec3(x, y, z));
-    }
-
-
-    mParticlesVao.bind();
-    CVertexBufferObject particlesVbo(EBufferType::eArrayBuffer);
-    particlesVbo.bind();
-    particlesVbo.copy(vtxParticles);
-    gl::vertex_attrib_pointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-    particlesVbo.unbind();
-    mParticlesVao.unbind();
 
 
     mScreenQuad.bind();

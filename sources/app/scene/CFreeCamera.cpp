@@ -1,5 +1,5 @@
 
-#include "CCamera.hpp"
+#include "CFreeCamera.hpp"
 #include "app/auxiliary/glm.hpp"
 
 #include <glm/gtx/euler_angles.hpp>
@@ -56,7 +56,7 @@ glm::vec3 get_moving_direction(const std::set<ECameraMovingDirection>& direction
 } // namespace
 
 
-CCamera::CCamera()
+CFreeCamera::CFreeCamera()
     : m_forward(glm::normalize(CAMERA_AT - CAMERA_EYE))
     , m_position(CAMERA_AT)
     , m_up(CAMERA_UP)
@@ -71,7 +71,7 @@ CCamera::CCamera()
 }
 
 
-void CCamera::update(float delta)
+void CFreeCamera::update(float delta)
 {
     const glm::vec3 direction = get_moving_direction(m_directions);
     const glm::vec3 right = glm::normalize(glm::cross(m_up, m_forward));
@@ -82,12 +82,12 @@ void CCamera::update(float delta)
 }
 
 
-glm::mat4 CCamera::get_view() const
+glm::mat4 CFreeCamera::get_view() const
 {
     return glm::lookAt(m_position, m_position + m_forward, m_up);
 }
 
-glm::mat4 CCamera::get_projection() const
+glm::mat4 CFreeCamera::get_projection() const
 {
     const float fov = glm::radians(m_fov);
     const float ratio = static_cast<float>(VIEW_PORT.x) / static_cast<float>(VIEW_PORT.y);
@@ -95,56 +95,56 @@ glm::mat4 CCamera::get_projection() const
 }
 
 
-glm::vec3 CCamera::get_position() const
+glm::vec3 CFreeCamera::get_position() const
 {
     return m_position;
 }
 
 
-float CCamera::get_moving_speed() const
+float CFreeCamera::get_moving_speed() const
 {
     return m_speed;
 }
 
 
-void CCamera::set_moving_speed(float speed)
+void CFreeCamera::set_moving_speed(float speed)
 {
     m_speed = speed;
 }
 
 
-void CCamera::set_near_far(const glm::vec2 nf)
+void CFreeCamera::set_near_far(const glm::vec2 nf)
 {
     m_near_far = nf;
 }
 
-glm::vec2 CCamera::get_near_far() const
+glm::vec2 CFreeCamera::get_near_far() const
 {
     return m_near_far;
 }
 
-void CCamera::set_fov(const float fov)
+void CFreeCamera::set_fov(const float fov)
 {
     m_fov = fov;
 }
 
-float CCamera::get_fov()
+float CFreeCamera::get_fov()
 {
     return m_fov;
 }
 
-void CCamera::add_moving_direction(const ECameraMovingDirection& direction)
+void CFreeCamera::add_moving_direction(const ECameraMovingDirection& direction)
 {
     m_directions.insert(direction);
 }
 
 
-void CCamera::remove_moving_direction(const ECameraMovingDirection& direction)
+void CFreeCamera::remove_moving_direction(const ECameraMovingDirection& direction)
 {
     m_directions.erase(direction);
 }
 
-void CCamera::mouse_move(const glm::ivec2& delta)
+void CFreeCamera::mouse_move(const glm::ivec2& delta)
 {
     if (m_is_active)
     {

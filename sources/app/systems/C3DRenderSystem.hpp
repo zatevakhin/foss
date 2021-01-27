@@ -43,5 +43,4 @@ private:
     CCompleteFbo mFbo;
 
     CVertexArrayObject mScreenQuad;
-    CVertexArrayObject mParticlesVao;
 };

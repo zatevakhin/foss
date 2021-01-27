@@ -17,15 +17,15 @@ enum class ECameraMovingDirection
     NONE
 };
 
-class CCamera : public ICamera
+class CFreeCamera : public ICamera
 {
 public:
-    CCamera();
+    CFreeCamera();
 
-    ~CCamera() = default;
+    ~CFreeCamera() = default;
 
-    CCamera(const CCamera&) = delete;
-    CCamera& operator=(const CCamera&) = delete;
+    CFreeCamera(const CFreeCamera&) = delete;
+    CFreeCamera& operator=(const CFreeCamera&) = delete;
 
     void update(float delta) override;
 
@@ -59,3 +59,6 @@ private:
 
     glm::vec2 m_near_far;
 };
+
+
+using TFreeCameraPtr = std::shared_ptr<CFreeCamera>;

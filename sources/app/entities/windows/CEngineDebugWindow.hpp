@@ -1,18 +1,16 @@
 #pragma once
 
 #include "IWindow.hpp"
-
-
-class CCamera;
+#include "app/scene/CFreeCamera.hpp"
 
 class CEngineDebugWindow : public IWindow
 {
 public:
-    CEngineDebugWindow(const CCamera& camera);
+    CEngineDebugWindow(const TFreeCameraPtr& camera);
     ~CEngineDebugWindow();
 
     void draw() override;
 
 private:
-    const CCamera& mCamera;
+    TFreeCameraPtr mCamera;
 };

@@ -2,7 +2,7 @@
 
 #include <glm/mat4x4.hpp>
 #include <glm/vec3.hpp>
-
+#include <memory>
 
 class ICamera
 {
@@ -23,3 +23,5 @@ public:
     virtual void set_fov(const float fov) = 0;
     virtual float get_fov() = 0;
 };
+
+using TCameraPtr = std::shared_ptr<ICamera>;
