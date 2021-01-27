@@ -2,6 +2,7 @@
 #include "app/components/CEditableComponent.hpp"
 #include "app/components/CParticleSystemComponent.hpp"
 #include "app/components/CTransform3DComponent.hpp"
+#include "app/components/CCameraComponent.hpp"
 
 #include "CEntityManagerWindow.hpp"
 #include "app/auxiliary/imgui.hpp"
@@ -147,6 +148,34 @@ void CEntityManagerWindow::draw()
                 auto angle = component.m_particle_emitter->get_max_deviation_angle();
                 ImGui::SliderAngle("Deviation angle", &angle, -180.f, 180.f);
                 component.m_particle_emitter->setMaxDeviationAngle(angle);
+            }
+        }
+    }
+
+    if (m_entity_manager.hasComponent<CCameraComponent>(entity))
+    {
+        auto title = fmt::format("Camera ({})", static_cast<size_t>(entity));
+        if (ImGui::CollapsingHeader(title.c_str()))
+        {
+            auto& component = m_entity_manager.getComponent<CCameraComponent>(entity);
+            auto camera = component.getCamera();
+
+            {
+                auto speed = camera->get_moving_speed();
+                ImGui::SliderFloat("Camera speed", &speed, 0.0f, 100.0f, "Speed = %.3f");
+                camera->set_moving_speed(speed);
+            }
+
+            {
+                auto fov = camera->get_fov();
+                ImGui::SliderFloat("Camera FoV", &fov, 0.0f, 179.9f, "FoV = %.3f");
+                camera->set_fov(fov);
+            }
+
+            {
+                auto nearAndFar = camera->get_near_far();
+                ImGui::SliderFloat2("Near / Far", &nearAndFar[0], 0.0001f, 10000.0f, "%.5f", 3.f);
+                camera->set_near_far(nearAndFar);
             }
         }
     }

@@ -15,6 +15,7 @@
 #include "components/CTransform3DComponent.hpp"
 #include "components/CWindowComponent.hpp"
 #include "components/MeshComponent.hpp"
+#include "components/CCameraComponent.hpp"
 
 #include "app/scene/Mesh.hpp"
 
@@ -287,6 +288,12 @@ void CEngine::prepare()
         o.isInCameraView = true;
     }
 
+
+    {
+        auto e = mEntityManager.createEntity();
+        mEntityManager.addComponent<CEditableComponent>(e, "Camera");
+        mEntityManager.addComponent<CCameraComponent>(e, m_camera);
+    }
 
     {
         auto e = mEntityManager.createEntity();
