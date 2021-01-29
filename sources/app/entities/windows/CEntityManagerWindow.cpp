@@ -65,7 +65,7 @@ void CEntityManagerWindow::draw()
             }
 
             {
-                auto scale = component.mScale;
+                auto& scale = component.mScale;
                 ImGui::InputFloat3("Scale", &scale[0]);
             }
 
