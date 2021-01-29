@@ -8,6 +8,7 @@
 
 #include "components/C3DModelComponent.hpp"
 #include "components/C3dObjectComponent.hpp"
+#include "components/CCameraComponent.hpp"
 #include "components/CEditableComponent.hpp"
 #include "components/CMeshObjectComponent.hpp"
 #include "components/CParticleSystemComponent.hpp"
@@ -15,7 +16,6 @@
 #include "components/CTransform3DComponent.hpp"
 #include "components/CWindowComponent.hpp"
 #include "components/MeshComponent.hpp"
-#include "components/CCameraComponent.hpp"
 
 #include "app/scene/Mesh.hpp"
 
@@ -347,21 +347,6 @@ void CEngine::prepare()
         p.m_particle_emitter = createEmitter();
 
         system->set_emitter(p.m_particle_emitter);
-    }
-
-    {
-        auto e = mEntityManager.createEntity();
-        mEntityManager.addComponent<CEditableComponent>(e, "Rock");
-
-        auto& m = mEntityManager.addComponent<MeshComponent>(e);
-        auto& t = mEntityManager.addComponent<CTransform3DComponent>(e);
-
-        t.mScale = glm::vec3(1);
-        t.mPosition = glm::vec3(0, 0, 0);
-        t.mOrientation = glm::quat(glm::vec3(0));
-
-
-        m.mMesh = resources::load_model("resources/models/rock/rock.obj");
     }
 }
 
