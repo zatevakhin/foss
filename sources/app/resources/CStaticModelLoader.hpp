@@ -10,6 +10,15 @@
 #include "app/scene/Mesh.hpp"
 #include "app/scene/PhongMaterial.hpp"
 
+
+enum class EImportQuality
+{
+    FAST,
+    HIGH,
+    MAX
+};
+
+
 class CStaticModelLoader : public IModelLoader
 {
 
@@ -17,11 +26,12 @@ private:
     std::unordered_map<unsigned, glm::mat4> mMeshTransforms;
     std::vector<TMeshPtr> mMeshes;
     std::vector<TPhongMaterialPtr> mMaterials;
-    const aiScene& mScene;
+    aiScene* mScene;
     const std::filesystem::path mModelDirectory;
+    EImportQuality mQuality;
 
 public:
-    CStaticModelLoader(const aiScene* scene, const std::filesystem::path& path);
+    CStaticModelLoader(const std::filesystem::path& path, EImportQuality quality);
 
     TModelPtr getModel() override;
 

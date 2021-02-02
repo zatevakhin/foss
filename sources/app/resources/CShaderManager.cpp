@@ -190,6 +190,8 @@ CShaderManager::getShaderByPath(const char* shaderName) const
 
 void CShaderManager::initialize()
 {
+    spdlog::debug("{}.{}", typeid(*this).name(), __FUNCTION__);
+
     for (const auto& e : getShaders(mShadersDirectory))
     {
         auto [programId, shaderIds] = getShaderByPath(e.c_str());

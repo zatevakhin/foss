@@ -2,23 +2,23 @@
 
 #include "app/auxiliary/imgui.hpp"
 #include "app/auxiliary/trace.hpp"
-#include "app/geometry/CCubeSphere.hpp"
 #include "app/input/CCameraListener.hpp"
 #include "app/input/CEngineListener.hpp"
 
 #include "components/C3dObjectComponent.hpp"
 #include "components/CCameraComponent.hpp"
 #include "components/CEditableComponent.hpp"
-#include "components/CMeshObjectComponent.hpp"
 #include "components/CModelComponent.hpp"
 #include "components/CParticleSystemComponent.hpp"
 #include "components/CSkyboxComponent.hpp"
 #include "components/CTransform3DComponent.hpp"
 #include "components/CWindowComponent.hpp"
 
+#include "app/scene/CCubeSphere.hpp"
 #include "app/scene/Mesh.hpp"
 
 #include "resources/CRegistry.hpp"
+#include "resources/CStaticModelLoader.hpp"
 #include "resources/resources.hpp"
 
 #include "entities/windows/CEngineDebugWindow.hpp"
@@ -129,7 +129,7 @@ void CEngine::initialize()
     // Textures
 
     // Engine settings
-    mSettings.mVersion = {0, 4};
+    mSettings.mVersion = {0, 5};
 
     mSettings.mBlend = false;
     mSettings.mCullFace = false;
@@ -206,9 +206,7 @@ void CEngine::prepare()
     srand(SDL_GetTicks());
 
     spdlog::debug("prepare: ");
-    // auto skyboxTexture = resources::get_texture("resources/skybox/purple-nebula/4096",
-    //                                             resources::ETextureType::CUBE_MAP_TEXTURE);
-    auto skyboxTexture = resources::get_texture("resources/skybox/green-nebula/4096",
+    auto skyboxTexture = resources::get_texture("resources/skybox/purple-nebula/4096",
                                                 resources::ETextureType::CUBE_MAP_TEXTURE);
 
     auto orange = resources::get_texture("resources/textures/orange.png",
@@ -240,7 +238,9 @@ void CEngine::prepare()
 
 
     {
-        auto model = resources::get_model("resources/models/cube/cube.obj", EModelType::STATIC);
+        auto loader = std::make_shared<CStaticModelLoader>("resources/models/cube/cube.obj",
+                                                           EImportQuality::MAX);
+        auto model = loader->getModel();
 
         auto e = mEntityManager.createEntity();
         mEntityManager.addComponent<CEditableComponent>(e, "Skybox");
@@ -252,7 +252,10 @@ void CEngine::prepare()
         auto e = mEntityManager.createEntity();
         mEntityManager.addComponent<CEditableComponent>(e, "Sphere");
 
-        auto& m = mEntityManager.addComponent<CMeshObjectComponent>(e);
+        CCubeSphere sphere(40);
+        auto model = sphere.getModel();
+
+        auto& m = mEntityManager.addComponent<CModelComponent>(e, model);
         auto& o = mEntityManager.addComponent<C3dObjectComponent>(e);
         auto& t = mEntityManager.addComponent<CTransform3DComponent>(e);
 
@@ -260,7 +263,6 @@ void CEngine::prepare()
         t.mPosition = glm::vec3(0.f, 0.f, -50.f);
         t.mOrientation = glm::quat(glm::vec3(90.f, 0.f, 0.f));
 
-        m.mMeshObject.reset(new CCubeSphere(40));
         o.isInCameraView = true;
     }
 
@@ -282,10 +284,11 @@ void CEngine::prepare()
 
         t.mScale = glm::vec3(1);
         t.mPosition = glm::vec3(10.f, 0.f, -20.f);
-        // t.mOrientation = glm::quat(glm::vec3(90.f, 0.f, 0.f));
+        t.mOrientation = glm::quat(glm::vec3(90.f, 0.f, 0.f));
 
-        // auto model = resources::get_model("resources/models/rock/rock.obj", EModelType::STATIC);
-        auto model = resources::get_model("trash/nanosuit/nanosuit.obj", EModelType::STATIC);
+        auto loader = std::make_shared<CStaticModelLoader>("resources/models/rock/rock.obj",
+                                                           EImportQuality::MAX);
+        auto model = loader->getModel();
         mEntityManager.addComponent<CModelComponent>(e, model);
     }
 

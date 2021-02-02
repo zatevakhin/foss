@@ -1,5 +1,6 @@
 #pragma once
 
+#include "IModelLoader.hpp"
 #include "app/scene/IModel.hpp"
 #include <filesystem>
 
@@ -7,11 +8,13 @@
 class CModelManager
 {
 public:
-    CModelManager();
-    ~CModelManager();
+    CModelManager() = default;
+    ~CModelManager() = default;
 
     CModelManager(const CModelManager&) = delete;
     CModelManager& operator=(const CModelManager&) = delete;
 
-    TModelPtr getModel(const std::filesystem::path path);
+    void initialize();
+
+    TModelPtr getModel();
 };

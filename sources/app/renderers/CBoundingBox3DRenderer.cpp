@@ -8,11 +8,6 @@ CBoundingBox3DRenderer::CBoundingBox3DRenderer()
 {
 }
 
-void CBoundingBox3DRenderer::draw(const CMeshObject& mesh)
-{
-    drawBoundingBox(mesh.getBoundingBox());
-}
-
 void CBoundingBox3DRenderer::draw(const TModelPtr model)
 {
     drawBoundingBox(model->getBoundingBox());

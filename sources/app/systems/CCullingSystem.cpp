@@ -1,7 +1,6 @@
 
 #include "CCullingSystem.hpp"
 #include "app/components/C3dObjectComponent.hpp"
-#include "app/components/CMeshObjectComponent.hpp"
 #include "app/components/CModelComponent.hpp"
 #include "app/components/CTransform3DComponent.hpp"
 #include <glm/gtc/matrix_access.hpp>
@@ -20,14 +19,6 @@ void CCullingSystem::update(double& delta)
     {
         auto [model, object, transform] = components;
         cullObjects(model.mModel->getBoundingBox(), object.isInCameraView, transform.toMat4());
-    }
-
-    for (auto [entity, components] :
-         mEntityManager
-             .getEntitySet<CMeshObjectComponent, C3dObjectComponent, CTransform3DComponent>())
-    {
-        auto [mesh, object, transform] = components;
-        cullObjects(mesh.mMeshObject->getBoundingBox(), object.isInCameraView, transform.toMat4());
     }
 }
 

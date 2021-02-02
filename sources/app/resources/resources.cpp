@@ -11,11 +11,6 @@
 #include <iostream>
 #include <sstream>
 
-#include <assimp/Importer.hpp>
-#include <assimp/postprocess.h>
-#include <assimp/scene.h>
-#include <assimp/types.h>
-
 
 namespace
 {
@@ -110,41 +105,6 @@ std::tuple<std::shared_ptr<SDL_Surface>, bool> get_image(const std::filesystem::
 {
     sdl::SdlImage image(path.c_str());
     return std::tuple(image.get(), image.has_alpha());
-}
-
-namespace
-{
-
-
-} // namespace
-
-TModelLoaderPtr createModelLoader(const aiScene* scene, const std::filesystem::path path,
-                                  EModelType type)
-{
-    switch (type)
-    {
-    case EModelType::STATIC:
-        return std::make_shared<CStaticModelLoader>(scene, path.parent_path());
-        break;
-    default:
-        return TModelLoaderPtr(0);
-    }
-}
-
-TModelPtr get_model(const std::filesystem::path path, EModelType type)
-{
-    Assimp::Importer importer;
-
-    const aiScene* scene = importer.ReadFile(path, aiProcessPreset_TargetRealtime_MaxQuality);
-
-    if (nullptr == scene)
-    {
-        spdlog::error(importer.GetErrorString());
-        return TModelPtr(0);
-    }
-
-    TModelLoaderPtr loader = createModelLoader(scene, path, type);
-    return loader->getModel();
 }
 
 } // namespace resources

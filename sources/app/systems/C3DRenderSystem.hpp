@@ -1,8 +1,6 @@
 #pragma once
 
 #include "app/renderers/CBoundingBox3DRenderer.hpp"
-#include "app/renderers/CMeshRenderer.hpp"
-#include "app/renderers/CParticleSystemRenderer.hpp"
 #include "app/scene/CCompleteFbo.hpp"
 #include "app/scene/ICamera.hpp"
 #include "app/textures/CTexture2D.hpp"
@@ -29,9 +27,7 @@ private:
     void renderInstanced(const glm::mat4& view, const glm::mat4& projection);
     void renderBoundingBoxes(const glm::mat4& view, const glm::mat4& projection);
 
-    CMeshRenderer mMeshRenderer;
     CBoundingBox3DRenderer mBBoxRenderer;
-    CParticleSystemRenderer mParticleSystemRenderer;
 
     ecs::EntityManager& mEntityManager;
     TShaderManagerPtr m_shader_manager;

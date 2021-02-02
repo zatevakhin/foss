@@ -4,6 +4,9 @@
 #include "app/scene/CStaticModel.hpp"
 #include "resources.hpp"
 
+#include <assimp/Importer.hpp>
+#include <assimp/postprocess.h>
+#include <unordered_map>
 
 namespace
 {
@@ -79,23 +82,48 @@ bool canBePhongShaded(unsigned shadingMode)
     }
 }
 
+
+unsigned int mapSceneQuality(EImportQuality quality)
+{
+    static const std::unordered_map<EImportQuality, unsigned int> qualityMap = {
+        {EImportQuality::FAST, aiProcessPreset_TargetRealtime_Fast},
+        {EImportQuality::HIGH, aiProcessPreset_TargetRealtime_Quality},
+        {EImportQuality::MAX, aiProcessPreset_TargetRealtime_MaxQuality},
+    };
+
+    return qualityMap.at(quality);
+}
+
 } // namespace
 
 
-CStaticModelLoader::CStaticModelLoader(const aiScene* scene, const std::filesystem::path& path)
-    : mScene(*scene)
+CStaticModelLoader::CStaticModelLoader(const std::filesystem::path& path, EImportQuality quality)
+    : mScene(nullptr)
     , mModelDirectory(path)
+    , mQuality(quality)
 {
 }
 
 TModelPtr CStaticModelLoader::getModel()
 {
-    visitNodeTree();
-    loadMaterials(); // should be before adding meshes
+    Assimp::Importer importer;
+    mScene = const_cast<aiScene*>(importer.ReadFile(mModelDirectory, mapSceneQuality(mQuality)));
 
-    for (auto i = 0U; i < mScene.mNumMeshes; ++i)
+    if (!mScene)
     {
-        add(*(mScene.mMeshes[i]));
+        spdlog::error(importer.GetErrorString());
+        spdlog::error("Scene not ready!");
+        return TModelPtr(0);
+    }
+
+    visitNodeTree();
+
+    // should be before adding meshes
+    loadMaterials();
+
+    for (auto i = 0U; i < mScene->mNumMeshes; ++i)
+    {
+        add(*(mScene->mMeshes[i]));
     }
 
     return std::make_shared<CStaticModel>(mMeshes);
@@ -105,12 +133,12 @@ void CStaticModelLoader::loadMaterials()
 {
     const auto DEFAULT_SHININESS = 30.f;
 
-    for (auto i = 0U; i < mScene.mNumMaterials; ++i)
+    for (auto i = 0U; i < mScene->mNumMaterials; ++i)
     {
         auto& mat = mMaterials.emplace_back(new SMaterialPhong());
 
-        const auto& material = *(mScene.mMaterials[i]);
-        CMaterialReader reader(material, mModelDirectory);
+        const auto& material = *(mScene->mMaterials[i]);
+        CMaterialReader reader(material, mModelDirectory.parent_path());
 
         const unsigned int shadingMode = reader.getUnsigned(AI_MATKEY_SHADING_MODEL);
         if (!canBePhongShaded(shadingMode))
@@ -148,7 +176,7 @@ void CStaticModelLoader::loadMaterials()
 
 void CStaticModelLoader::visitNodeTree()
 {
-    visitNode(*(mScene.mRootNode), glm::mat4(1));
+    visitNode(*(mScene->mRootNode), glm::mat4(1));
 }
 
 void CStaticModelLoader::visitNode(const aiNode& node, const glm::mat4& parentTransform)

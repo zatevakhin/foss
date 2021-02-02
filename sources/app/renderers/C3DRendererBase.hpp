@@ -1,6 +1,5 @@
 #pragma once
 
-#include "app/geometry/CMeshObject.hpp"
 #include "app/scene/IModel.hpp"
 #include "app/shading/IShaderProgram.hpp"
 #include <glm/mat4x4.hpp>
@@ -15,13 +14,8 @@ public:
 
     virtual void setProgram(TProgramWeakPtr program);
     virtual void use();
-    virtual void draw(const CMeshObject& mesh)
-    {
-    }
 
-    virtual void draw(const TModelPtr model)
-    {
-    }
+    virtual void draw(const TModelPtr model) = 0;
 
 protected:
     bool mIsPicked;

@@ -15,7 +15,8 @@ void CFboDebugWindow::draw()
         ImVec2 wsize = ImGui::GetWindowSize();
         ImGui::Image(reinterpret_cast<void*>(fboRgb->id()), {wsize.x, wsize.y}, ImVec2(0, 1),
                      ImVec2(1, 0));
-    } else
+    }
+    else
     {
         ImGui::Text("Texture not set!");
     }
@@ -29,7 +30,8 @@ void CFboDebugWindow::draw()
         ImVec2 wsize = ImGui::GetWindowSize();
         ImGui::Image(reinterpret_cast<void*>(fboDepth->id()), {wsize.x, wsize.y}, ImVec2(0, 1),
                      ImVec2(1, 0));
-    } else
+    }
+    else
     {
         ImGui::Text("Texture not set!");
     }

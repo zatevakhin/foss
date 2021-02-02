@@ -62,8 +62,6 @@ void Mesh::applyMaterial(TProgramSharedPtr program) const
     program->uniform("material.colorSpecular") = mMaterial->mSpecularColor;
     program->uniform("material.colorEmissive") = mMaterial->mEmissiveColor;
 
-    auto id = 0;
-
     if (mMaterial->mEmissiveTexture)
     {
         glActiveTexture(GL_TEXTURE2);
@@ -88,10 +86,7 @@ void Mesh::applyMaterial(TProgramSharedPtr program) const
 
 void Mesh::draw(TProgramSharedPtr program)
 {
-    if (mMaterial)
-    {
-        applyMaterial(program);
-    }
+    applyMaterial(program);
 
     m_vao.bind();
     glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, 0);

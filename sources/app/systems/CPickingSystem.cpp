@@ -2,7 +2,6 @@
 #include "CPickingSystem.hpp"
 #include "app/auxiliary/trace.hpp"
 #include "app/components/C3dObjectComponent.hpp"
-#include "app/components/CMeshObjectComponent.hpp"
 #include "app/components/CModelComponent.hpp"
 #include "app/components/CTransform3DComponent.hpp"
 #include "app/resources/CRegistry.hpp"
@@ -123,20 +122,6 @@ void CPickingSystem::update(double& delta)
     ScreenPosToWorldRay(screen_w / 2, screen_h / 2, screen_w, screen_h, view, projection,
                         ray_origin, ray_direction);
 
-    for (auto [entity, components] :
-         mEntityManager
-             .getEntitySet<CMeshObjectComponent, C3dObjectComponent, CTransform3DComponent>())
-    {
-        auto [mesh, object, transform] = components;
-
-        if (object.isInCameraView)
-        {
-            const auto& bounds = mesh.mMeshObject->getBoundingBox().getBounds<glm::vec3>();
-
-            object.isPicked = testRayIntersect(ray_origin, ray_direction, bounds.mMin, bounds.mMax,
-                                               transform.toMat4(), object.intersection);
-        }
-    }
 
     for (auto [entity, components] :
          mEntityManager.getEntitySet<CModelComponent, C3dObjectComponent, CTransform3DComponent>())

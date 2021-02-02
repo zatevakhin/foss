@@ -7,12 +7,10 @@
 
 #include "app/components/C3dObjectComponent.hpp"
 #include "app/components/CInstanced3dObjectComponent.hpp"
-#include "app/components/CMeshObjectComponent.hpp"
 #include "app/components/CModelComponent.hpp"
 #include "app/components/CParticleSystemComponent.hpp"
 #include "app/components/CSkyboxComponent.hpp"
 #include "app/components/CTransform3DComponent.hpp"
-#include "app/components/MeshComponent.hpp"
 
 #include "app/geometry/CBoundingBox.hpp"
 #include "app/renderers/CBoundingBox3DRenderer.hpp"
@@ -35,9 +33,7 @@ C3DRenderSystem::C3DRenderSystem(ecs::EntityManager& entityManager,
                                  TShaderManagerPtr shader_manager)
     : mEntityManager(entityManager)
     , m_shader_manager(shader_manager)
-    , mMeshRenderer()
     , mBBoxRenderer()
-    , mParticleSystemRenderer()
     , mFbo({1920, 1080})
     , mScreenQuad()
 {
@@ -59,7 +55,6 @@ C3DRenderSystem::C3DRenderSystem(ecs::EntityManager& entityManager,
     q_vbo.unbind();
     mScreenQuad.unbind();
 
-    mMeshRenderer.setProgram(m_shader_manager->getByName("m3d"));
     mBBoxRenderer.setProgram(m_shader_manager->getByName("m3d"));
 }
 
@@ -68,10 +63,7 @@ void C3DRenderSystem::prepare(const ICamera* camera)
     auto view = camera->get_view();
     auto projection = camera->get_projection();
 
-    mMeshRenderer.setViewMatrix(view);
     mBBoxRenderer.setViewMatrix(view);
-
-    mMeshRenderer.setProjectionMatrix(projection);
     mBBoxRenderer.setProjectionMatrix(projection);
 }
 
@@ -161,20 +153,6 @@ void C3DRenderSystem::renderEnvironment(const glm::mat4& view, const glm::mat4& 
 
 void C3DRenderSystem::renderForeground(const glm::mat4& view, const glm::mat4& projection)
 {
-    mMeshRenderer.use();
-    for (auto [entity, components] :
-         mEntityManager
-             .getEntitySet<CMeshObjectComponent, C3dObjectComponent, CTransform3DComponent>())
-    {
-        auto [mesh, drawable, transform] = components;
-
-        if (drawable.isInCameraView)
-        {
-            mMeshRenderer.setTransformMatrix(transform.toMat4());
-            mMeshRenderer.draw(*mesh.mMeshObject);
-        }
-    }
-
     auto prog = m_shader_manager->getByName("mesh").lock();
 
     prog->use();
@@ -203,20 +181,6 @@ void C3DRenderSystem::renderBoundingBoxes(const glm::mat4& view, const glm::mat4
             mBBoxRenderer.setTransformMatrix(transform.toMat4());
             mBBoxRenderer.setIsPicked(object.isPicked);
             mBBoxRenderer.draw(model.mModel);
-        }
-    }
-
-    for (auto [entity, components] :
-         mEntityManager
-             .getEntitySet<CMeshObjectComponent, C3dObjectComponent, CTransform3DComponent>())
-    {
-        auto [model, object, transform] = components;
-
-        if (object.isInCameraView)
-        {
-            mBBoxRenderer.setTransformMatrix(transform.toMat4());
-            mBBoxRenderer.setIsPicked(object.isPicked);
-            mBBoxRenderer.draw(*model.mMeshObject);
         }
     }
 }

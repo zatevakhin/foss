@@ -20,7 +20,6 @@ target_link_libraries(foss.app
         app_renderers
         app_window
         app_entities_windows
-        app_entities_3d_objects
         app_resources
         app_shading
         app_geometry
