@@ -11,7 +11,7 @@ uniform mat4 view;
 
 
 void main() {
-    fragTextureUV = 0.5 * tex_coord + vec2(0.5);
+    fragTextureUV = tex_coord;
     gl_Position = projection * (view * vec4(vertex, 1.0));
 }
 

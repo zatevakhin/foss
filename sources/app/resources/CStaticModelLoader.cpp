@@ -1,306 +1,229 @@
 
 #include "CStaticModelLoader.hpp"
-#include "app/auxiliary/trace.hpp"
-#include "app/geometry/auxiliary.hpp"
-#include "app/textures/ITexture.hpp"
-#include "auxiliary.hpp"
 
-#include <assimp/Importer.hpp>
-#include <assimp/postprocess.h>
-#include <assimp/scene.h>
-#include <assimp/types.h>
+#include "app/scene/CStaticModel.hpp"
+#include "resources.hpp"
 
-#include <filesystem>
-#include <unordered_map>
 
 namespace
 {
-template <class T>
-size_t getBytesCount(const std::vector<T>& data)
-{
-    return sizeof(T) * data.size();
-}
 
-template <class T>
-T* addItemsToWrite(std::vector<T>& data, size_t count)
-{
-    const size_t oldSize = data.size();
-    data.resize(oldSize + count);
-
-    return (data.data() + oldSize);
-}
-
-geometry::EPrimitiveType mapPrimitiveType(unsigned int aiPrimitiveTypeValue)
-{
-    switch (aiPrimitiveTypeValue)
-    {
-    case aiPrimitiveType_POINT:
-        return geometry::EPrimitiveType::ePoints;
-    case aiPrimitiveType_LINE:
-        return geometry::EPrimitiveType::eLines;
-    case aiPrimitiveType_TRIANGLE:
-        return geometry::EPrimitiveType::eTriangles;
-    default:
-        break;
-    }
-    throw std::runtime_error("Unsupported assimp primitive type " +
-                             std::to_string(aiPrimitiveTypeValue));
-}
-
-unsigned int getPrimitiveVertexCount(geometry::EPrimitiveType type)
-{
-    switch (type)
-    {
-    case geometry::EPrimitiveType::ePoints:
-        return 1U;
-    case geometry::EPrimitiveType::eLines:
-        return 2U;
-    case geometry::EPrimitiveType::eTriangles:
-        return 3U;
-    default:
-        break;
-    }
-    throw std::runtime_error("Unexpected internal primitive type " +
-                             std::to_string(static_cast<unsigned>(type)));
-}
-
-
-class CMeshAccumulator
+class CMaterialReader
 {
 public:
-    static const size_t RESERVED_SIZE = (4 * 1024);
-
-    CMeshAccumulator()
+    CMaterialReader(const aiMaterial& srcMat, const std::filesystem::path& resourceDir)
+        : mSrcMat(srcMat)
+        , mResourceDir(resourceDir)
     {
-        mGeometry.mIndices.reserve(RESERVED_SIZE);
-        mGeometry.mVerticies.reserve(RESERVED_SIZE);
     }
 
-    void collectBoundingBox(const aiScene& scene)
+    /// returns normalized material color or default value
+    glm::vec4 getColor(const char* key, unsigned int type, unsigned int index)
     {
-        mGeometry.mBBox = getNodeBBox(scene, *scene.mRootNode);
-    }
-
-    void visitNodeTree(const aiScene& scene)
-    {
-        visitNode(*scene.mRootNode, glm::mat4(1));
-    }
-
-    void add(const aiMesh& mesh)
-    {
-        const auto meshNo = unsigned(mMeshes.size());
-        CStaticMesh3D mesh3d;
-        mesh3d.mMaterialIndex = mesh.mMaterialIndex;
-
-        try
+        aiColor3D color(0, 0, 0);
+        if (AI_SUCCESS == mSrcMat.Get(key, type, index, color))
         {
-            mesh3d.mLocal = mMeshTransforms.at(meshNo);
-        } catch (const std::out_of_range&)
-        {
-            throw std::out_of_range("Submesh #" + std::to_string(meshNo) + " has no transform");
+            return glm::clamp(glm::vec4(color.r, color.g, color.b, 1), glm::vec4(0), glm::vec4(1));
         }
-
-        setupBytesLayout(mesh, mesh3d.mLayout);
-        copyVertices(mesh, mesh3d.mLayout);
-        copyIndices(mesh, mesh3d.mLayout);
-
-        mMeshes.push_back(mesh3d);
+        return glm::vec4(0);
     }
 
-    std::vector<CStaticMesh3D>&& takeMeshes()
+    float getFloat(const char* key, unsigned int type, unsigned int index)
     {
-        return std::move(mMeshes);
+        float value = 0;
+        if (AI_SUCCESS == mSrcMat.Get(key, type, index, value))
+        {
+            return value;
+        }
+        return 0.f;
     }
 
-    geometry::CGeometrySharedPtr makeGeometry() const
+    unsigned int getUnsigned(const char* key, unsigned int type, unsigned int index)
     {
-        auto geometry = std::make_shared<geometry::CGeometry>();
-        geometry->copy(mGeometry);
-        return geometry;
+        auto value = 0U;
+        if (AI_SUCCESS == mSrcMat.Get(key, type, index, value))
+        {
+            return value;
+        }
+        return 0;
+    }
+
+    TTextureSharedPtr getTexture(const char* key, unsigned int type, unsigned int index)
+    {
+        aiString filename;
+        if (AI_SUCCESS == mSrcMat.Get(key, type, index, filename))
+        {
+            const auto abspath = mResourceDir / filename.data;
+            return resources::get_texture(abspath.c_str(), resources::ETextureType::TEXTURE_2D);
+        }
+        return nullptr;
     }
 
 private:
-    static geometry::CBoundingBox getNodeBBox(const aiScene& scene, const aiNode& node)
-    {
-        glm::vec3 lowerBound(0);
-        glm::vec3 upperBound(0);
-
-        for (unsigned mi = 0; mi < node.mNumMeshes; ++mi)
-        {
-            const unsigned indexOnScene = node.mMeshes[mi];
-            const aiMesh* mesh = scene.mMeshes[indexOnScene];
-            for (unsigned vi = 0; vi < mesh->mNumVertices; ++vi)
-            {
-                const aiVector3D aiVertex = mesh->mVertices[vi];
-                const glm::vec3 vertex = glm::vec3(aiVertex.x, aiVertex.y, aiVertex.z);
-                lowerBound = glm::min(lowerBound, vertex);
-                upperBound = glm::max(upperBound, vertex);
-            }
-        }
-
-        geometry::CBoundingBox box(lowerBound, upperBound);
-
-        for (unsigned ci = 0; ci < node.mNumChildren; ++ci)
-        {
-            const aiNode* pChildNode = node.mChildren[ci];
-            geometry::CBoundingBox childBox = getNodeBBox(scene, *pChildNode);
-            box.unite(childBox);
-        }
-
-        return box;
-    }
-
-    void setupBytesLayout(const aiMesh& mesh, geometry::SGeometryLayout& layout)
-    {
-        const geometry::EPrimitiveType primitive = mapPrimitiveType(mesh.mPrimitiveTypes);
-        const unsigned vertexPerPrimitive = getPrimitiveVertexCount(primitive);
-
-        layout.mPrimitive = primitive;
-        layout.mIndexCount = size_t(vertexPerPrimitive * mesh.mNumFaces);
-        layout.mVertexCount = size_t(mesh.mNumVertices);
-        layout.mBaseVertexOffset = getBytesCount(mGeometry.mVerticies);
-        layout.mBaseIndexOffset = getBytesCount(mGeometry.mIndices);
-
-        layout.mPosition3D = layout.mVertexSize;
-        layout.mVertexSize += sizeof(aiVector3D);
-
-        layout.mNormal = layout.mVertexSize;
-        layout.mVertexSize += sizeof(aiVector3D);
-
-        if (mesh.HasTextureCoords(0))
-        {
-            layout.mTexCoord2D = layout.mVertexSize;
-            layout.mVertexSize += sizeof(aiVector2D);
-        }
-
-        if (mesh.HasTangentsAndBitangents())
-        {
-            layout.mTangent = layout.mVertexSize;
-            layout.mVertexSize += sizeof(aiVector3D);
-            layout.mBitangent = layout.mVertexSize;
-            layout.mVertexSize += sizeof(aiVector3D);
-        }
-    }
-
-    void copyVertices(const aiMesh& mesh, geometry::SGeometryLayout& layout)
-    {
-        const size_t dataSize = layout.mVertexCount * layout.mVertexSize;
-        uint8_t* dest = addItemsToWrite(mGeometry.mVerticies, dataSize);
-        for (unsigned i = 0, n = mesh.mNumVertices; i < n; i += 1)
-        {
-            std::memcpy(dest + layout.mPosition3D, &mesh.mVertices[i].x, sizeof(aiVector3D));
-            std::memcpy(dest + layout.mNormal, &mesh.mNormals[i].x, sizeof(aiVector3D));
-
-            if (layout.mTexCoord2D != geometry::SGeometryLayout::UNSET)
-            {
-                std::memcpy(dest + layout.mTexCoord2D, &mesh.mTextureCoords[0][i].x,
-                            sizeof(aiVector2D));
-            }
-
-            if (layout.mTangent != geometry::SGeometryLayout::UNSET)
-            {
-                std::memcpy(dest + layout.mTangent, &mesh.mTangents[i].x, sizeof(aiVector3D));
-            }
-
-            if (layout.mBitangent != geometry::SGeometryLayout::UNSET)
-            {
-                std::memcpy(dest + layout.mBitangent, &mesh.mBitangents[i].x, sizeof(aiVector3D));
-            }
-
-            dest += layout.mVertexSize;
-        }
-    }
-
-    void copyIndices(const aiMesh& mesh, geometry::SGeometryLayout& layout)
-    {
-        const unsigned vertexPerPrimitive = getPrimitiveVertexCount(layout.mPrimitive);
-        const size_t dataSize = vertexPerPrimitive * mesh.mNumFaces;
-        uint32_t* dest = addItemsToWrite(mGeometry.mIndices, dataSize);
-
-        for (unsigned i = 0, n = mesh.mNumFaces; i < n; i += 1)
-        {
-            unsigned* indicies = mesh.mFaces[i].mIndices;
-            std::memcpy(dest, indicies, sizeof(unsigned) * vertexPerPrimitive);
-            dest += vertexPerPrimitive;
-        }
-    }
-
-    void visitNode(const aiNode& node, const glm::mat4& parentTransform)
-    {
-        const glm::mat4 globalMat4 =
-            parentTransform * glm::transpose(glm::make_mat4(&node.mTransformation.a1));
-
-        for (auto mi = 0U; mi < node.mNumMeshes; ++mi)
-        {
-            const unsigned int meshNo = node.mMeshes[mi];
-            if (mMeshTransforms.count(meshNo))
-            {
-                throw std::runtime_error("Mesh #" + std::to_string(meshNo) +
-                                         " used twice in node tree");
-            }
-            mMeshTransforms[meshNo] = globalMat4;
-        }
-        for (auto ci = 0U; ci < node.mNumChildren; ++ci)
-        {
-            visitNode(*node.mChildren[ci], globalMat4);
-        }
-    }
-
-    std::vector<CStaticMesh3D> mMeshes;
-    geometry::SGeometryData<uint8_t, uint32_t> mGeometry;
-    std::unordered_map<unsigned, glm::mat4> mMeshTransforms;
+    const aiMaterial& mSrcMat;
+    std::filesystem::path mResourceDir;
 };
+
+bool canBePhongShaded(unsigned shadingMode)
+{
+    switch (shadingMode)
+    {
+    case 0:
+    case aiShadingMode_Phong:
+    case aiShadingMode_Blinn:
+    case aiShadingMode_Gouraud:
+    case aiShadingMode_Flat:
+        return true;
+    default:
+        return false;
+    }
+}
+
 } // namespace
 
-CStaticModelLoader::CStaticModelLoader()
+
+CStaticModelLoader::CStaticModelLoader(const aiScene* scene, const std::filesystem::path& path)
+    : mScene(*scene)
+    , mModelDirectory(path)
 {
 }
 
-SStaticModel3DPtr CStaticModelLoader::load(const std::filesystem::path& path)
+TModelPtr CStaticModelLoader::getModel()
 {
-    Assimp::Importer importer;
-    const aiScene& scene = openScene(path, importer);
+    visitNodeTree();
+    loadMaterials(); // should be before adding meshes
 
-    CMeshAccumulator accumulator;
-    accumulator.collectBoundingBox(scene);
-    accumulator.visitNodeTree(scene);
-
-    for (auto mi = 0U; mi < scene.mNumMeshes; ++mi)
+    for (auto i = 0U; i < mScene.mNumMeshes; ++i)
     {
-        accumulator.add(*(scene.mMeshes[mi]));
+        add(*(mScene.mMeshes[i]));
     }
 
-    auto model = std::make_shared<SStaticModel3D>();
-    model->mMeshes = accumulator.takeMeshes();
-    model->mGeometry = accumulator.makeGeometry();
-
-    resources::loadMaterials(path.parent_path(), scene, model->mMaterials);
-
-    return model;
+    return std::make_shared<CStaticModel>(mMeshes);
 }
 
-const aiScene& CStaticModelLoader::openScene(const std::filesystem::path& path,
-                                             Assimp::Importer& importer, SceneImportQuality quality)
+void CStaticModelLoader::loadMaterials()
 {
-    auto importFlags = 0U;
-    switch (quality)
+    const auto DEFAULT_SHININESS = 30.f;
+
+    for (auto i = 0U; i < mScene.mNumMaterials; ++i)
     {
-    case SceneImportQuality::Fast:
-        importFlags = aiProcessPreset_TargetRealtime_Fast;
-        break;
-    case SceneImportQuality::HighQuality:
-        importFlags = aiProcessPreset_TargetRealtime_Quality;
-        break;
-    case SceneImportQuality::MaxQuality:
-        importFlags = aiProcessPreset_TargetRealtime_MaxQuality;
-        break;
+        auto& mat = mMaterials.emplace_back(new SMaterialPhong());
+
+        const auto& material = *(mScene.mMaterials[i]);
+        CMaterialReader reader(material, mModelDirectory);
+
+        const unsigned int shadingMode = reader.getUnsigned(AI_MATKEY_SHADING_MODEL);
+        if (!canBePhongShaded(shadingMode))
+        {
+            spdlog::error("Given shading model was not implemented");
+        }
+
+        mat->mShininess = reader.getFloat(AI_MATKEY_SHININESS);
+
+        if (mat->mShininess < 1.f)
+        {
+            mat->mShininess = DEFAULT_SHININESS;
+        }
+
+        mat->mDiffuseTexture = reader.getTexture(AI_MATKEY_TEXTURE_DIFFUSE(0));
+        if (mat->mDiffuseTexture)
+        {
+            mat->mDiffuseColor = reader.getColor(AI_MATKEY_COLOR_DIFFUSE);
+        }
+
+        mat->mSpecularTexture = reader.getTexture(AI_MATKEY_TEXTURE_SPECULAR(0));
+        if (mat->mDiffuseTexture)
+        {
+            mat->mSpecularColor = reader.getColor(AI_MATKEY_COLOR_SPECULAR);
+        }
+
+        mat->mEmissiveTexture = reader.getTexture(AI_MATKEY_TEXTURE_EMISSIVE(0));
+        if (mat->mDiffuseTexture)
+        {
+            mat->mSpecularColor = reader.getColor(AI_MATKEY_COLOR_EMISSIVE);
+        }
+    }
+}
+
+
+void CStaticModelLoader::visitNodeTree()
+{
+    visitNode(*(mScene.mRootNode), glm::mat4(1));
+}
+
+void CStaticModelLoader::visitNode(const aiNode& node, const glm::mat4& parentTransform)
+{
+    auto nodeTransform = glm::make_mat4(&node.mTransformation.a1);
+    const glm::mat4 globalMat4 = parentTransform * glm::transpose(nodeTransform);
+
+    for (auto mi = 0U; mi < node.mNumMeshes; ++mi)
+    {
+        const unsigned int meshNo = node.mMeshes[mi];
+
+        if (mMeshTransforms.count(meshNo))
+        {
+            spdlog::error("Mesh #{} used twice in node tree", meshNo);
+        }
+
+        mMeshTransforms[meshNo] = globalMat4;
     }
 
-    const aiScene* scene = importer.ReadFile(path.generic_string().c_str(), importFlags);
-    if (scene == nullptr)
+    for (auto ci = 0U; ci < node.mNumChildren; ++ci)
     {
-        throw std::runtime_error(importer.GetErrorString());
+        visitNode(*node.mChildren[ci], globalMat4);
     }
+}
 
-    return *scene;
+void CStaticModelLoader::add(const aiMesh& mesh)
+{
+    TVerticeList vertices;
+    TIndiceList indices;
+
+    copyVertices(mesh, vertices);
+    copyIndices(mesh, indices);
+
+    mMeshes.emplace_back(new Mesh(vertices, indices, mMaterials[mesh.mMaterialIndex]));
+}
+
+void CStaticModelLoader::copyVertices(const aiMesh& mesh, TVerticeList& vertices) const
+{
+    auto numVertices = mesh.mNumVertices;
+    vertices.reserve(numVertices);
+
+    auto verticeList = mesh.mVertices;
+    auto normalList = mesh.mNormals;
+
+
+    auto meshHasTextureCoords = mesh.HasTextureCoords(0);
+    auto texCoordList = mesh.mTextureCoords[0];
+
+    // auto meshHasTangentsAndBitangents = mesh.HasTangentsAndBitangents();
+    // auto tangentList = mesh.mTangents;
+    // auto bitangentList = mesh.mBitangents;
+
+    for (unsigned int i = 0; i < numVertices; ++i)
+    {
+        const auto& position = glm::make_vec3(&verticeList[i].x);
+        const auto& normal = glm::make_vec3(&normalList[i].x);
+        const auto& tex_coord =
+            meshHasTextureCoords ? glm::make_vec2(&texCoordList[i].x) : glm::vec2(0);
+
+        vertices.emplace_back(position, normal, tex_coord);
+    }
+}
+
+void CStaticModelLoader::copyIndices(const aiMesh& mesh, TIndiceList& indices) const
+{
+    auto numFaces = mesh.mNumFaces;
+    auto facesList = mesh.mFaces;
+
+    for (unsigned int i = 0; i < numFaces; ++i)
+    {
+        auto numIndices = facesList[i].mNumIndices;
+
+        for (unsigned int j = 0; j < numIndices; ++j)
+        {
+            indices.push_back(facesList[i].mIndices[j]);
+        }
+    }
 }

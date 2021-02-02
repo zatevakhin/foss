@@ -1,6 +1,6 @@
 #pragma once
 
-#include "app/components/C3dObjectComponent.hpp"
+#include "app/geometry/CBoundingBox.hpp"
 #include "ecs/EntityManager.hpp"
 
 #include <glm/glm.hpp>
@@ -23,6 +23,10 @@ public:
     }
 
     void update(double& delta);
+
+private:
+    void cullObjects(const geometry::CBoundingBox& aabb, bool& isInCameraView,
+                     const glm::mat4 transform);
 
 private:
     glm::mat4 mProjection = glm::mat4(1);

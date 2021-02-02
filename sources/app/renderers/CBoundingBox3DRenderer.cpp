@@ -1,6 +1,5 @@
 
 #include "app/renderers/CBoundingBox3DRenderer.hpp"
-#include "app/scene/SStaticModel3D.hpp"
 #include "app/shading/CUniform.hpp"
 
 
@@ -9,15 +8,15 @@ CBoundingBox3DRenderer::CBoundingBox3DRenderer()
 {
 }
 
-void CBoundingBox3DRenderer::draw(SStaticModel3D& model)
-{
-    drawBoundingBox(model.mGeometry->getBoundingBox());
-}
-
 void CBoundingBox3DRenderer::draw(const CMeshObject& mesh)
 {
     drawBoundingBox(mesh.getBoundingBox());
 }
+
+void CBoundingBox3DRenderer::draw(const TModelPtr model)
+{
+    drawBoundingBox(model->getBoundingBox());
+};
 
 void CBoundingBox3DRenderer::drawBoundingBox(const geometry::CBoundingBox& aabb)
 {

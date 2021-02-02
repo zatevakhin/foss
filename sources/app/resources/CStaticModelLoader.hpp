@@ -1,26 +1,39 @@
 #pragma once
 
-#include "app/scene/SStaticModel3D.hpp"
-#include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <filesystem>
+#include <glm/matrix.hpp>
+#include <unordered_map>
+#include <vector>
 
-enum class SceneImportQuality
+#include "IModelLoader.hpp"
+#include "app/scene/Mesh.hpp"
+#include "app/scene/PhongMaterial.hpp"
+
+class CStaticModelLoader : public IModelLoader
 {
-    Fast,
-    HighQuality,
-    MaxQuality,
-};
-
-
-class CStaticModelLoader
-{
-public:
-    explicit CStaticModelLoader();
-
-    SStaticModel3DPtr load(const std::filesystem::path& path);
 
 private:
-    static const aiScene& openScene(const std::filesystem::path& path, Assimp::Importer& importer,
-                                    SceneImportQuality quality = SceneImportQuality::HighQuality);
+    std::unordered_map<unsigned, glm::mat4> mMeshTransforms;
+    std::vector<TMeshPtr> mMeshes;
+    std::vector<TPhongMaterialPtr> mMaterials;
+    const aiScene& mScene;
+    const std::filesystem::path mModelDirectory;
+
+public:
+    CStaticModelLoader(const aiScene* scene, const std::filesystem::path& path);
+
+    TModelPtr getModel() override;
+
+private:
+    void loadMaterials();
+
+    void visitNodeTree();
+
+    void visitNode(const aiNode& node, const glm::mat4& parentTransform);
+
+    void add(const aiMesh& mesh);
+
+    void copyIndices(const aiMesh& mesh, TIndiceList& indices) const;
+    void copyVertices(const aiMesh& mesh, TVerticeList& vertices) const;
 };

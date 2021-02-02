@@ -13,5 +13,5 @@ public:
     CModelManager(const CModelManager&) = delete;
     CModelManager& operator=(const CModelManager&) = delete;
 
-    TModelPtr get_model(const std::filesystem::path path);
+    TModelPtr getModel(const std::filesystem::path path);
 };

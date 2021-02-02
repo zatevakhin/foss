@@ -3,7 +3,7 @@
 #include "app/textures/CTexture2D.hpp"
 #include "auxiliary/sdl.hpp"
 
-#include "app/scene/IMesh.hpp"
+#include "app/scene/IModel.hpp"
 
 #include <filesystem>
 #include <fstream>
@@ -27,7 +27,7 @@ TTextureSharedPtr get_texture(const std::filesystem::path path, ETextureType typ
 std::stringstream get_content_from(const std::filesystem::path path);
 
 std::tuple<std::shared_ptr<SDL_Surface>, bool> get_image(const std::filesystem::path path);
-TMeshPtr load_model(const std::filesystem::path model);
+TModelPtr get_model(const std::filesystem::path model, EModelType type);
 
 
 } // namespace resources

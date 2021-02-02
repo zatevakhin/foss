@@ -6,21 +6,19 @@
 #include "app/input/CCameraListener.hpp"
 #include "app/input/CEngineListener.hpp"
 
-#include "components/C3DModelComponent.hpp"
 #include "components/C3dObjectComponent.hpp"
 #include "components/CCameraComponent.hpp"
 #include "components/CEditableComponent.hpp"
 #include "components/CMeshObjectComponent.hpp"
+#include "components/CModelComponent.hpp"
 #include "components/CParticleSystemComponent.hpp"
 #include "components/CSkyboxComponent.hpp"
 #include "components/CTransform3DComponent.hpp"
 #include "components/CWindowComponent.hpp"
-#include "components/MeshComponent.hpp"
 
 #include "app/scene/Mesh.hpp"
 
 #include "resources/CRegistry.hpp"
-#include "resources/CStaticModelLoader.hpp"
 #include "resources/resources.hpp"
 
 #include "entities/windows/CEngineDebugWindow.hpp"
@@ -241,36 +239,14 @@ void CEngine::prepare()
     mParticleUpdateSystem.reset(new CParticleUpdateSystem(mEntityManager));
 
 
-    CStaticModelLoader modelLoader;
-    auto rockModel = modelLoader.load("resources/models/rock/rock.obj");
-    auto cubeModel = modelLoader.load("resources/models/cube/cube.obj");
-
     {
+        auto model = resources::get_model("resources/models/cube/cube.obj", EModelType::STATIC);
+
         auto e = mEntityManager.createEntity();
         mEntityManager.addComponent<CEditableComponent>(e, "Skybox");
-
         mEntityManager.addComponent<CSkyboxComponent>(e);
-        auto& m = mEntityManager.addComponent<C3DModelComponent>(e);
-        m.mModel = cubeModel;
+        mEntityManager.addComponent<CModelComponent>(e, model);
     }
-
-
-    {
-        auto e = mEntityManager.createEntity();
-        mEntityManager.addComponent<CEditableComponent>(e, "Rock");
-
-        auto& m = mEntityManager.addComponent<C3DModelComponent>(e);
-        auto& o = mEntityManager.addComponent<C3dObjectComponent>(e);
-        auto& t = mEntityManager.addComponent<CTransform3DComponent>(e);
-
-        t.mScale = glm::vec3(2);
-        t.mPosition = glm::vec3(-10.f, 0.f, -10.f);
-        t.mOrientation = glm::quat(glm::vec3(1.f, 2.f, 3.f));
-
-        m.mModel = rockModel;
-        o.isInCameraView = false;
-    }
-
 
     {
         auto e = mEntityManager.createEntity();
@@ -281,7 +257,7 @@ void CEngine::prepare()
         auto& t = mEntityManager.addComponent<CTransform3DComponent>(e);
 
         t.mScale = glm::vec3(5);
-        t.mPosition = glm::vec3(0.f, 0.f, -20.f);
+        t.mPosition = glm::vec3(0.f, 0.f, -50.f);
         t.mOrientation = glm::quat(glm::vec3(90.f, 0.f, 0.f));
 
         m.mMeshObject.reset(new CCubeSphere(40));
@@ -293,6 +269,24 @@ void CEngine::prepare()
         auto e = mEntityManager.createEntity();
         mEntityManager.addComponent<CEditableComponent>(e, "Camera");
         mEntityManager.addComponent<CCameraComponent>(e, m_camera);
+    }
+
+
+    {
+        auto e = mEntityManager.createEntity();
+        mEntityManager.addComponent<CEditableComponent>(e, "Model");
+        auto& t = mEntityManager.addComponent<CTransform3DComponent>(e);
+        auto& o = mEntityManager.addComponent<C3dObjectComponent>(e);
+
+        o.isInCameraView = true;
+
+        t.mScale = glm::vec3(1);
+        t.mPosition = glm::vec3(10.f, 0.f, -20.f);
+        // t.mOrientation = glm::quat(glm::vec3(90.f, 0.f, 0.f));
+
+        // auto model = resources::get_model("resources/models/rock/rock.obj", EModelType::STATIC);
+        auto model = resources::get_model("trash/nanosuit/nanosuit.obj", EModelType::STATIC);
+        mEntityManager.addComponent<CModelComponent>(e, model);
     }
 
     {
@@ -322,7 +316,7 @@ void CEngine::prepare()
         auto& t = mEntityManager.addComponent<CTransform3DComponent>(e);
 
         t.mScale = glm::vec3(1);
-        t.mPosition = glm::vec3(0.f, 0.f, -20.f);
+        t.mPosition = glm::vec3(0.f, 0.f, -50.f);
         t.mOrientation = glm::quat(glm::vec3(0));
 
         auto system = std::make_shared<CParticleSystem>();

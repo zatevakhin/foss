@@ -3,14 +3,30 @@
 out vec4 FragColor;
 in vec2 fragTextureUV;
 
-uniform sampler2D texture_diffuse1;
-uniform sampler2D texture_specular1;
+struct Material
+{
+    float shininess;
+
+    vec4 colorDiffuse;
+    vec4 colorSpecular;
+    vec4 colorEmissive;
+
+    sampler2D textureDiffuse;
+    sampler2D textureSpecular;
+    sampler2D textureEmissive;
+};
+
+uniform Material material;
+
 
 
 void main()
 {
-    // Get material emissive color by fetching the texture
-    vec4 matEmissive = texture(texture_diffuse1, fragTextureUV.st);
+    // FragColor = texture(material.textureDiffuse, fragTextureUV.st);
 
-    FragColor = matEmissive;
+    vec4 matDiffuse = /* material.colorDiffuse + */ texture(material.textureDiffuse, fragTextureUV.st);
+    vec4 matSpecular = material.colorSpecular + texture(material.textureSpecular, fragTextureUV.st);
+    vec4 matEmissive = material.colorEmissive + texture(material.textureEmissive, fragTextureUV.st);
+
+    FragColor = matDiffuse /* + matSpecular + matEmissive */;
 }

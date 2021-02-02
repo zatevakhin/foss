@@ -2,12 +2,8 @@
 #include "app/renderers/CMeshRenderer.hpp"
 #include "app/auxiliary/trace.hpp"
 #include "app/auxiliary/util.hpp"
-#include "app/scene/SStaticModel3D.hpp"
 #include "app/shading/CUniform.hpp"
 
-void CMeshRenderer::draw(SStaticModel3D& model)
-{
-}
 
 void CMeshRenderer::draw(const CMeshObject& mesh)
 {

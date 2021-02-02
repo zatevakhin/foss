@@ -10,6 +10,5 @@ public:
     CMeshRenderer() = default;
     ~CMeshRenderer() = default;
 
-    void draw(SStaticModel3D& model) override;
     virtual void draw(const CMeshObject& mesh) override;
 };
