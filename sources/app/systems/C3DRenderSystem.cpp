@@ -153,10 +153,13 @@ void C3DRenderSystem::renderEnvironment(const glm::mat4& view, const glm::mat4& 
 
 void C3DRenderSystem::renderForeground(const glm::mat4& view, const glm::mat4& projection)
 {
+    auto camera = CRegistry::get<CFreeCamera*>("camera");
     auto prog = m_shader_manager->getByName("mesh").lock();
 
     prog->use();
     prog->uniform("projection") = projection;
+    prog->uniform("viewPosition") = camera->get_position();
+    prog->uniform("lightPosition") = glm::vec3(13.f, 0.f, -20.f);
 
     for (auto [entity, components] :
          mEntityManager.getEntitySet<CModelComponent, CTransform3DComponent>())
