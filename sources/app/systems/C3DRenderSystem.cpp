@@ -6,7 +6,6 @@
 #include "app/auxiliary/trace.hpp"
 
 #include "app/components/C3dObjectComponent.hpp"
-#include "app/components/CInstanced3dObjectComponent.hpp"
 #include "app/components/CModelComponent.hpp"
 #include "app/components/CParticleSystemComponent.hpp"
 #include "app/components/CSkyboxComponent.hpp"
@@ -73,8 +72,6 @@ void C3DRenderSystem::render(const glm::mat4& view, const glm::mat4& projection)
     auto settings = CRegistry::get<SEngineSettings*>("settings");
 
     glPolygonMode(GL_FRONT_AND_BACK, settings->mPolygonMode.mItems[settings->mPolygonMode.mIndex]);
-    GL_SWITCH_OPTION(settings->mDepthTest, GL_DEPTH_TEST);
-    GL_SWITCH_OPTION(settings->mCullFace, GL_CULL_FACE);
 
     gl::clear_color(0.2f, 0.3f, 0.3f, 1.0f);
     gl::clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
