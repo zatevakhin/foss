@@ -1,6 +1,5 @@
 #pragma once
 
-#include "app/components/C3dObjectComponent.hpp"
 #include "ecs/EntityManager.hpp"
 
 #include <glm/glm.hpp>

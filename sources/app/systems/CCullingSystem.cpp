@@ -1,8 +1,9 @@
 
 #include "CCullingSystem.hpp"
-#include "app/components/C3dObjectComponent.hpp"
+
 #include "app/components/CModelComponent.hpp"
 #include "app/components/CTransform3DComponent.hpp"
+
 #include <glm/gtc/matrix_access.hpp>
 #include <glm/gtx/transform.hpp>
 
@@ -15,14 +16,14 @@ CCullingSystem::CCullingSystem(ecs::EntityManager& entityManager)
 void CCullingSystem::update(double& delta)
 {
     for (auto [entity, components] :
-         mEntityManager.getEntitySet<CModelComponent, C3dObjectComponent, CTransform3DComponent>())
+         mEntityManager.getEntitySet<CModelComponent, CTransform3DComponent>())
     {
-        auto [model, object, transform] = components;
-        cullObjects(model.mModel->getBoundingBox(), object.isInCameraView, transform.toMat4());
+        auto [model, transform] = components;
+        cullObjects(model.mModel->getBoundingBox(), model.mIsInView, transform.toMat4());
     }
 }
 
-void CCullingSystem::cullObjects(const geometry::CBoundingBox& aabb, bool& isInCameraView,
+void CCullingSystem::cullObjects(const geometry::CBoundingBox& aabb, bool& isInView,
                                  const glm::mat4 transform)
 {
     const auto& bounds = aabb.getBounds<glm::vec3>();
@@ -46,7 +47,7 @@ void CCullingSystem::cullObjects(const geometry::CBoundingBox& aabb, bool& isInC
     planes[4] = (rowW + rowZ);
     planes[5] = (rowW - rowZ);
 
-    isInCameraView = ([&] {
+    isInView = ([&] {
         for (const auto& plane : planes)
         {
             if ((glm::dot(glm::vec3(plane), center) +

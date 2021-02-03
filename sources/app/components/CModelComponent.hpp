@@ -9,8 +9,11 @@ class CModelComponent : public ecs::Component<CModelComponent>
 public:
     CModelComponent(TModelPtr& model)
         : mModel(model)
+        , mIsInView(true)
     {
     }
 
     TModelPtr mModel;
+
+    bool mIsInView;
 };

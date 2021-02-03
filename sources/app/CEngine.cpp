@@ -5,11 +5,11 @@
 #include "app/input/CCameraListener.hpp"
 #include "app/input/CEngineListener.hpp"
 
-#include "components/C3dObjectComponent.hpp"
 #include "components/CCameraComponent.hpp"
 #include "components/CEditableComponent.hpp"
 #include "components/CModelComponent.hpp"
 #include "components/CParticleSystemComponent.hpp"
+#include "components/CPickingComponent.hpp"
 #include "components/CSkyboxComponent.hpp"
 #include "components/CTransform3DComponent.hpp"
 #include "components/CWindowComponent.hpp"
@@ -251,19 +251,17 @@ void CEngine::prepare()
     {
         auto e = mEntityManager.createEntity();
         mEntityManager.addComponent<CEditableComponent>(e, "Sphere");
+        mEntityManager.addComponent<CPickingComponent>(e);
 
         CCubeSphere sphere(40);
         auto model = sphere.getModel();
 
         auto& m = mEntityManager.addComponent<CModelComponent>(e, model);
-        auto& o = mEntityManager.addComponent<C3dObjectComponent>(e);
         auto& t = mEntityManager.addComponent<CTransform3DComponent>(e);
 
         t.mScale = glm::vec3(5);
         t.mPosition = glm::vec3(0.f, 0.f, -50.f);
         t.mOrientation = glm::quat(glm::vec3(90.f, 0.f, 0.f));
-
-        o.isInCameraView = true;
     }
 
 
@@ -277,10 +275,9 @@ void CEngine::prepare()
     {
         auto e = mEntityManager.createEntity();
         mEntityManager.addComponent<CEditableComponent>(e, "Model");
-        auto& t = mEntityManager.addComponent<CTransform3DComponent>(e);
-        auto& o = mEntityManager.addComponent<C3dObjectComponent>(e);
+        mEntityManager.addComponent<CPickingComponent>(e);
 
-        o.isInCameraView = true;
+        auto& t = mEntityManager.addComponent<CTransform3DComponent>(e);
 
         t.mScale = glm::vec3(1);
         t.mPosition = glm::vec3(10.f, 0.f, -20.f);

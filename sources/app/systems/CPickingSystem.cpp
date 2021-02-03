@@ -1,9 +1,11 @@
 
 #include "CPickingSystem.hpp"
 #include "app/auxiliary/trace.hpp"
-#include "app/components/C3dObjectComponent.hpp"
+
 #include "app/components/CModelComponent.hpp"
+#include "app/components/CPickingComponent.hpp"
 #include "app/components/CTransform3DComponent.hpp"
+
 #include "app/resources/CRegistry.hpp"
 #include "app/scene/CFreeCamera.hpp"
 #include <glm/gtc/matrix_access.hpp>
@@ -124,16 +126,17 @@ void CPickingSystem::update(double& delta)
 
 
     for (auto [entity, components] :
-         mEntityManager.getEntitySet<CModelComponent, C3dObjectComponent, CTransform3DComponent>())
+         mEntityManager.getEntitySet<CModelComponent, CPickingComponent, CTransform3DComponent>())
     {
-        auto [mesh, object, transform] = components;
+        auto [model, picking, transform] = components;
 
-        if (object.isInCameraView)
+        if (model.mIsInView)
         {
-            const auto& bounds = mesh.mModel->getBoundingBox().getBounds<glm::vec3>();
+            float intersection = 0.f;
+            const auto& bounds = model.mModel->getBoundingBox().getBounds<glm::vec3>();
 
-            object.isPicked = testRayIntersect(ray_origin, ray_direction, bounds.mMin, bounds.mMax,
-                                               transform.toMat4(), object.intersection);
+            picking.isPicked = testRayIntersect(ray_origin, ray_direction, bounds.mMin, bounds.mMax,
+                                                transform.toMat4(), picking.intersection);
         }
     }
 }

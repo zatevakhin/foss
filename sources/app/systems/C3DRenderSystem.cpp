@@ -5,9 +5,9 @@
 #include "app/auxiliary/glm.hpp"
 #include "app/auxiliary/trace.hpp"
 
-#include "app/components/C3dObjectComponent.hpp"
 #include "app/components/CModelComponent.hpp"
 #include "app/components/CParticleSystemComponent.hpp"
+#include "app/components/CPickingComponent.hpp"
 #include "app/components/CSkyboxComponent.hpp"
 #include "app/components/CTransform3DComponent.hpp"
 
@@ -70,6 +70,7 @@ void C3DRenderSystem::render(const glm::mat4& view, const glm::mat4& projection)
 {
     // For testing purposes.
     auto settings = CRegistry::get<SEngineSettings*>("settings");
+    gl::enable(GL_DEPTH_TEST);
 
     glPolygonMode(GL_FRONT_AND_BACK, settings->mPolygonMode.mItems[settings->mPolygonMode.mIndex]);
 
@@ -162,9 +163,11 @@ void C3DRenderSystem::renderForeground(const glm::mat4& view, const glm::mat4& p
          mEntityManager.getEntitySet<CModelComponent, CTransform3DComponent>())
     {
         auto [model, transform] = components;
-
-        prog->uniform("view") = view * transform.toMat4();
-        model.mModel->draw(prog);
+        if (model.mIsInView)
+        {
+            prog->uniform("view") = view * transform.toMat4();
+            model.mModel->draw(prog);
+        }
     }
 }
 
@@ -172,14 +175,14 @@ void C3DRenderSystem::renderBoundingBoxes(const glm::mat4& view, const glm::mat4
 {
     mBBoxRenderer.use();
     for (auto [entity, components] :
-         mEntityManager.getEntitySet<CModelComponent, C3dObjectComponent, CTransform3DComponent>())
+         mEntityManager.getEntitySet<CModelComponent, CPickingComponent, CTransform3DComponent>())
     {
-        auto [model, object, transform] = components;
+        auto [model, picking, transform] = components;
 
-        if (object.isInCameraView)
+        if (model.mIsInView)
         {
             mBBoxRenderer.setTransformMatrix(transform.toMat4());
-            mBBoxRenderer.setIsPicked(object.isPicked);
+            mBBoxRenderer.setIsPicked(picking.isPicked);
             mBBoxRenderer.draw(model.mModel);
         }
     }
