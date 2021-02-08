@@ -1,8 +1,9 @@
 
+#include "app/components/CCameraComponent.hpp"
 #include "app/components/CEditableComponent.hpp"
+#include "app/components/CModelComponent.hpp"
 #include "app/components/CParticleSystemComponent.hpp"
 #include "app/components/CTransform3DComponent.hpp"
-#include "app/components/CCameraComponent.hpp"
 
 #include "CEntityManagerWindow.hpp"
 #include "app/auxiliary/imgui.hpp"
@@ -51,6 +52,40 @@ void CEntityManagerWindow::draw()
                    editable_entity_list.size(), 6);
 
     auto entity = editable_entity_list[current_entity].second;
+
+    if (m_entity_manager.hasComponent<CModelComponent>(entity))
+    {
+        auto& component = m_entity_manager.getComponent<CModelComponent>(entity);
+        auto& debug = component.mDebug;
+
+        auto title = fmt::format("Debug draw ({})", static_cast<size_t>(entity));
+        if (ImGui::CollapsingHeader(title.c_str()))
+        {
+            ImGui::Checkbox("Hide model", &debug.mHideModel);
+            ImGui::SameLine(110);
+            ImGui::Checkbox("Hide box", &debug.mHideBox);
+            ImGui::SameLine(200);
+            ImGui::Checkbox("Debug draw", &debug.mEnableDebugDraw);
+            ImGui::SameLine(300);
+            ImGui::Checkbox("Draw normals", &debug.mEnableNormalsDraw);
+
+            static SModelDebug::EDebugDrawMode modes[3] = {SModelDebug::EDebugDrawMode::FILL,
+                                                           SModelDebug::EDebugDrawMode::LINE,
+                                                           SModelDebug::EDebugDrawMode::POINT};
+
+            static const char* modeNames[3] = {"FILL", "LINE", "POINT"};
+            static int modeIndex = 0;
+
+            modeIndex = static_cast<int>(debug.mDebugDrawMode);
+
+            if (debug.mEnableDebugDraw)
+            {
+                ImGui::Combo("Draw mode", &modeIndex, &modeNames[0], IM_ARRAYSIZE(modeNames));
+            }
+
+            debug.mDebugDrawMode = modes[modeIndex];
+        }
+    }
 
     if (m_entity_manager.hasComponent<CTransform3DComponent>(entity))
     {

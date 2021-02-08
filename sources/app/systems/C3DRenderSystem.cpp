@@ -154,6 +154,9 @@ void C3DRenderSystem::renderForeground(const glm::mat4& view, const glm::mat4& p
     auto camera = CRegistry::get<CFreeCamera*>("camera");
     auto prog = m_shader_manager->getByName("mesh").lock();
 
+    std::vector<ecs::Entity> debugDraw;
+    std::vector<ecs::Entity> debugDrawNormals;
+
     prog->use();
     prog->uniform("projection") = projection;
     prog->uniform("viewPosition") = camera->get_position();
@@ -163,10 +166,76 @@ void C3DRenderSystem::renderForeground(const glm::mat4& view, const glm::mat4& p
          mEntityManager.getEntitySet<CModelComponent, CTransform3DComponent>())
     {
         auto [model, transform] = components;
-        if (model.mIsInView)
+        if (model.mIsInView && !model.mDebug.mHideModel)
         {
             prog->uniform("view") = view * transform.toMat4();
             model.mModel->draw(prog);
+        }
+
+        if (model.mDebug.mEnableDebugDraw)
+        {
+            debugDraw.push_back(entity);
+        }
+
+        if (model.mDebug.mEnableNormalsDraw)
+        {
+            debugDrawNormals.push_back(entity);
+        }
+    }
+
+    if (debugDraw.size())
+    {
+        auto debug = m_shader_manager->getByName("m3d").lock();
+        debug->use();
+        debug->uniform("projection") = projection;
+        debug->uniform("background") = glm::vec4(1.f, 1.f, 0.f, 1.f);
+
+        for (auto& entity : debugDraw)
+        {
+            auto [model, transform] =
+                mEntityManager.getComponents<CModelComponent, CTransform3DComponent>(entity);
+
+            if (model.mIsInView)
+            {
+                switch (model.mDebug.mDebugDrawMode)
+                {
+                case SModelDebug::EDebugDrawMode::FILL:
+                    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+                    break;
+                case SModelDebug::EDebugDrawMode::LINE:
+                    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+                    break;
+                case SModelDebug::EDebugDrawMode::POINT:
+                    glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
+                    break;
+                default:
+                    assert(true);
+                    break;
+                }
+
+                debug->uniform("view") = view * transform.toMat4();
+                model.mModel->draw(debug);
+                glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+            }
+        }
+    }
+
+    if (debugDrawNormals.size())
+    {
+        auto debug_normals = m_shader_manager->getByName("m3d_n").lock();
+        debug_normals->use();
+        debug_normals->uniform("projection") = projection;
+
+        for (auto& entity : debugDrawNormals)
+        {
+            auto [model, transform] =
+                mEntityManager.getComponents<CModelComponent, CTransform3DComponent>(entity);
+
+            if (model.mDebug.mEnableNormalsDraw)
+            {
+                debug_normals->uniform("view") = view * transform.toMat4();
+                model.mModel->draw(debug_normals);
+            }
         }
     }
 }
@@ -179,7 +248,7 @@ void C3DRenderSystem::renderBoundingBoxes(const glm::mat4& view, const glm::mat4
     {
         auto [model, picking, transform] = components;
 
-        if (model.mIsInView)
+        if (model.mIsInView && !model.mDebug.mHideBox)
         {
             mBBoxRenderer.setTransformMatrix(transform.toMat4());
             mBBoxRenderer.setIsPicked(picking.isPicked);
