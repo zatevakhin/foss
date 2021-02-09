@@ -13,9 +13,9 @@
 #include <string>
 
 
-constexpr const char* VERT_SHADER_EXT = ".vert";
-constexpr const char* FRAG_SHADER_EXT = ".frag";
-constexpr const char* GEOM_SHADER_EXT = ".geom";
+constexpr const char* VERT_SHADER_EXT = ".vs";
+constexpr const char* FRAG_SHADER_EXT = ".fs";
+constexpr const char* GEOM_SHADER_EXT = ".gs";
 
 
 namespace
