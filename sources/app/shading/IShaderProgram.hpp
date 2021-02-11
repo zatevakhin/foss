@@ -23,4 +23,3 @@ public:
 };
 
 using TProgramSharedPtr = std::shared_ptr<IShaderProgram>;
-using TProgramWeakPtr = std::weak_ptr<IShaderProgram>;

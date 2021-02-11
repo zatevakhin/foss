@@ -22,7 +22,7 @@ public:
 
     // void reloadModified(); // check by modification time
     void reloadByName(const char* shaderName);
-    TProgramWeakPtr getByName(const char* shaderName) const;
+    TProgramSharedPtr getByName(const char* shaderName) const;
     void use(const char* shaderName) const;
 
     std::vector<std::pair<std::string, unsigned int>> getProgramsList() const;

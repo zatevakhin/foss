@@ -12,7 +12,7 @@ public:
     void setTransformMatrix(const glm::mat4& value);
     void setProjectionMatrix(const glm::mat4& value);
 
-    virtual void setProgram(TProgramWeakPtr program);
+    virtual void setProgram(const TProgramSharedPtr& program);
     virtual void use();
 
     virtual void draw(const TModelPtr model) = 0;

@@ -91,7 +91,7 @@ void C3DRenderSystem::render(const glm::mat4& view, const glm::mat4& projection)
     mFbo.unbind();
 
     auto& colorTexture = mFbo.getColorTexture();
-    auto screen = m_shader_manager->getByName("screen").lock();
+    auto screen = m_shader_manager->getByName("screen");
 
     screen->use();
     screen->uniform("frameNumber") = static_cast<int>(mFrame);
@@ -110,9 +110,7 @@ void C3DRenderSystem::renderEnvironment(const glm::mat4& view, const glm::mat4& 
     glDepthFunc(GL_LEQUAL);
     glFrontFace(GL_CW);
 
-    // mCubeMapRenderer.use();
-
-    auto prog = m_shader_manager->getByName("skybox").lock();
+    auto prog = m_shader_manager->getByName("skybox");
     auto cubeMap = CRegistry::get<TTextureSharedPtr>("texture/skybox");
 
     prog->use();
@@ -138,7 +136,7 @@ void C3DRenderSystem::renderEnvironment(const glm::mat4& view, const glm::mat4& 
 void C3DRenderSystem::renderForeground(const glm::mat4& view, const glm::mat4& projection)
 {
     auto camera = CRegistry::get<CFreeCamera*>("camera");
-    auto prog = m_shader_manager->getByName("mesh").lock();
+    auto prog = m_shader_manager->getByName("mesh");
 
     std::vector<ecs::Entity> debugDraw;
     std::vector<ecs::Entity> debugDrawNormals;
@@ -171,7 +169,7 @@ void C3DRenderSystem::renderForeground(const glm::mat4& view, const glm::mat4& p
 
     if (debugDraw.size())
     {
-        auto debug = m_shader_manager->getByName("m3d").lock();
+        auto debug = m_shader_manager->getByName("m3d");
         debug->use();
         debug->uniform("projection") = projection;
         debug->uniform("background") = glm::vec4(1.f, 1.f, 0.f, 1.f);
@@ -208,7 +206,7 @@ void C3DRenderSystem::renderForeground(const glm::mat4& view, const glm::mat4& p
 
     if (debugDrawNormals.size())
     {
-        auto debug_normals = m_shader_manager->getByName("normals").lock();
+        auto debug_normals = m_shader_manager->getByName("normals");
         debug_normals->use();
         debug_normals->uniform("projection") = projection;
 
@@ -250,7 +248,7 @@ void C3DRenderSystem::renderInstanced(const glm::mat4& view, const glm::mat4& pr
     // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // More real alpha blend.
     // glDepthMask(GL_FALSE); // Don't write to depth buffer.
 
-    auto program = m_shader_manager->getByName("particles").lock();
+    auto program = m_shader_manager->getByName("particles");
 
     program->use();
     program->uniform("projection") = projection;

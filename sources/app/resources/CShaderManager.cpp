@@ -224,7 +224,7 @@ void CShaderManager::reloadByName(const char* shaderName)
     shaderPtr->replace(programId, shaderIds);
 }
 
-TProgramWeakPtr CShaderManager::getByName(const char* shaderName) const
+TProgramSharedPtr CShaderManager::getByName(const char* shaderName) const
 {
     return mPrograms.at(shaderName);
 }

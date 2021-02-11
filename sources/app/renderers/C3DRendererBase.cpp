@@ -22,9 +22,9 @@ void C3DRendererBase::setProjectionMatrix(const glm::mat4& value)
     mProjection = value;
 }
 
-void C3DRendererBase::setProgram(TProgramWeakPtr program)
+void C3DRendererBase::setProgram(const TProgramSharedPtr& program)
 {
-    mProgram = program.lock();
+    mProgram = program;
 }
 
 void C3DRendererBase::use()
