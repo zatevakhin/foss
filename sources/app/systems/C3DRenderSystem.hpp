@@ -34,5 +34,7 @@ private:
 
     CCompleteFbo mFbo;
 
+    unsigned int mFrame;
+
     CVertexArrayObject mScreenQuad;
 };

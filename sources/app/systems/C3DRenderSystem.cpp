@@ -20,6 +20,7 @@
 #include "app/shading/CVertexAttribute.cpp"
 
 
+#include <chrono>
 #include <glm/gtc/matrix_access.hpp>
 #include <glm/gtx/transform.hpp>
 #include <iostream>
@@ -35,6 +36,7 @@ C3DRenderSystem::C3DRenderSystem(ecs::EntityManager& entityManager,
     , mBBoxRenderer()
     , mFbo({1920, 1080})
     , mScreenQuad()
+    , mFrame(0)
 {
 
     std::vector<float> vtx({-1.0f, 1.0f,  0.0f, 1.0f, -1.0f, -1.0f, 0.0f, 0.0f,
@@ -68,6 +70,7 @@ void C3DRenderSystem::prepare(const ICamera* camera)
 
 void C3DRenderSystem::render(const glm::mat4& view, const glm::mat4& projection)
 {
+    mFrame++;
     // For testing purposes.
     auto settings = CRegistry::get<SEngineSettings*>("settings");
     gl::enable(GL_DEPTH_TEST);
@@ -77,45 +80,28 @@ void C3DRenderSystem::render(const glm::mat4& view, const glm::mat4& projection)
     gl::clear_color(0.2f, 0.3f, 0.3f, 1.0f);
     gl::clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
-    renderForeground(view, projection);
-    renderBoundingBoxes(view, projection);
-
-    renderEnvironment(view, projection);
-    renderInstanced(view, projection);
-
     mFbo.bind();
     gl::clear_color(0.f, 0.f, 0.f, 1.0f);
     gl::clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     renderForeground(view, projection);
     renderBoundingBoxes(view, projection);
+
+    renderEnvironment(view, projection);
     renderInstanced(view, projection);
     mFbo.unbind();
 
-
-    gl::viewport(0, 0, 320, 200);
-    gl::disable(GL_DEPTH_TEST);
-
     auto& colorTexture = mFbo.getColorTexture();
-    auto& depthTexture = mFbo.getDepthTexture();
+    auto screen = m_shader_manager->getByName("screen").lock();
 
-    m_shader_manager->use("screen");
+    screen->use();
+    screen->uniform("frameNumber") = static_cast<int>(mFrame);
+
     mScreenQuad.bind();
     colorTexture.bind();
     glDrawArrays(GL_TRIANGLES, 0, 6);
     colorTexture.unbind();
     mScreenQuad.unbind();
 
-    gl::viewport(0, 200, 320, 200);
-    m_shader_manager->use("depth");
-    mScreenQuad.bind();
-    depthTexture.bind();
-    glDrawArrays(GL_TRIANGLES, 0, 6);
-    depthTexture.unbind();
-    mScreenQuad.unbind();
-
-
-    gl::viewport(0, 0, 1920, 1080);
     glUseProgram(0U); // Free shader
 }
 
