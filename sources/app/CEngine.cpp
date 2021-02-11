@@ -23,7 +23,6 @@
 
 #include "entities/windows/CEngineDebugWindow.hpp"
 #include "entities/windows/CEntityManagerWindow.hpp"
-#include "entities/windows/CFboDebugWindow.hpp"
 #include "entities/windows/CShaderManagerWindow.hpp"
 
 #include <glm/glm.hpp>
@@ -214,10 +213,6 @@ void CEngine::prepare()
 
     CRegistry::set("camera", m_camera.get());
     CRegistry::set("texture/skybox", skyboxTexture);
-    CRegistry::set("texture/orange", orange);
-
-    CRegistry::set("dbg.tex.fbo.rgb", 0);
-    CRegistry::set("dbg.tex.fbo.depth", 0);
 
     constexpr auto nbEntities = std::size_t(10000);
     mEntityManager.reserve(nbEntities);
