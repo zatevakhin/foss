@@ -208,7 +208,7 @@ void C3DRenderSystem::renderForeground(const glm::mat4& view, const glm::mat4& p
 
     if (debugDrawNormals.size())
     {
-        auto debug_normals = m_shader_manager->getByName("m3d_n").lock();
+        auto debug_normals = m_shader_manager->getByName("normals").lock();
         debug_normals->use();
         debug_normals->uniform("projection") = projection;
 
