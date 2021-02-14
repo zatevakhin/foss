@@ -6,7 +6,7 @@ CStaticModel::CStaticModel(TMeshesList& meshes)
 {
 }
 
-void CStaticModel::draw(TProgramSharedPtr program)
+void CStaticModel::draw(TProgramAdapterPtr program)
 {
     for (const auto& m : mMeshes)
     {

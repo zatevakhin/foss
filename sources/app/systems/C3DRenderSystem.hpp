@@ -1,8 +1,9 @@
 #pragma once
 
-#include "app/renderers/CBoundingBox3DRenderer.hpp"
 #include "app/scene/CCompleteFbo.hpp"
+#include "app/scene/CVertexArrayObject.hpp"
 #include "app/scene/ICamera.hpp"
+#include "app/scene/IModel.hpp"
 #include "app/textures/CTexture2D.hpp"
 #include "ecs/EntityManager.hpp"
 
@@ -27,8 +28,6 @@ private:
     void renderInstanced(const glm::mat4& view, const glm::mat4& projection);
     void renderBoundingBoxes(const glm::mat4& view, const glm::mat4& projection);
 
-    CBoundingBox3DRenderer mBBoxRenderer;
-
     ecs::EntityManager& mEntityManager;
     TShaderManagerPtr m_shader_manager;
 
@@ -37,4 +36,6 @@ private:
     unsigned int mFrame;
 
     CVertexArrayObject mScreenQuad;
+
+    TModelPtr mBoundingBoxModel;
 };

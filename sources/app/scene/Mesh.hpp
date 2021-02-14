@@ -14,10 +14,14 @@ struct Vertex
 {
     Vertex() = default;
 
+
+    Vertex(glm::vec3& p)
+        : Vertex(p, glm::vec3(0.f), glm::vec2(0.f))
+    {
+    }
+
     Vertex(glm::vec3& p, glm::vec3& n)
-        : position(p)
-        , normal(n)
-        , tex_coords(0)
+        : Vertex(p, n, glm::vec2(0.f))
     {
     }
 
@@ -39,14 +43,15 @@ using TIndiceList = std::vector<unsigned int>;
 class Mesh : public IMesh
 {
 public:
-    Mesh(TVerticeList& vertices, TIndiceList& indices, const TPhongMaterialPtr& material);
+    Mesh(TVerticeList& vertices, TIndiceList& indices, const TPhongMaterialPtr& material,
+         unsigned int primitiveType = GL_TRIANGLES);
+
     ~Mesh();
 
     Mesh(const Mesh&) = delete;
     Mesh& operator=(const Mesh&) = delete;
 
-    void draw(TProgramSharedPtr) override;
-    void applyMaterial(TProgramSharedPtr program) const;
+    void draw(TProgramAdapterPtr) override;
     geometry::CBoundingBox getBoundingBox() const override;
 
 
@@ -61,6 +66,8 @@ private:
     CVertexBufferObject m_vbo;
     CVertexBufferObject m_ebo;
     TPhongMaterialPtr mMaterial;
+
+    unsigned int mPrimitiveType;
 
     geometry::CBoundingBox mAABB;
 };

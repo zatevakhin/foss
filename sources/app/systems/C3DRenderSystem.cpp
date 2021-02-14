@@ -12,13 +12,13 @@
 #include "app/components/CTransform3DComponent.hpp"
 
 #include "app/geometry/CBoundingBox.hpp"
-#include "app/renderers/CBoundingBox3DRenderer.hpp"
 #include "app/resources/CRegistry.hpp"
 #include "app/resources/CShaderManager.hpp"
+#include "app/scene/CBoundingBox.hpp"
 #include "app/scene/CFreeCamera.hpp"
+#include "app/shading/CModelProgramAdapter.hpp"
 #include "app/shading/CUniform.hpp"
 #include "app/shading/CVertexAttribute.cpp"
-
 
 #include <chrono>
 #include <glm/gtc/matrix_access.hpp>
@@ -33,11 +33,13 @@ C3DRenderSystem::C3DRenderSystem(ecs::EntityManager& entityManager,
                                  TShaderManagerPtr shader_manager)
     : mEntityManager(entityManager)
     , m_shader_manager(shader_manager)
-    , mBBoxRenderer()
     , mFbo({1920, 1080})
     , mScreenQuad()
     , mFrame(0)
+    , mBoundingBoxModel(nullptr)
 {
+    CBoundingBox box;
+    mBoundingBoxModel = box.getModel();
 
     std::vector<float> vtx({-1.0f, 1.0f,  0.0f, 1.0f, -1.0f, -1.0f, 0.0f, 0.0f,
                             1.0f,  -1.0f, 1.0f, 0.0f, -1.0f, 1.0f,  0.0f, 1.0f,
@@ -56,26 +58,18 @@ C3DRenderSystem::C3DRenderSystem(ecs::EntityManager& entityManager,
     q_vbo.unbind();
     mScreenQuad.unbind();
 
-    mBBoxRenderer.setProgram(m_shader_manager->getByName("m3d"));
+    // mBBoxRenderer.setProgram(m_shader_manager->getByName("m3d"));
 }
 
 void C3DRenderSystem::prepare(const ICamera* camera)
 {
-    auto view = camera->get_view();
-    auto projection = camera->get_projection();
-
-    mBBoxRenderer.setViewMatrix(view);
-    mBBoxRenderer.setProjectionMatrix(projection);
 }
 
 void C3DRenderSystem::render(const glm::mat4& view, const glm::mat4& projection)
 {
     mFrame++;
     // For testing purposes.
-    auto settings = CRegistry::get<SEngineSettings*>("settings");
     gl::enable(GL_DEPTH_TEST);
-
-    glPolygonMode(GL_FRONT_AND_BACK, settings->mPolygonMode.mItems[settings->mPolygonMode.mIndex]);
 
     gl::clear_color(0.2f, 0.3f, 0.3f, 1.0f);
     gl::clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -115,19 +109,21 @@ void C3DRenderSystem::renderEnvironment(const glm::mat4& view, const glm::mat4& 
 
     prog->use();
 
+    auto adapter = std::make_shared<CModelProgramAdapter>(prog);
+    adapter->setProjection(projection);
+
     for (auto [entity, components] :
          mEntityManager.getEntitySet<CModelComponent, CSkyboxComponent>())
     {
         auto [model, skybox] = components;
 
-        prog->uniform("projection") = projection;
-        prog->uniform("view") = glm::mat4(glm::mat3(view));
+        adapter->setView(glm::mat4(glm::mat3(view)));
 
         glActiveTexture(GL_TEXTURE0);
         cubeMap->bind();
         prog->uniform("cubemap") = 0;
 
-        model.mModel->draw(prog);
+        model.mModel->draw(adapter);
     }
 
     glFrontFace(GL_CCW);
@@ -141,8 +137,11 @@ void C3DRenderSystem::renderForeground(const glm::mat4& view, const glm::mat4& p
     std::vector<ecs::Entity> debugDraw;
     std::vector<ecs::Entity> debugDrawNormals;
 
+    auto adapter = std::make_shared<CModelProgramAdapter>(prog);
+
     prog->use();
-    prog->uniform("projection") = projection;
+    adapter->setProjection(projection);
+
     prog->uniform("viewPosition") = camera->get_position();
     prog->uniform("lightPosition") = glm::vec3(13.f, 0.f, -20.f);
 
@@ -152,8 +151,9 @@ void C3DRenderSystem::renderForeground(const glm::mat4& view, const glm::mat4& p
         auto [model, transform] = components;
         if (model.mIsInView && !model.mDebug.mHideModel)
         {
-            prog->uniform("view") = view * transform.toMat4();
-            model.mModel->draw(prog);
+            adapter->setView(view * transform.toMat4());
+
+            model.mModel->draw(adapter);
         }
 
         if (model.mDebug.mEnableDebugDraw)
@@ -171,8 +171,10 @@ void C3DRenderSystem::renderForeground(const glm::mat4& view, const glm::mat4& p
     {
         auto debug = m_shader_manager->getByName("m3d");
         debug->use();
-        debug->uniform("projection") = projection;
         debug->uniform("background") = glm::vec4(1.f, 1.f, 0.f, 1.f);
+
+        auto adapter = std::make_shared<CModelProgramAdapter>(debug);
+        adapter->setProjection(projection);
 
         for (auto& entity : debugDraw)
         {
@@ -197,8 +199,9 @@ void C3DRenderSystem::renderForeground(const glm::mat4& view, const glm::mat4& p
                     break;
                 }
 
-                debug->uniform("view") = view * transform.toMat4();
-                model.mModel->draw(debug);
+                adapter->setView(view * transform.toMat4());
+
+                model.mModel->draw(adapter);
                 glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
             }
         }
@@ -208,7 +211,10 @@ void C3DRenderSystem::renderForeground(const glm::mat4& view, const glm::mat4& p
     {
         auto debug_normals = m_shader_manager->getByName("normals");
         debug_normals->use();
-        debug_normals->uniform("projection") = projection;
+
+        auto adapter = std::make_shared<CModelProgramAdapter>(debug_normals);
+        adapter->setProjection(projection);
+
 
         for (auto& entity : debugDrawNormals)
         {
@@ -217,8 +223,8 @@ void C3DRenderSystem::renderForeground(const glm::mat4& view, const glm::mat4& p
 
             if (model.mDebug.mEnableNormalsDraw)
             {
-                debug_normals->uniform("view") = view * transform.toMat4();
-                model.mModel->draw(debug_normals);
+                adapter->setView(view * transform.toMat4());
+                model.mModel->draw(adapter);
             }
         }
     }
@@ -226,7 +232,12 @@ void C3DRenderSystem::renderForeground(const glm::mat4& view, const glm::mat4& p
 
 void C3DRenderSystem::renderBoundingBoxes(const glm::mat4& view, const glm::mat4& projection)
 {
-    mBBoxRenderer.use();
+    auto prog = m_shader_manager->getByName("m3d");
+    prog->use();
+
+    auto adapter = std::make_shared<CModelProgramAdapter>(prog);
+    adapter->setProjection(projection);
+
     for (auto [entity, components] :
          mEntityManager.getEntitySet<CModelComponent, CPickingComponent, CTransform3DComponent>())
     {
@@ -234,9 +245,15 @@ void C3DRenderSystem::renderBoundingBoxes(const glm::mat4& view, const glm::mat4
 
         if (model.mIsInView && !model.mDebug.mHideBox)
         {
-            mBBoxRenderer.setTransformMatrix(transform.toMat4());
-            mBBoxRenderer.setIsPicked(picking.isPicked);
-            mBBoxRenderer.draw(model.mModel);
+            auto aabb = model.mModel->getBoundingBox();
+            glm::mat4 AABBTransform = glm::translate(glm::mat4(1), aabb.getCenter()) *
+                                      glm::scale(glm::mat4(1), aabb.getSize());
+
+            prog->uniform("background") =
+                picking.isPicked ? glm::vec4(1.f, 0.f, 0.f, 1.f) : glm::vec4(0.f, 1.f, 0.f, 1.f);
+
+            adapter->setView(view * (transform.toMat4() * AABBTransform));
+            mBoundingBoxModel->draw(adapter);
         }
     }
 }

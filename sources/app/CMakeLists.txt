@@ -3,7 +3,6 @@ add_subdirectory(geometry)
 add_subdirectory(resources)
 add_subdirectory(entities)
 add_subdirectory(input)
-add_subdirectory(renderers)
 add_subdirectory(shading)
 add_subdirectory(systems)
 add_subdirectory(window)
@@ -17,14 +16,13 @@ cmake_auxiliary_add_execultable(foss.app hpp cpp)
 target_link_libraries(foss.app
         app_input
         app_systems
-        app_renderers
         app_window
         app_entities_windows
         app_resources
-        app_shading
         app_geometry
         app_textures
         app_scene
+        app_shading
         app_gears
         app_math
 

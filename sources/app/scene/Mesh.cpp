@@ -1,18 +1,19 @@
 #include "Mesh.hpp"
-#include "app/auxiliary/opengl.hpp"
 #include "app/shading/CUniform.hpp"
 #include <fmt/core.h>
 #include <glm/common.hpp>
 #include <string>
 
 
-Mesh::Mesh(TVerticeList& vertices, TIndiceList& indices, const TPhongMaterialPtr& material)
+Mesh::Mesh(TVerticeList& vertices, TIndiceList& indices, const TPhongMaterialPtr& material,
+           unsigned int primitiveType)
     : m_vao()
     , m_vbo(EBufferType::eArrayBuffer)
     , m_ebo(EBufferType::eElementArrayBuffer)
     , m_vertices(vertices)
     , m_indices(indices)
     , mMaterial(material)
+    , mPrimitiveType(primitiveType)
 {
     setup_mesh();
 }
@@ -54,41 +55,14 @@ geometry::CBoundingBox Mesh::getBoundingBox() const
     return mAABB;
 };
 
-void Mesh::applyMaterial(TProgramSharedPtr program) const
+void Mesh::draw(TProgramAdapterPtr program)
 {
-    program->uniform("material.shininess") = mMaterial->mShininess;
-
-    program->uniform("material.colorDiffuse") = mMaterial->mDiffuseColor;
-    program->uniform("material.colorSpecular") = mMaterial->mSpecularColor;
-    program->uniform("material.colorEmissive") = mMaterial->mEmissiveColor;
-
-    if (mMaterial->mEmissiveTexture)
+    if (mMaterial)
     {
-        glActiveTexture(GL_TEXTURE2);
-        mMaterial->mEmissiveTexture->bind();
-        program->uniform("material.textureEmissive") = 2;
+        program->setMaterial(mMaterial);
     }
-
-    if (mMaterial->mSpecularTexture)
-    {
-        glActiveTexture(GL_TEXTURE1);
-        mMaterial->mSpecularTexture->bind();
-        program->uniform("material.textureSpecular") = 1;
-    }
-
-    if (mMaterial->mDiffuseTexture)
-    {
-        glActiveTexture(GL_TEXTURE0);
-        mMaterial->mDiffuseTexture->bind();
-        program->uniform("material.textureDiffuse") = 0;
-    }
-}
-
-void Mesh::draw(TProgramSharedPtr program)
-{
-    applyMaterial(program);
 
     m_vao.bind();
-    glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, 0);
+    glDrawElements(mPrimitiveType, m_indices.size(), GL_UNSIGNED_INT, 0);
     m_vao.unbind();
 }

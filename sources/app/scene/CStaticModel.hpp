@@ -14,7 +14,7 @@ public:
     explicit CStaticModel(TMeshesList& meshes);
     ~CStaticModel() = default;
 
-    void draw(TProgramSharedPtr program) override;
+    void draw(TProgramAdapterPtr program) override;
     geometry::CBoundingBox getBoundingBox() const override;
     EModelType getType() const override;
 
