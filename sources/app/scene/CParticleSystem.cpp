@@ -24,7 +24,7 @@ CParticleSystem::CParticleSystem()
     : mSpriteGeometry(EBufferType::eArrayBuffer, EBufferUsage::eStaticDraw)
     , mParticlePositions(EBufferType::eArrayBuffer, EBufferUsage::eStreamDraw)
     , mParticlesVao()
-    , m_particle_scale(1.f)
+    , mParticleScale(1.f)
 {
     mParticlesVao.bind();
 
@@ -44,53 +44,53 @@ CParticleSystem::~CParticleSystem()
 {
 }
 
-void CParticleSystem::set_emitter(std::shared_ptr<CParticleEmitter> emitter)
+void CParticleSystem::setEmitter(std::shared_ptr<CParticleEmitter> emitter)
 {
-    m_emitter = emitter;
+    mEmitter = emitter;
 }
 
 void CParticleSystem::setGravity(const glm::vec3& gravity)
 {
-    m_gravity = gravity;
+    mGravity = gravity;
 }
 
-glm::vec3 CParticleSystem::get_gravity() const
+glm::vec3 CParticleSystem::getGravity() const
 {
-    return m_gravity;
+    return mGravity;
 }
 
-void CParticleSystem::setParticleTexture(const TTextureSharedPtr& pTexture)
+void CParticleSystem::setParticleTexture(const TTextureSharedPtr& texture)
 {
-    mTexture = pTexture;
+    mTexture = texture;
 }
 
-void CParticleSystem::set_particle_scale(const glm::vec2& scale)
+void CParticleSystem::setParticleScale(const glm::vec2& scale)
 {
-    m_particle_scale = scale;
+    mParticleScale = scale;
 }
 
-glm::vec2 CParticleSystem::get_particle_scale() const
+glm::vec2 CParticleSystem::getParticleScale() const
 {
-    return m_particle_scale;
+    return mParticleScale;
 }
 
-size_t CParticleSystem::get_patricles_count() const
+size_t CParticleSystem::getPatriclesCount() const
 {
     return mParticles.size();
 }
 
 void CParticleSystem::advance(float dt)
 {
-    m_emitter->advance(dt);
+    mEmitter->advance(dt);
 
-    while (m_emitter->isEmitReady())
+    while (mEmitter->isEmitReady())
     {
-        mParticles.emplace_back(m_emitter->emit());
+        mParticles.emplace_back(mEmitter->emit());
     }
 
     for (auto& particle : mParticles)
     {
-        particle.advance(dt, m_gravity);
+        particle.advance(dt, mGravity);
     }
 
     auto newEnd = std::remove_if(mParticles.begin(), mParticles.end(),
@@ -98,7 +98,7 @@ void CParticleSystem::advance(float dt)
 
     mParticles.erase(newEnd, mParticles.end());
 
-    m_isDirty = true;
+    mIsDirty = true;
 }
 
 void CParticleSystem::draw(TProgramSharedPtr program, const glm::mat4& worldView)
@@ -110,13 +110,13 @@ void CParticleSystem::draw(TProgramSharedPtr program, const glm::mat4& worldView
 
     mTexture->bind();
 
-    if (m_isDirty)
+    if (mIsDirty)
     {
         updateParticlePositions(worldView);
-        m_isDirty = false;
+        mIsDirty = false;
     }
 
-    program->uniform("particle_scale") = m_particle_scale;
+    program->uniform("particle_scale") = mParticleScale;
 
     const GLsizei vertexCount = GLsizei(SPRITE_VERTECIES.size());
     const GLsizei instanceCount = GLsizei(mParticles.size());

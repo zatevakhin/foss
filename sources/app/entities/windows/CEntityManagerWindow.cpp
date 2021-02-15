@@ -122,13 +122,13 @@ void CEntityManagerWindow::draw()
         if (ImGui::CollapsingHeader(title.c_str()))
         {
             {
-                auto scale = component.mParticleSystem->get_particle_scale();
+                auto scale = component.mParticleSystem->getParticleScale();
                 ImGui::InputFloat2("Particle scale", &scale[0]);
-                component.mParticleSystem->set_particle_scale(scale);
+                component.mParticleSystem->setParticleScale(scale);
             }
 
             {
-                auto gravity = component.mParticleSystem->get_gravity();
+                auto gravity = component.mParticleSystem->getGravity();
                 ImGui::InputFloat3("Gravity", &gravity[0]);
                 component.mParticleSystem->setGravity(gravity);
             }
@@ -139,48 +139,48 @@ void CEntityManagerWindow::draw()
         {
             {
                 ImVec4 text_color(1.f, 1.f, 0.f, 1.f);
-                auto count = component.mParticleSystem->get_patricles_count();
+                auto count = component.mParticleSystem->getPatriclesCount();
                 ImGui::TextColored(text_color, "Particles count: %lu", count);
             }
 
             // {
-            //     auto position = component.m_particle_emitter->get_position();
+            //     auto position = component.m_particle_emitter->getPosition();
             //     ImGui::InputFloat3("Position", &position[0]);
             //     component.m_particle_emitter->setPosition(position);
             // }
 
             // {
-            //     auto direction = component.m_particle_emitter->get_direction();
+            //     auto direction = component.m_particle_emitter->getDirection();
             //     ImGui::InputFloat3("Direction", &direction[0]);
             //     component.m_particle_emitter->setDirection(direction);
             // }
 
             {
-                auto range = component.m_particle_emitter->get_distance_range();
+                auto range = component.m_particle_emitter->getDistanceRange();
                 ImGui::InputFloat2("Distance range", &range[0]);
                 component.m_particle_emitter->setDistanceRange(range.x, range.y);
             }
 
             {
-                auto range = component.m_particle_emitter->get_emit_interval_range();
+                auto range = component.m_particle_emitter->getEmitIntervalRange();
                 ImGui::SliderFloat2("Emit interval", &range[0], 0.00001f, 2.0f, "%.5f", 3.f);
                 component.m_particle_emitter->setEmitIntervalRange(range.x, range.y);
             }
 
             {
-                auto range = component.m_particle_emitter->get_lifetime_range();
+                auto range = component.m_particle_emitter->getLifetimeRange();
                 ImGui::SliderFloat2("Lifetime range", &range[0], 0.0001f, 100.0f, "%.4f", 3.f);
                 component.m_particle_emitter->setLifetimeRange(range.x, range.y);
             }
 
             {
-                auto range = component.m_particle_emitter->get_speed_range();
+                auto range = component.m_particle_emitter->getSpeedRange();
                 ImGui::SliderFloat2("Speed range", &range[0], -100.f, 100.0f, "%.3f", 3.f);
                 component.m_particle_emitter->setSpeedRange(range.x, range.y);
             }
 
             {
-                auto angle = component.m_particle_emitter->get_max_deviation_angle();
+                auto angle = component.m_particle_emitter->getMaxDeviationAngle();
                 ImGui::SliderAngle("Deviation angle", &angle, -180.f, 180.f);
                 component.m_particle_emitter->setMaxDeviationAngle(angle);
             }

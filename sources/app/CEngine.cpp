@@ -335,7 +335,7 @@ void CEngine::prepare()
 
         p.m_particle_emitter = createEmitter();
 
-        system->set_emitter(p.m_particle_emitter);
+        system->setEmitter(p.m_particle_emitter);
     }
 }
 

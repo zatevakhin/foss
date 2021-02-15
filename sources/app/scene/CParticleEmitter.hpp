@@ -84,25 +84,25 @@ public:
     CParticle emit();
 
     void setPosition(const glm::vec3& value);
-    glm::vec3 get_position() const;
+    glm::vec3 getPosition() const;
 
     void setDistanceRange(float minValue, float maxValue);
-    glm::vec2 get_distance_range() const;
+    glm::vec2 getDistanceRange() const;
 
     void setDirection(const glm::vec3& value);
-    glm::vec3 get_direction() const;
+    glm::vec3 getDirection() const;
 
     void setMaxDeviationAngle(float value);
-    float get_max_deviation_angle() const;
+    float getMaxDeviationAngle() const;
 
     void setLifetimeRange(float minValue, float maxValue);
-    glm::vec2 get_lifetime_range() const;
+    glm::vec2 getLifetimeRange() const;
 
     void setEmitIntervalRange(float minValue, float maxValue);
-    glm::vec2 get_emit_interval_range() const;
+    glm::vec2 getEmitIntervalRange() const;
 
     void setSpeedRange(float minValue, float maxValue);
-    glm::vec2 get_speed_range() const;
+    glm::vec2 getSpeedRange() const;
 
 private:
     using linear_random_float = std::uniform_real_distribution<float>;
