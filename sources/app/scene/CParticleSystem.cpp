@@ -4,22 +4,19 @@
 #include "app/auxiliary/trace.hpp"
 #include "app/shading/CUniform.hpp"
 #include "app/shading/CVertexAttribute.hpp"
+
 #include <algorithm>
-
-
-using glm::vec2;
-using glm::vec3;
-using glm::vec4;
+#include <array>
 
 
 namespace
 {
 
-vec2 SPRITE_VERTECIES[] = {
-    {-1.f, -1.f}, {+1.f, -1.f}, {-1.f, +1.f}, {-1.f, +1.f}, {+1.f, -1.f}, {+1.f, +1.f},
+constexpr std::array SPRITE_VERTECIES = {
+    glm::vec2(-1.f, -1.f), glm::vec2(+1.f, -1.f), glm::vec2(-1.f, +1.f),
+    glm::vec2(-1.f, +1.f), glm::vec2(+1.f, -1.f), glm::vec2(+1.f, +1.f),
 };
 
-constexpr size_t SPRITE_VERTEX_COUNT = sizeof(SPRITE_VERTECIES) / sizeof(SPRITE_VERTECIES[0]);
 } // namespace
 
 
@@ -37,8 +34,8 @@ CParticleSystem::CParticleSystem()
 
     glVertexAttribDivisor(0, 1);
 
-    mSpriteGeometry.copy(SPRITE_VERTECIES, sizeof(SPRITE_VERTECIES));
-    gl::vertex_attrib_pointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(vec2), 0);
+    mSpriteGeometry.copy(SPRITE_VERTECIES.data(), SPRITE_VERTECIES.size() * sizeof(glm::vec2));
+    gl::vertex_attrib_pointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), 0);
 
     mParticlesVao.unbind();
 }
@@ -52,7 +49,7 @@ void CParticleSystem::set_emitter(std::shared_ptr<CParticleEmitter> emitter)
     m_emitter = emitter;
 }
 
-void CParticleSystem::setGravity(const vec3& gravity)
+void CParticleSystem::setGravity(const glm::vec3& gravity)
 {
     m_gravity = gravity;
 }
@@ -121,7 +118,7 @@ void CParticleSystem::draw(TProgramSharedPtr program, const glm::mat4& worldView
 
     program->uniform("particle_scale") = m_particle_scale;
 
-    const GLsizei vertexCount = GLsizei(SPRITE_VERTEX_COUNT);
+    const GLsizei vertexCount = GLsizei(SPRITE_VERTECIES.size());
     const GLsizei instanceCount = GLsizei(mParticles.size());
 
     mParticlesVao.bind();
@@ -140,8 +137,8 @@ void CParticleSystem::updateParticlePositions(const glm::mat4& worldView)
 
     /// Sort particles in order of distance from the camera.
     std::sort(positions.begin(), positions.end(), [&](const glm::vec4& a, const glm::vec4& b) {
-        const vec3 viewA = vec3(worldView * vec4(a.x, a.y, a.z, 1.0));
-        const vec3 viewB = vec3(worldView * vec4(b.x, b.y, b.z, 1.0));
+        const glm::vec3 viewA = glm::vec3(worldView * glm::vec4(a.x, a.y, a.z, 1.0));
+        const glm::vec3 viewB = glm::vec3(worldView * glm::vec4(b.x, b.y, b.z, 1.0));
         return viewA.z < viewB.z;
     });
 
