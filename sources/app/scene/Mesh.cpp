@@ -1,9 +1,31 @@
 #include "Mesh.hpp"
 #include "app/shading/CUniform.hpp"
+
+#include <algorithm>
 #include <fmt/core.h>
 #include <glm/common.hpp>
 #include <string>
 
+namespace
+{
+struct SBoxFinder
+{
+    void operator()(const Vertex& v)
+    {
+        lowerBound = glm::min(lowerBound, v.position);
+        upperBound = glm::max(upperBound, v.position);
+    }
+
+    geometry::CBoundingBox get() const
+    {
+        return geometry::CBoundingBox(lowerBound, upperBound);
+    }
+
+    glm::vec3 lowerBound{0};
+    glm::vec3 upperBound{0};
+};
+
+} // namespace
 
 Mesh::Mesh(TVerticeList& vertices, TIndiceList& indices, const TPhongMaterialPtr& material,
            unsigned int primitiveType)
@@ -28,18 +50,7 @@ void Mesh::setup_mesh()
     m_vbo.copy(m_vertices);
     m_ebo.copy(m_indices);
 
-    mAABB = ([](const TVerticeList& vertices) -> decltype(mAABB) {
-        glm::vec3 lowerBound(0);
-        glm::vec3 upperBound(0);
-
-        for (const auto& v : vertices)
-        {
-            lowerBound = glm::min(lowerBound, v.position);
-            upperBound = glm::max(upperBound, v.position);
-        }
-
-        return geometry::CBoundingBox(lowerBound, upperBound);
-    })(m_vertices);
+    mAABB = std::for_each(m_vertices.begin(), m_vertices.end(), SBoxFinder()).get();
 
     gl::vertex_attrib_pointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
     auto normal_offset = reinterpret_cast<void*>(offsetof(Vertex, normal));

@@ -12,6 +12,12 @@ CBoundingBox::CBoundingBox(const glm::vec3& lowerBounds, const glm::vec3& upperB
 {
 }
 
+CBoundingBox& CBoundingBox::operator=(const CBoundingBox& box)
+{
+    mBounds = box.mBounds;
+    return *this;
+}
+
 void CBoundingBox::unite(const CBoundingBox& other)
 {
     unite(other.mBounds.mMin, other.mBounds.mMax);
