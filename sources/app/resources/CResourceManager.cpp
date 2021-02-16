@@ -12,6 +12,8 @@ void CResourceManager::initialize()
     m_model_manager.reset(new CModelManager());
     m_model_manager->initialize();
 
+    mTextureManager.reset(new CTextureManager());
+    mTextureManager->initialize();
 }
 
 std::shared_ptr<CModelManager> CResourceManager::get_model_manager() const
@@ -24,7 +26,7 @@ std::shared_ptr<CShaderManager> CResourceManager::get_shader_manager() const
     return m_shader_manager;
 }
 
-std::shared_ptr<CTextureManager> CResourceManager::get_texture_manager() const
+std::shared_ptr<CTextureManager> CResourceManager::getTextureManager() const
 {
-    return nullptr;
+    return mTextureManager;
 }

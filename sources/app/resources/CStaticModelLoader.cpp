@@ -1,5 +1,6 @@
 
 #include "CStaticModelLoader.hpp"
+#include "CTextureManager.hpp"
 
 #include "app/scene/CStaticModel.hpp"
 #include "resources.hpp"
@@ -57,7 +58,7 @@ public:
         if (AI_SUCCESS == mSrcMat.Get(key, type, index, filename))
         {
             const auto abspath = mResourceDir / filename.data;
-            return resources::get_texture(abspath.c_str(), resources::ETextureType::TEXTURE_2D);
+            return TextureManagement::getTexture2D(abspath.c_str());
         }
         return nullptr;
     }

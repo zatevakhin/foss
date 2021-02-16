@@ -205,11 +205,14 @@ void CEngine::prepare()
     srand(SDL_GetTicks());
 
     spdlog::debug("prepare: ");
-    auto skyboxTexture = resources::get_texture("resources/skybox/purple-nebula/4096",
-                                                resources::ETextureType::CUBE_MAP_TEXTURE);
 
-    auto orange = resources::get_texture("resources/textures/orange.png",
-                                         resources::ETextureType::TEXTURE_2D);
+    auto texManager = mResourceManager->getTextureManager();
+
+    auto skyboxTexture = texManager->create<CTextureCubeMap>("resources/skybox/purple-nebula/4096",
+                                                             CTextureManager::Type::FILE);
+
+    auto orange = texManager->create<CTexture2D>("resources/textures/orange.png",
+                                                 CTextureManager::Type::FILE);
 
     CRegistry::set("camera", m_camera.get());
     CRegistry::set("texture/skybox", skyboxTexture);
