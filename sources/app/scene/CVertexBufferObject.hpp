@@ -1,6 +1,7 @@
 #pragma once
 
 #include "app/auxiliary/opengl.hpp"
+#include <array>
 #include <vector>
 
 
@@ -33,11 +34,24 @@ public:
 
     void unbind() const;
 
+    /**
+     * @brief Copying the data to video memory.
+     * @param data - Any type of data which can be writen into buffer.
+     * @param size - Data size in bytes.
+     */
     void copy(const void* data, size_t size);
 
-    template <class T> inline void copy(const std::vector<T>& array)
+    template <class T>
+    inline void copy(const std::vector<T>& array)
     {
         const size_t size = sizeof(T) * array.size();
+        copy(array.data(), size);
+    }
+
+    template <class T, size_t N>
+    inline void copy(const std::array<T, N>& array)
+    {
+        const size_t size = sizeof(T) * N;
         copy(array.data(), size);
     }
 
