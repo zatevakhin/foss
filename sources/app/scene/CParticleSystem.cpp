@@ -25,6 +25,7 @@ CParticleSystem::CParticleSystem()
     , mParticlePositions(EBufferType::eArrayBuffer, EBufferUsage::eStreamDraw)
     , mParticlesVao()
     , mParticleScale(1.f)
+    , mMaxParticles(10)
 {
     mParticlesVao.bind();
 
@@ -79,12 +80,28 @@ size_t CParticleSystem::getPatriclesCount() const
     return mParticles.size();
 }
 
+void CParticleSystem::setMaxPatricles(unsigned int maxParticles)
+{
+    mMaxParticles = maxParticles;
+}
+
+unsigned int CParticleSystem::getMaxPatricles() const
+{
+    return mMaxParticles;
+}
+
 void CParticleSystem::advance(float dt, const glm::mat4& transform)
 {
     mEmitter->advance(dt);
 
     while (mEmitter->isEmitReady())
     {
+        unsigned int particlesCount = static_cast<unsigned int>(mParticles.size());
+        if (particlesCount >= mMaxParticles)
+        {
+            break;
+        }
+
         mParticles.emplace_back(mEmitter->emit());
     }
 

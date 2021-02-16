@@ -30,12 +30,19 @@ public:
 
     size_t getPatriclesCount() const;
 
+    void setMaxPatricles(unsigned int maxParticles);
+
+    unsigned int getMaxPatricles() const;
+
     void advance(float dt, const glm::mat4& transform);
 
     void draw(TProgramSharedPtr program);
 
 private:
     void updateParticlePositions(const glm::mat4& worldView);
+
+private:
+    unsigned int mMaxParticles;
 
     std::shared_ptr<CParticleEmitter> mEmitter;
     std::vector<CParticle> mParticles;

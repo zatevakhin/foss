@@ -122,6 +122,21 @@ void CEntityManagerWindow::draw()
         if (ImGui::CollapsingHeader(title.c_str()))
         {
             {
+                ImVec4 text_color(1.f, 1.f, 0.f, 1.f);
+                auto count = component.mParticleSystem->getPatriclesCount();
+                ImGui::TextColored(text_color, "Particles count: %lu", count);
+            }
+
+            {
+                auto maxParticles = static_cast<int>(component.mParticleSystem->getMaxPatricles());
+                ImGui::InputInt("Particles max", &maxParticles);
+                if (maxParticles >= 0)
+                {
+                    component.mParticleSystem->setMaxPatricles(maxParticles);
+                }
+            }
+
+            {
                 auto scale = component.mParticleSystem->getParticleScale();
                 ImGui::InputFloat2("Particle scale", &scale[0]);
                 component.mParticleSystem->setParticleScale(scale);
@@ -137,12 +152,6 @@ void CEntityManagerWindow::draw()
         auto title2 = fmt::format("Particle emitter ({})", static_cast<size_t>(entity));
         if (ImGui::CollapsingHeader(title2.c_str()))
         {
-            {
-                ImVec4 text_color(1.f, 1.f, 0.f, 1.f);
-                auto count = component.mParticleSystem->getPatriclesCount();
-                ImGui::TextColored(text_color, "Particles count: %lu", count);
-            }
-
             // {
             //     auto position = component.m_particle_emitter->getPosition();
             //     ImGui::InputFloat3("Position", &position[0]);

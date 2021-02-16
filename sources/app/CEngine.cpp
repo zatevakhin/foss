@@ -322,6 +322,7 @@ void CEngine::prepare()
 
         system->setGravity(glm::vec3(0));
         system->setParticleTexture(orange);
+        system->setMaxPatricles(1000);
 
         auto createEmitter = []() -> std::shared_ptr<CParticleEmitter> {
             auto emitter = std::make_shared<CParticleEmitter>();
