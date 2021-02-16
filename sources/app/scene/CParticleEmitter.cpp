@@ -15,7 +15,8 @@ CParticle::CParticle(const vec3& position, const vec3& velocity, float lifetime)
 {
 }
 
-void CParticle::advance(float deltaSeconds, const glm::vec3& acceleration)
+void CParticle::advance(float deltaSeconds, const glm::vec3& acceleration,
+                        const glm::mat4& transform)
 {
     float fp = (mLifetime / mLifetimeInitial);
     float fp10 = 0.1;
@@ -38,6 +39,8 @@ void CParticle::advance(float deltaSeconds, const glm::vec3& acceleration)
     mLifetime -= deltaSeconds;
     mVelocity += acceleration * deltaSeconds;
     mPosition += mVelocity * deltaSeconds;
+
+    mDistanceFromCamera = glm::vec3(transform * glm::vec4(mPosition, 1.0)).z;
 }
 
 glm::vec3 CParticle::getPosition() const
@@ -50,6 +53,13 @@ float CParticle::getAlphaValue() const
 {
     return mAlphaValue;
 }
+
+
+float CParticle::getDistanceFromCamera() const
+{
+    return mDistanceFromCamera;
+}
+
 
 bool CParticle::isAlive() const
 {

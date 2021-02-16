@@ -34,7 +34,7 @@ CParticleSystem::CParticleSystem()
 
     glVertexAttribDivisor(0, 1);
 
-    mSpriteGeometry.copy(SPRITE_VERTECIES.data(), SPRITE_VERTECIES.size() * sizeof(glm::vec2));
+    mSpriteGeometry.copy(SPRITE_VERTECIES);
     gl::vertex_attrib_pointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), 0);
 
     mParticlesVao.unbind();
@@ -79,7 +79,7 @@ size_t CParticleSystem::getPatriclesCount() const
     return mParticles.size();
 }
 
-void CParticleSystem::advance(float dt)
+void CParticleSystem::advance(float dt, const glm::mat4& transform)
 {
     mEmitter->advance(dt);
 
@@ -90,7 +90,7 @@ void CParticleSystem::advance(float dt)
 
     for (auto& particle : mParticles)
     {
-        particle.advance(dt, mGravity);
+        particle.advance(dt, mGravity, transform);
     }
 
     auto newEnd = std::remove_if(mParticles.begin(), mParticles.end(),
@@ -98,10 +98,22 @@ void CParticleSystem::advance(float dt)
 
     mParticles.erase(newEnd, mParticles.end());
 
-    mIsDirty = true;
+    std::stable_sort(mParticles.begin(), mParticles.end(),
+                     [](const CParticle& a, const CParticle& b) {
+                         return a.getDistanceFromCamera() < b.getDistanceFromCamera();
+                     });
+
+    mPositions.resize(mParticles.size());
+
+    std::transform(mParticles.begin(), mParticles.end(), mPositions.begin(),
+                   [](const CParticle& particle) {
+                       return glm::vec4(particle.getPosition(), particle.getAlphaValue());
+                   });
+
+    mParticlePositions.copy(mPositions);
 }
 
-void CParticleSystem::draw(TProgramSharedPtr program, const glm::mat4& worldView)
+void CParticleSystem::draw(TProgramSharedPtr program)
 {
     if (!mTexture)
     {
@@ -109,12 +121,6 @@ void CParticleSystem::draw(TProgramSharedPtr program, const glm::mat4& worldView
     }
 
     mTexture->bind();
-
-    if (mIsDirty)
-    {
-        updateParticlePositions(worldView);
-        mIsDirty = false;
-    }
 
     program->uniform("particle_scale") = mParticleScale;
 
@@ -124,23 +130,4 @@ void CParticleSystem::draw(TProgramSharedPtr program, const glm::mat4& worldView
     mParticlesVao.bind();
     glDrawArraysInstanced(GL_TRIANGLES, 0, vertexCount, instanceCount);
     mParticlesVao.unbind();
-}
-
-void CParticleSystem::updateParticlePositions(const glm::mat4& worldView)
-{
-    std::vector<glm::vec4> positions(mParticles.size());
-
-    std::transform(mParticles.begin(), mParticles.end(), positions.begin(),
-                   [](const CParticle& particle) {
-                       return glm::vec4(particle.getPosition(), particle.getAlphaValue());
-                   });
-
-    /// Sort particles in order of distance from the camera.
-    std::sort(positions.begin(), positions.end(), [&](const glm::vec4& a, const glm::vec4& b) {
-        const glm::vec3 viewA = glm::vec3(worldView * glm::vec4(a.x, a.y, a.z, 1.0));
-        const glm::vec3 viewB = glm::vec3(worldView * glm::vec4(b.x, b.y, b.z, 1.0));
-        return viewA.z < viewB.z;
-    });
-
-    mParticlePositions.copy(positions);
 }

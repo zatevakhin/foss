@@ -14,8 +14,6 @@ CCompleteFbo::CCompleteFbo(glm::ivec2 size)
 
 void CCompleteFbo::createTexturesAndBind()
 {
-    mFbo.bind();
-
     mFboTextureRgb.bind();
     mFboTextureRgb.setTexture(GL_RGB, GL_RGB, GL_UNSIGNED_BYTE, mSize, 0);
     mFboTextureRgb.setFilter();
@@ -27,9 +25,9 @@ void CCompleteFbo::createTexturesAndBind()
     mFboTextureDepth.setFilter();
     mFboTextureDepth.unbind();
 
+    mFbo.bind();
     mFbo.attachTexture(mFboTextureRgb.id(), GL_COLOR_ATTACHMENT0);
     mFbo.attachTexture(mFboTextureDepth.id(), GL_DEPTH_STENCIL_ATTACHMENT);
-
     mFbo.unbind();
 }
 

@@ -397,6 +397,9 @@ void CEngine::onUpdate(double delta)
     mCullingSystem->setProjectionMatrix(projection);
     mCullingSystem->setViewMatrix(view);
 
+    mParticleUpdateSystem->setProjectionMatrix(projection);
+    mParticleUpdateSystem->setViewMatrix(view);
+
     mCullingSystem->update(delta);
     mPickingSystem->update(delta);
     mParticleUpdateSystem->update(delta);

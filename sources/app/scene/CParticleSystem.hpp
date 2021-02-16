@@ -30,9 +30,9 @@ public:
 
     size_t getPatriclesCount() const;
 
-    void advance(float dt);
+    void advance(float dt, const glm::mat4& transform);
 
-    void draw(TProgramSharedPtr program, const glm::mat4& worldView);
+    void draw(TProgramSharedPtr program);
 
 private:
     void updateParticlePositions(const glm::mat4& worldView);
@@ -41,8 +41,8 @@ private:
     std::vector<CParticle> mParticles;
     glm::vec3 mGravity;
     glm::vec2 mParticleScale;
+    std::vector<glm::vec4> mPositions;
 
-    bool mIsDirty = false;
     TTextureSharedPtr mTexture;
     CVertexArrayObject mParticlesVao;
     CVertexBufferObject mSpriteGeometry;

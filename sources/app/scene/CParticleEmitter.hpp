@@ -9,10 +9,11 @@ class CParticle
 public:
     CParticle(const glm::vec3& position, const glm::vec3& velocity, float lifetime);
 
-    void advance(float deltaSeconds, const glm::vec3& acceleration);
+    void advance(float deltaSeconds, const glm::vec3& acceleration, const glm::mat4& transform);
 
     glm::vec3 getPosition() const;
     float getAlphaValue() const;
+    float getDistanceFromCamera() const;
     bool isAlive() const;
 
 private:
@@ -21,6 +22,7 @@ private:
     float mAlphaValue = 0;
     float mLifetime = 0;
     float mLifetimeInitial = 0;
+    float mDistanceFromCamera = 0;
 };
 
 // Based on http://stackoverflow.com/questions/28618900

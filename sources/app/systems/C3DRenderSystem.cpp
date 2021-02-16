@@ -275,9 +275,8 @@ void C3DRenderSystem::renderInstanced(const glm::mat4& view, const glm::mat4& pr
     {
         auto [p, t] = component;
 
-        const auto& modelView = view * t.toMat4();
-        program->uniform("modelView") = modelView;
-        p.mParticleSystem->draw(program, modelView);
+        program->uniform("modelView") = view * t.toMat4();
+        p.mParticleSystem->draw(program);
     }
 
     glDepthMask(GL_TRUE);
