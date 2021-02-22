@@ -22,25 +22,4 @@ unsigned int mapTextureWrapMode(ETextureWrapMode mode)
     return textureWrapModeMap.at(mode);
 }
 
-void tryBindTexture(const TTextureSharedPtr& texture, const unsigned int textureId,
-                    const ETextureType type)
-{
-    if (nullptr != texture)
-    {
-        glActiveTexture(textureId);
-        texture->bind();
-    } else
-    {
-        switch (type)
-        {
-        case ETextureType::eTexture2D:
-            CTexture2D::unbind();
-            break;
-        case ETextureType::eTextureCubeMap:
-            CTextureCubeMap::unbind();
-            break;
-        }
-    }
-}
-
 } // namespace textures
