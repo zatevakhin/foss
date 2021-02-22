@@ -1,6 +1,7 @@
 #pragma once
 
-#include "app/scene/CCompleteFbo.hpp"
+#include "app/resources/CResourceManager.hpp"
+#include "app/scene/CFrameBufferObject.hpp"
 #include "app/scene/CVertexArrayObject.hpp"
 #include "app/scene/ICamera.hpp"
 #include "app/scene/IModel.hpp"
@@ -10,15 +11,10 @@
 #include <memory>
 
 
-class CShaderManager;
-
-using TShaderManagerPtr = std::shared_ptr<CShaderManager>;
-
-
 class C3DRenderSystem
 {
 public:
-    C3DRenderSystem(ecs::EntityManager& entityManager, TShaderManagerPtr shader_manager);
+    C3DRenderSystem(ecs::EntityManager& entityManager, const CResourceManager& resourceManager);
     void render(const glm::mat4& view, const glm::mat4& projection);
     void prepare(const ICamera* camera);
 
@@ -29,13 +25,12 @@ private:
     void renderBoundingBoxes(const glm::mat4& view, const glm::mat4& projection);
 
     ecs::EntityManager& mEntityManager;
-    TShaderManagerPtr m_shader_manager;
-
-    CCompleteFbo mFbo;
+    const CResourceManager& mResourceManager;
 
     unsigned int mFrame;
 
     CVertexArrayObject mScreenQuad;
+    CFrameBufferObject mFbo;
 
     TModelPtr mBoundingBoxModel;
 };

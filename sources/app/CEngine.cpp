@@ -215,7 +215,6 @@ void CEngine::prepare()
                                                  CTextureManager::Type::FILE);
 
     CRegistry::set("camera", m_camera.get());
-    CRegistry::set("texture/skybox", skyboxTexture);
 
     constexpr auto nbEntities = std::size_t(10000);
     mEntityManager.reserve(nbEntities);
@@ -227,8 +226,7 @@ void CEngine::prepare()
     style.Colors[ImGuiCol_WindowBg] = ImVec4(0.00f, 0.00f, 0.00f, 0.30f);
 
     m2dRenderSystem.reset(new C2DRenderSystem(mEntityManager));
-    auto shader_manager = mResourceManager->get_shader_manager();
-    m3dRenderSystem.reset(new C3DRenderSystem(mEntityManager, shader_manager));
+    m3dRenderSystem.reset(new C3DRenderSystem(mEntityManager, *mResourceManager));
     mCullingSystem.reset(new CCullingSystem(mEntityManager));
     mPickingSystem.reset(new CPickingSystem(mEntityManager));
     mRotationUpdateSystem.reset(new CRotationUpdateSystem(mEntityManager));
@@ -296,7 +294,7 @@ void CEngine::prepare()
     {
         auto e = mEntityManager.createEntity();
         auto& w = mEntityManager.addComponent<CWindowComponent>(e);
-        w.mWindow = std::make_shared<CShaderManagerWindow>(shader_manager);
+        w.mWindow = std::make_shared<CShaderManagerWindow>(mResourceManager->get_shader_manager());
     }
 
     {

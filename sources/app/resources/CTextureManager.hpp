@@ -37,7 +37,7 @@ public:
     void initialize(){};
 
     template <class T>
-    TTextureSharedPtr create(const std::string name, Type type)
+    std::shared_ptr<T> create(const std::string name, Type type)
     {
         static_assert(std::is_base_of<ITexture, T>::value, "Should be derived from ITexture!");
 
@@ -60,10 +60,14 @@ public:
             }
         }
 
-        return mTextureCache[name];
+        return std::static_pointer_cast<T>(mTextureCache[name]);
     }
 
-    TTextureSharedPtr get(const std::string name);
+    template <class T>
+    std::shared_ptr<T> get(const std::string name)
+    {
+        return std::static_pointer_cast<T>(mTextureCache[name]);
+    }
 
 private:
     std::unordered_map<std::string, TTextureSharedPtr> mTextureCache;

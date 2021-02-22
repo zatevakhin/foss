@@ -18,10 +18,6 @@ CTextureManager::CTextureManager()
 {
 }
 
-TTextureSharedPtr CTextureManager::get(const std::string name)
-{
-    return mTextureCache[name];
-}
 
 namespace TextureManagement
 {

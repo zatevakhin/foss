@@ -26,17 +26,14 @@
 #include <iostream>
 
 
-#define GL_SWITCH_OPTION(expression, option) (((expression) ? gl::enable : gl::disable)(option))
-
-
 C3DRenderSystem::C3DRenderSystem(ecs::EntityManager& entityManager,
-                                 TShaderManagerPtr shader_manager)
+                                 const CResourceManager& resourceManager)
     : mEntityManager(entityManager)
-    , m_shader_manager(shader_manager)
-    , mFbo({1920, 1080})
+    , mResourceManager(resourceManager)
     , mScreenQuad()
     , mFrame(0)
     , mBoundingBoxModel(nullptr)
+    , mFbo()
 {
     CBoundingBox box;
     mBoundingBoxModel = box.getModel();
@@ -58,7 +55,25 @@ C3DRenderSystem::C3DRenderSystem(ecs::EntityManager& entityManager,
     q_vbo.unbind();
     mScreenQuad.unbind();
 
-    // mBBoxRenderer.setProgram(m_shader_manager->getByName("m3d"));
+    auto textures = mResourceManager.getTextureManager();
+
+    auto color = textures->create<CTexture2D>("fbo.rgb", CTextureManager::Type::VIRTUAL);
+    auto depth = textures->create<CTexture2D>("fbo.d.s", CTextureManager::Type::VIRTUAL);
+
+    color->bind();
+    color->setTexture(GL_RGB, GL_RGB, GL_UNSIGNED_BYTE, {1920, 1080}, 0);
+    color->setFilter();
+    color->unbind();
+
+    depth->bind();
+    depth->setTexture(GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, {1920, 1080}, 0);
+    depth->setFilter();
+    depth->unbind();
+
+    mFbo.bind();
+    mFbo.attachTexture(color->id(), GL_COLOR_ATTACHMENT0);
+    mFbo.attachTexture(depth->id(), GL_DEPTH_STENCIL_ATTACHMENT);
+    mFbo.unbind();
 }
 
 void C3DRenderSystem::prepare(const ICamera* camera)
@@ -67,8 +82,13 @@ void C3DRenderSystem::prepare(const ICamera* camera)
 
 void C3DRenderSystem::render(const glm::mat4& view, const glm::mat4& projection)
 {
+    auto shaders = mResourceManager.get_shader_manager();
+    auto textures = mResourceManager.getTextureManager();
+
+    auto colorTexture = textures->get<CTexture2D>("fbo.rgb");
+
     mFrame++;
-    // For testing purposes.
+
     gl::enable(GL_DEPTH_TEST);
 
     gl::clear_color(0.2f, 0.3f, 0.3f, 1.0f);
@@ -84,16 +104,15 @@ void C3DRenderSystem::render(const glm::mat4& view, const glm::mat4& projection)
     renderInstanced(view, projection);
     mFbo.unbind();
 
-    auto& colorTexture = mFbo.getColorTexture();
-    auto screen = m_shader_manager->getByName("screen");
+    auto screen = shaders->getByName("screen");
 
     screen->use();
     screen->uniform("frameNumber") = static_cast<int>(mFrame);
 
     mScreenQuad.bind();
-    colorTexture.bind();
+    colorTexture->bind();
     glDrawArrays(GL_TRIANGLES, 0, 6);
-    colorTexture.unbind();
+    colorTexture->unbind();
     mScreenQuad.unbind();
 
     glUseProgram(0U); // Free shader
@@ -101,11 +120,15 @@ void C3DRenderSystem::render(const glm::mat4& view, const glm::mat4& projection)
 
 void C3DRenderSystem::renderEnvironment(const glm::mat4& view, const glm::mat4& projection)
 {
+    auto shaders = mResourceManager.get_shader_manager();
+    auto textures = mResourceManager.getTextureManager();
+
+    auto cubeMap = textures->get<ITexture>("resources/skybox/purple-nebula/4096");
+
     glDepthFunc(GL_LEQUAL);
     glFrontFace(GL_CW);
 
-    auto prog = m_shader_manager->getByName("skybox");
-    auto cubeMap = CRegistry::get<TTextureSharedPtr>("texture/skybox");
+    auto prog = shaders->getByName("skybox");
 
     prog->use();
 
@@ -131,8 +154,10 @@ void C3DRenderSystem::renderEnvironment(const glm::mat4& view, const glm::mat4& 
 
 void C3DRenderSystem::renderForeground(const glm::mat4& view, const glm::mat4& projection)
 {
+    auto shaders = mResourceManager.get_shader_manager();
+
     auto camera = CRegistry::get<CFreeCamera*>("camera");
-    auto prog = m_shader_manager->getByName("mesh");
+    auto prog = shaders->getByName("mesh");
 
     std::vector<ecs::Entity> debugDraw;
     std::vector<ecs::Entity> debugDrawNormals;
@@ -169,7 +194,7 @@ void C3DRenderSystem::renderForeground(const glm::mat4& view, const glm::mat4& p
 
     if (debugDraw.size())
     {
-        auto debug = m_shader_manager->getByName("m3d");
+        auto debug = shaders->getByName("m3d");
         debug->use();
         debug->uniform("background") = glm::vec4(1.f, 1.f, 0.f, 1.f);
 
@@ -209,7 +234,7 @@ void C3DRenderSystem::renderForeground(const glm::mat4& view, const glm::mat4& p
 
     if (debugDrawNormals.size())
     {
-        auto debug_normals = m_shader_manager->getByName("normals");
+        auto debug_normals = shaders->getByName("normals");
         debug_normals->use();
 
         auto adapter = std::make_shared<CModelProgramAdapter>(debug_normals);
@@ -232,7 +257,9 @@ void C3DRenderSystem::renderForeground(const glm::mat4& view, const glm::mat4& p
 
 void C3DRenderSystem::renderBoundingBoxes(const glm::mat4& view, const glm::mat4& projection)
 {
-    auto prog = m_shader_manager->getByName("m3d");
+    auto shaders = mResourceManager.get_shader_manager();
+
+    auto prog = shaders->getByName("m3d");
     prog->use();
 
     auto adapter = std::make_shared<CModelProgramAdapter>(prog);
@@ -260,12 +287,14 @@ void C3DRenderSystem::renderBoundingBoxes(const glm::mat4& view, const glm::mat4
 
 void C3DRenderSystem::renderInstanced(const glm::mat4& view, const glm::mat4& projection)
 {
+    auto shaders = mResourceManager.get_shader_manager();
+
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
     // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // More real alpha blend.
     // glDepthMask(GL_FALSE); // Don't write to depth buffer.
 
-    auto program = m_shader_manager->getByName("particles");
+    auto program = shaders->getByName("particles");
 
     program->use();
     program->uniform("projection") = projection;
