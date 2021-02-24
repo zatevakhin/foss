@@ -60,14 +60,22 @@ C3DRenderSystem::C3DRenderSystem(ecs::EntityManager& entityManager,
     auto color = textures->create<CTexture2D>("fbo.rgb", CTextureManager::Type::VIRTUAL);
     auto depth = textures->create<CTexture2D>("fbo.d.s", CTextureManager::Type::VIRTUAL);
 
+    gl::TTexParametriList params;
+    // Filtering
+    params.emplace_back(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    params.emplace_back(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glm::ivec2 size(1920, 1080);
     color->bind();
-    color->setTexture(GL_RGB, GL_RGB, GL_UNSIGNED_BYTE, {1920, 1080}, 0);
-    color->setFilter();
+    gl::tex_parameteri(params);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, size.x, size.y, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
     color->unbind();
 
     depth->bind();
-    depth->setTexture(GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, {1920, 1080}, 0);
-    depth->setFilter();
+    gl::tex_parameteri(params);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, size.x, size.y, 0, GL_DEPTH_STENCIL,
+                 GL_UNSIGNED_INT_24_8, 0);
     depth->unbind();
 
     mFbo.bind();

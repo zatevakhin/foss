@@ -31,12 +31,23 @@ TTextureSharedPtr getTexture2D(const std::filesystem::path path)
     auto texture = std::make_shared<CTexture2D>();
 
     texture->bind();
-    texture->setWrapMode(textures::ETextureWrapMode::eRepeat, textures::ETextureWrapMode::eRepeat);
-    texture->setFilter();
-    texture->setTexture(format, format, GL_UNSIGNED_BYTE, size, surface->pixels);
-    texture->generateMipMaps();
 
-    CTexture2D::unbind();
+    gl::TTexParametriList params;
+    // Wrap mode
+    params.emplace_back(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    params.emplace_back(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    // Filtering
+    params.emplace_back(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    params.emplace_back(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    gl::tex_parameteri(params);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, format, size.x, size.y, 0, format, GL_UNSIGNED_BYTE,
+                 surface->pixels);
+
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    texture->unbind();
     return texture;
 }
 
@@ -45,9 +56,16 @@ TTextureSharedPtr getTextureCubeMap(const std::filesystem::path path)
     auto texture = std::make_shared<CTextureCubeMap>();
 
     texture->bind();
-    texture->setWrapMode(textures::ETextureWrapMode::eClampToEdge,
-                         textures::ETextureWrapMode::eClampToEdge,
-                         textures::ETextureWrapMode::eClampToEdge);
+    gl::TTexParametriList params;
+    // Wrap mode
+    params.emplace_back(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    params.emplace_back(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    params.emplace_back(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    // Filtering
+    params.emplace_back(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    params.emplace_back(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    gl::tex_parameteri(params);
 
     for (auto i = 0U; i < 6; ++i)
     {
@@ -60,7 +78,6 @@ TTextureSharedPtr getTextureCubeMap(const std::filesystem::path path)
                      0, format, GL_UNSIGNED_BYTE, surface->pixels);
     }
 
-    texture->genMipMap();
     texture->unbind();
 
     return texture;
