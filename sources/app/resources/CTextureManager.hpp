@@ -1,7 +1,5 @@
 #pragma once
 
-#include "app/textures/CTexture2D.hpp"
-#include "app/textures/CTextureCubeMap.hpp"
 #include "app/textures/ITexture.hpp"
 
 #include <filesystem>
@@ -9,26 +7,19 @@
 #include <string>
 #include <unordered_map>
 
-namespace TextureManagement
+
+enum class ETextureType
 {
-
-TTextureSharedPtr getTexture2D(const std::filesystem::path path);
-TTextureSharedPtr getTextureCubeMap(const std::filesystem::path path);
-
-} // namespace TextureManagement
+    VIRTUAL,
+    FILE
+};
 
 
 class CTextureManager
 {
 
 public:
-    enum class Type
-    {
-        VIRTUAL,
-        FILE
-    };
-
-    CTextureManager();
+    CTextureManager() = default;
     ~CTextureManager() = default;
 
     CTextureManager(const CTextureManager&) = delete;
@@ -36,27 +27,20 @@ public:
 
     void initialize(){};
 
-    template <class T>
-    std::shared_ptr<T> create(const std::string name, Type type)
+    template <class T, typename = std::enable_if_t<std::is_base_of<ITexture, T>::value>>
+    std::shared_ptr<T> create(const std::string path, ETextureType type)
     {
-        static_assert(std::is_base_of<ITexture, T>::value, "Should be derived from ITexture!");
+        std::string name = std::filesystem::path(path).filename();
+        TTextureSharedPtr texturePtr(nullptr);
 
         if (mTextureCache.find(name) == mTextureCache.end())
         {
-            if (type == Type::FILE)
+            mTextureCache.emplace(name, new T());
+            texturePtr = mTextureCache[name];
+
+            if (ETextureType::FILE == type)
             {
-                if (std::is_same<T, CTextureCubeMap>::value)
-                {
-                    mTextureCache.emplace(name, TextureManagement::getTextureCubeMap(name));
-                }
-                else
-                {
-                    mTextureCache.emplace(name, TextureManagement::getTexture2D(name));
-                }
-            }
-            else
-            {
-                mTextureCache.emplace(name, new T());
+                getTexture<T>(path, std::static_pointer_cast<T>(texturePtr));
             }
         }
 
@@ -68,6 +52,10 @@ public:
     {
         return std::static_pointer_cast<T>(mTextureCache[name]);
     }
+
+    template <class T>
+    static void getTexture(const std::filesystem::path path, std::shared_ptr<T> texture);
+
 
 private:
     std::unordered_map<std::string, TTextureSharedPtr> mTextureCache;

@@ -25,6 +25,9 @@
 #include "entities/windows/CEntityManagerWindow.hpp"
 #include "entities/windows/CShaderManagerWindow.hpp"
 
+#include "app/textures/CTexture2D.hpp"
+#include "app/textures/CTextureCubeMap.hpp"
+
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -208,11 +211,11 @@ void CEngine::prepare()
 
     auto texManager = mResourceManager->getTextureManager();
 
-    auto skyboxTexture = texManager->create<CTextureCubeMap>("resources/skybox/purple-nebula/4096",
-                                                             CTextureManager::Type::FILE);
+    auto skyboxTexture = texManager->create<CTextureCubeMap>("resources/skybox/purple-nebula.4096",
+                                                             ETextureType::FILE);
 
-    auto orange = texManager->create<CTexture2D>("resources/textures/orange.png",
-                                                 CTextureManager::Type::FILE);
+    auto orange =
+        texManager->create<CTexture2D>("resources/textures/orange.png", ETextureType::FILE);
 
     CRegistry::set("camera", m_camera.get());
 

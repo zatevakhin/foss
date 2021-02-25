@@ -1,7 +1,12 @@
 #include "CTextureManager.hpp"
+#include "app/textures/CTexture2D.hpp"
+#include "app/textures/CTextureCubeMap.hpp"
+
 #include "app/auxiliary/opengl.hpp"
 #include "auxiliary/sdl.hpp"
 
+
+// TODO: Use GLI. (https://github.com/g-truc/gli).
 namespace
 {
 
@@ -13,22 +18,13 @@ std::tuple<std::shared_ptr<SDL_Surface>, bool> get_image(const std::filesystem::
 
 } // namespace
 
-
-CTextureManager::CTextureManager()
-{
-}
-
-
-namespace TextureManagement
-{
-
-TTextureSharedPtr getTexture2D(const std::filesystem::path path)
+template <>
+void CTextureManager::getTexture(const std::filesystem::path path,
+                                 std::shared_ptr<CTexture2D> texture)
 {
     const auto [surface, is_alpha] = get_image(path);
     const auto size = glm::ivec2(surface->w, surface->h);
     const auto format = is_alpha ? GL_RGBA : GL_RGB;
-
-    auto texture = std::make_shared<CTexture2D>();
 
     texture->bind();
 
@@ -48,14 +44,14 @@ TTextureSharedPtr getTexture2D(const std::filesystem::path path)
     glGenerateMipmap(GL_TEXTURE_2D);
 
     texture->unbind();
-    return texture;
 }
 
-TTextureSharedPtr getTextureCubeMap(const std::filesystem::path path)
+template <>
+void CTextureManager::getTexture(const std::filesystem::path path,
+                                 std::shared_ptr<CTextureCubeMap> texture)
 {
-    auto texture = std::make_shared<CTextureCubeMap>();
-
     texture->bind();
+
     gl::TTexParametriList params;
     // Wrap mode
     params.emplace_back(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -67,10 +63,14 @@ TTextureSharedPtr getTextureCubeMap(const std::filesystem::path path)
 
     gl::tex_parameteri(params);
 
+    auto parentPath = path.parent_path();
+    // TODO: Refactoring.
+    std::string extension = &(path.extension().string()[1]); // removing dot symbol from extension.
+    auto stem = path.stem();
+
     for (auto i = 0U; i < 6; ++i)
     {
-        std::string file(fmt::format("{}.{}.png", path.string(), i + 1));
-
+        auto file = parentPath / stem / fmt::format("{}.{}.png", extension, i + 1);
         const auto [surface, is_alpha] = get_image(file);
         const GLenum format = is_alpha ? GL_RGBA : GL_RGB;
 
@@ -79,8 +79,4 @@ TTextureSharedPtr getTextureCubeMap(const std::filesystem::path path)
     }
 
     texture->unbind();
-
-    return texture;
 }
-
-} // namespace TextureManagement

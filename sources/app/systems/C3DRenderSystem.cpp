@@ -57,8 +57,8 @@ C3DRenderSystem::C3DRenderSystem(ecs::EntityManager& entityManager,
 
     auto textures = mResourceManager.getTextureManager();
 
-    auto color = textures->create<CTexture2D>("fbo.rgb", CTextureManager::Type::VIRTUAL);
-    auto depth = textures->create<CTexture2D>("fbo.d.s", CTextureManager::Type::VIRTUAL);
+    auto color = textures->create<CTexture2D>("fbo.rgb", ETextureType::VIRTUAL);
+    auto depth = textures->create<CTexture2D>("fbo.d.s", ETextureType::VIRTUAL);
 
     gl::TTexParametriList params;
     // Filtering
@@ -131,7 +131,7 @@ void C3DRenderSystem::renderEnvironment(const glm::mat4& view, const glm::mat4& 
     auto shaders = mResourceManager.get_shader_manager();
     auto textures = mResourceManager.getTextureManager();
 
-    auto cubeMap = textures->get<ITexture>("resources/skybox/purple-nebula/4096");
+    auto cubeMap = textures->get<ITexture>("purple-nebula.4096");
 
     glDepthFunc(GL_LEQUAL);
     glFrontFace(GL_CW);

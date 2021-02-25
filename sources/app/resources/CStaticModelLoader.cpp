@@ -58,7 +58,9 @@ public:
         if (AI_SUCCESS == mSrcMat.Get(key, type, index, filename))
         {
             const auto abspath = mResourceDir / filename.data;
-            return TextureManagement::getTexture2D(abspath.c_str());
+            auto texture = std::make_shared<CTexture2D>();
+            CTextureManager::getTexture<CTexture2D>(abspath, texture);
+            return texture;
         }
         return nullptr;
     }

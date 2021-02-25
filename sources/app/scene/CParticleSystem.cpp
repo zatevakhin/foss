@@ -135,6 +135,7 @@ void CParticleSystem::draw(TProgramSharedPtr program)
     if (!mTexture)
     {
         spdlog::error("No texture set for particle system");
+        return;
     }
 
     mTexture->bind();
