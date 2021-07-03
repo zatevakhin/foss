@@ -6,6 +6,6 @@
 class CPickingComponent : public ecs::Component<CPickingComponent>
 {
 public:
-    bool isPicked = false;
-    float intersection = 0.f;
+    bool isPicked{false};
+    float intersection{0.f};
 };

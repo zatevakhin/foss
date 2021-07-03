@@ -1,3 +1,5 @@
+#include <algorithm>
+
 #include "CStaticModel.hpp"
 
 
@@ -23,10 +25,8 @@ geometry::CBoundingBox CStaticModel::getBoundingBox() const
 {
     geometry::CBoundingBox bbox;
 
-    for (const auto& m : mMeshes)
-    {
-        bbox.unite(m->getBoundingBox());
-    }
+    std::for_each(mMeshes.begin(), mMeshes.end(),
+                  [&bbox](const auto& m) { bbox.unite(m->getBoundingBox()); });
 
     return bbox;
 }

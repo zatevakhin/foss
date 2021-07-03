@@ -17,5 +17,5 @@ public:
     GLuint getId() const;
 
 private:
-    GLuint mId;
+    GLuint mId{0};
 };

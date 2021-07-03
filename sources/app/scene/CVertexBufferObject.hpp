@@ -56,7 +56,7 @@ public:
     }
 
 private:
-    GLuint mId = 0;
+    GLuint mId{0};
 
     EBufferType mType;
     EBufferUsage mUsage;

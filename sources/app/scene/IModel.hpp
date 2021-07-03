@@ -20,8 +20,8 @@ public:
     virtual void draw(TProgramAdapterPtr program) = 0;
     virtual geometry::CBoundingBox getBoundingBox() const = 0;
 
-    virtual void update(){};
-    virtual ~IModel(){};
+    virtual void update() {};
+    virtual ~IModel() {};
 };
 
 using TModelPtr = std::shared_ptr<IModel>;
