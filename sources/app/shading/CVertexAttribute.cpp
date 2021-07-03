@@ -11,12 +11,12 @@ CVertexAttribute::CVertexAttribute(int location)
 
 bool CVertexAttribute::isValid() const
 {
-    return (mLocation != -1);
+    return (UNDEFINED != mLocation);
 }
 
 void CVertexAttribute::enablePointer()
 {
-    if (mLocation != -1)
+    if (UNDEFINED != mLocation)
     {
         glEnableVertexAttribArray(GLuint(mLocation));
     }
@@ -24,7 +24,7 @@ void CVertexAttribute::enablePointer()
 
 void CVertexAttribute::disablePointer()
 {
-    if (mLocation != -1)
+    if (UNDEFINED != mLocation)
     {
         glDisableVertexAttribArray(GLuint(mLocation));
     }
@@ -32,7 +32,7 @@ void CVertexAttribute::disablePointer()
 
 void CVertexAttribute::setDivisor(unsigned divisor)
 {
-    if (mLocation != -1)
+    if (UNDEFINED != mLocation)
     {
         glVertexAttribDivisor(GLuint(mLocation), divisor);
     }
@@ -40,7 +40,7 @@ void CVertexAttribute::setDivisor(unsigned divisor)
 
 void CVertexAttribute::setVec3Offset(size_t offset, size_t stride, bool needClamp)
 {
-    if (mLocation != -1)
+    if (UNDEFINED != mLocation)
     {
         const GLboolean normalize = needClamp ? GL_TRUE : GL_FALSE;
         glVertexAttribPointer(GLuint(mLocation), 3, GL_FLOAT, normalize, GLsizei(stride),
@@ -50,7 +50,7 @@ void CVertexAttribute::setVec3Offset(size_t offset, size_t stride, bool needClam
 
 void CVertexAttribute::setVec2Offset(size_t offset, size_t stride)
 {
-    if (mLocation != -1)
+    if (UNDEFINED != mLocation)
     {
         const GLboolean normalize = GL_FALSE;
         glVertexAttribPointer(GLuint(mLocation), 2, GL_FLOAT, normalize, GLsizei(stride),
@@ -61,7 +61,7 @@ void CVertexAttribute::setVec2Offset(size_t offset, size_t stride)
 void CVertexAttribute::setFloatsOffset(size_t offset, size_t stride, unsigned numComponents,
                                        bool needClamp)
 {
-    if (mLocation != -1)
+    if (UNDEFINED != mLocation)
     {
         const GLboolean normalize = needClamp ? GL_TRUE : GL_FALSE;
         glVertexAttribPointer(GLuint(mLocation), GLint(numComponents), GL_FLOAT, normalize,
@@ -71,7 +71,7 @@ void CVertexAttribute::setFloatsOffset(size_t offset, size_t stride, unsigned nu
 
 void CVertexAttribute::setUint8Offset(size_t offset, size_t stride, unsigned numComponents)
 {
-    if (mLocation != -1)
+    if (UNDEFINED != mLocation)
     {
         glVertexAttribIPointer(GLuint(mLocation), GLint(numComponents), GL_UNSIGNED_BYTE,
                                GLsizei(stride), reinterpret_cast<const void*>(offset));

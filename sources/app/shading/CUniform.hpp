@@ -27,5 +27,7 @@ public:
     void operator=(const void*) = delete;
 
 private:
-    int mLocation;
+    static constexpr int UNDEFINED = -1;
+
+    int mLocation = UNDEFINED;
 };

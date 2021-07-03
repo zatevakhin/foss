@@ -25,5 +25,7 @@ public:
     void setUint8Offset(size_t offset, size_t stride, unsigned numComponents);
 
 private:
-    int mLocation = -1;
+    static constexpr int UNDEFINED = -1;
+
+    int mLocation = UNDEFINED;
 };
