@@ -30,3 +30,8 @@ geometry::CBoundingBox CStaticModel::getBoundingBox() const
 
     return bbox;
 }
+
+TMeshesList& CStaticModel::getMeshList()
+{
+    return mMeshes;
+}

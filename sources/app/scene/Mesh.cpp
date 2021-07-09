@@ -77,3 +77,9 @@ void Mesh::draw(TProgramAdapterPtr program)
     glDrawElements(mPrimitiveType, m_indices.size(), GL_UNSIGNED_INT, 0);
     m_vao.unbind();
 }
+
+
+TPhongMaterialPtr Mesh::getMaterial()
+{
+    return mMaterial;
+}

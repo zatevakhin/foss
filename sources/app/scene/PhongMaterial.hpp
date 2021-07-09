@@ -6,20 +6,18 @@
 #include <memory>
 
 
-struct SMaterialPhong;
-
-using TPhongMaterialPtr = std::shared_ptr<SMaterialPhong>;
-
-
 struct SMaterialPhong
 {
-    float mShininess = 0;
+    float mShininess{0.f};
+    float mSpecular{1.f};
 
-    glm::vec4 mDiffuseColor;
-    glm::vec4 mSpecularColor;
-    glm::vec4 mEmissiveColor;
+    glm::vec4 mDiffuseColor{0.f};
+    glm::vec4 mSpecularColor{0.f};
+    glm::vec4 mEmissiveColor{0.f};
 
     TTextureSharedPtr mDiffuseTexture;
     TTextureSharedPtr mSpecularTexture;
     TTextureSharedPtr mEmissiveTexture;
 };
+
+using TPhongMaterialPtr = std::shared_ptr<SMaterialPhong>;

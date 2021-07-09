@@ -5,7 +5,6 @@
 
 #include <vector>
 
-using TMeshesList = std::vector<TMeshPtr>;
 
 class CStaticModel : public IModel
 {
@@ -17,6 +16,7 @@ public:
     void draw(TProgramAdapterPtr program) override;
     geometry::CBoundingBox getBoundingBox() const override;
     EModelType getType() const override;
+    TMeshesList& getMeshList() override;
 
 private:
     TMeshesList mMeshes;

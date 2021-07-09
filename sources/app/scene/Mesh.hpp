@@ -53,6 +53,7 @@ public:
 
     void draw(TProgramAdapterPtr) override;
     geometry::CBoundingBox getBoundingBox() const override;
+    TPhongMaterialPtr getMaterial() override;
 
 
 private:
