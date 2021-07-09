@@ -11,7 +11,7 @@ class IProgramAdapter
 public:
     virtual void setMaterial(TPhongMaterialPtr material) = 0;
     virtual void setProjection(glm::mat4 projection) = 0;
-    virtual void setView(glm::mat4 view) = 0;
+    virtual void setModelAndView(glm::mat4 model, glm::mat4 view) = 0;
 
     virtual ~IProgramAdapter(){};
 };

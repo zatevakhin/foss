@@ -1,13 +1,19 @@
 
 #include "app/components/CCameraComponent.hpp"
 #include "app/components/CEditableComponent.hpp"
+#include "app/components/CLightComponent.hpp"
 #include "app/components/CModelComponent.hpp"
 #include "app/components/CParticleSystemComponent.hpp"
+#include "app/components/CProceduralComponent.hpp"
 #include "app/components/CTransform3DComponent.hpp"
+
+#include "app/scene/CAsteroidGenerator.hpp"
+#include "app/scene/CPlanetGenerator.hpp"
 
 #include "CEntityManagerWindow.hpp"
 #include "app/auxiliary/imgui.hpp"
 #include <fmt/core.h>
+#include <set>
 #include <string>
 #include <utility>
 
@@ -221,6 +227,131 @@ void CEntityManagerWindow::draw()
                 ImGui::SliderFloat2("Near / Far", &nearAndFar[0], 0.0001f, 10000.0f, "%.5f", 3.f);
                 camera->set_near_far(nearAndFar);
             }
+        }
+    }
+
+    if (m_entity_manager.hasComponent<CProceduralComponent>(entity))
+    {
+        auto title = fmt::format("CProceduralComponent ({})", static_cast<size_t>(entity));
+        if (ImGui::CollapsingHeader(title.c_str()))
+        {
+            auto& component = m_entity_manager.getComponent<CProceduralComponent>(entity);
+
+            if (EProceduralType::ASTEROID == component.getType())
+            {
+                const auto& settings = static_cast<TAsteroidSettings&>(
+                    const_cast<IProceduralSettings&>(component.getSettings()));
+
+                TAsteroidSettings newSettings{settings};
+
+                ImGui::SliderInt("Object Resolution", &newSettings.mResolution, 10, 1024);
+
+                ImGui::SliderInt("Seed", &newSettings.mSeed, 0, 10);
+                ImGui::SliderInt("Raduis", &newSettings.mRadius, 1, 256);
+
+                bool updated = false;
+                updated |= settings.mResolution != newSettings.mResolution;
+                updated |= settings.mSeed != newSettings.mSeed;
+                updated |= settings.mRadius != newSettings.mRadius;
+
+                auto title = fmt::format("Noise Settings ({})", static_cast<size_t>(entity));
+                if (ImGui::CollapsingHeader(title.c_str()))
+                {
+                    auto& noise = newSettings.mNoiseSettings;
+                    ImGui::SliderFloat("Strength", &noise.strength, 0.0f, 1.0f, "%.4f");
+                    ImGui::SliderFloat("Roughness", &noise.roughness, 0.0f, 5.0f, "%.4f");
+                    ImGui::SliderFloat3("Noise center", &noise.center[0], 0.0f, 5.0f, "%.4f", 1.f);
+
+                    updated |= settings.mNoiseSettings.center != noise.center;
+                    updated |= settings.mNoiseSettings.roughness != noise.roughness;
+                    updated |= settings.mNoiseSettings.strength != noise.strength;
+                }
+
+                if (updated)
+                {
+                    component.setSettings(newSettings);
+                }
+            }
+            else if (EProceduralType::PLANET == component.getType())
+            {
+                const auto& settings = static_cast<TPlanetSettings&>(
+                    const_cast<IProceduralSettings&>(component.getSettings()));
+
+                TPlanetSettings newSettings{settings};
+
+                ImGui::SliderInt("Object Resolution", &newSettings.mResolution, 10, 1024);
+
+                ImGui::SliderInt("Seed", &newSettings.mSeed, 0, 10);
+                ImGui::SliderInt("Raduis", &newSettings.mRadius, 1, 256);
+
+                bool updated = false;
+                updated |= settings.mResolution != newSettings.mResolution;
+                updated |= settings.mSeed != newSettings.mSeed;
+                updated |= settings.mRadius != newSettings.mRadius;
+
+                auto title = fmt::format("Noise Settings ({})", static_cast<size_t>(entity));
+                if (ImGui::CollapsingHeader(title.c_str()))
+                {
+                    auto& noise = newSettings.mNoiseSettings;
+                    ImGui::SliderFloat("Strength", &noise.strength, 0.0f, 1.0f, "%.4f");
+                    ImGui::SliderFloat("Roughness", &noise.roughness, 0.0f, 5.0f, "%.4f");
+                    ImGui::SliderFloat3("Noise center", &noise.center[0], 0.0f, 5.0f, "%.4f", 1.f);
+
+                    updated |= settings.mNoiseSettings.center != noise.center;
+                    updated |= settings.mNoiseSettings.roughness != noise.roughness;
+                    updated |= settings.mNoiseSettings.strength != noise.strength;
+                }
+
+                if (updated)
+                {
+                    component.setSettings(newSettings);
+                }
+            }
+        }
+    }
+
+    if (m_entity_manager.hasComponent<CModelComponent>(entity))
+    {
+        auto title = fmt::format("CModelComponent ({})", static_cast<size_t>(entity));
+        if (ImGui::CollapsingHeader(title.c_str()))
+        {
+            auto& component = m_entity_manager.getComponent<CModelComponent>(entity);
+            auto& model = component.mModel;
+            auto& meshes = component.mModel->getMeshList();
+
+            std::vector<TPhongMaterialPtr> materials;
+
+            std::transform(meshes.begin(), meshes.end(), std::back_inserter(materials),
+                           [](auto& mesh) { return mesh->getMaterial(); });
+
+            // @note: some generated objects can contain one material for all meshes.
+            auto last = std::unique(materials.begin(), materials.end());
+            materials.erase(last, materials.end());
+
+            for (auto& material : materials)
+            {
+                ImGui::SliderFloat("Shininess", &material->mShininess, 0.0f, 256.0f, "%.4f", 3.f);
+                ImGui::SliderFloat("Spec Strength", &material->mSpecular, 0.0f, 256.0f, "%.4f",
+                                   3.f);
+                ImGui::ColorEdit4("Diffuse color", &material->mDiffuseColor[0],
+                                  ImGuiColorEditFlags_Float);
+                ImGui::ColorEdit4("Specular color", &material->mSpecularColor[0],
+                                  ImGuiColorEditFlags_Float);
+                ImGui::ColorEdit4("Emissive color", &material->mEmissiveColor[0],
+                                  ImGuiColorEditFlags_Float);
+            }
+        }
+    }
+
+    if (m_entity_manager.hasComponent<CLightComponent>(entity))
+    {
+        auto title = fmt::format("CLightComponent ({})", static_cast<size_t>(entity));
+        if (ImGui::CollapsingHeader(title.c_str()))
+        {
+            auto& component = m_entity_manager.getComponent<CLightComponent>(entity);
+            auto light = component.getLight();
+
+            ImGui::InputFloat3("Position", &light->mPosition[0]);
         }
     }
 

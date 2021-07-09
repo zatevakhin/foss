@@ -5,6 +5,7 @@
 #include "app/auxiliary/glm.hpp"
 #include "app/auxiliary/trace.hpp"
 
+#include "app/components/CLightComponent.hpp"
 #include "app/components/CModelComponent.hpp"
 #include "app/components/CParticleSystemComponent.hpp"
 #include "app/components/CPickingComponent.hpp"
@@ -148,7 +149,7 @@ void C3DRenderSystem::renderEnvironment(const glm::mat4& view, const glm::mat4& 
     {
         auto [model, skybox] = components;
 
-        adapter->setView(glm::mat4(glm::mat3(view)));
+        adapter->setModelAndView(glm::mat4(1), glm::mat4(glm::mat3(view)));
 
         glActiveTexture(GL_TEXTURE0);
         cubeMap->bind();
@@ -176,7 +177,17 @@ void C3DRenderSystem::renderForeground(const glm::mat4& view, const glm::mat4& p
     adapter->setProjection(projection);
 
     prog->uniform("viewPosition") = camera->get_position();
-    prog->uniform("lightPosition") = glm::vec3(13.f, 0.f, -20.f);
+
+    for (auto [entity, components] : mEntityManager.getEntitySet<CLightComponent>())
+    {
+        auto& [lightComponent] = components;
+        auto light = lightComponent.getLight();
+
+        prog->uniform("lightPosition") = light->mPosition;
+    }
+
+    // prog->uniform("lightPosition") = glm::vec3(13.f, 0.f, -20.f);
+
 
     for (auto [entity, components] :
          mEntityManager.getEntitySet<CModelComponent, CTransform3DComponent>())
@@ -184,7 +195,7 @@ void C3DRenderSystem::renderForeground(const glm::mat4& view, const glm::mat4& p
         auto [model, transform] = components;
         if (model.mIsInView && !model.mDebug.mHideModel)
         {
-            adapter->setView(view * transform.toMat4());
+            adapter->setModelAndView(transform.toMat4(), view);
 
             model.mModel->draw(adapter);
         }
@@ -232,7 +243,7 @@ void C3DRenderSystem::renderForeground(const glm::mat4& view, const glm::mat4& p
                     break;
                 }
 
-                adapter->setView(view * transform.toMat4());
+                adapter->setModelAndView(glm::mat4(1), view * transform.toMat4());
 
                 model.mModel->draw(adapter);
                 glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -256,7 +267,7 @@ void C3DRenderSystem::renderForeground(const glm::mat4& view, const glm::mat4& p
 
             if (model.mDebug.mEnableNormalsDraw)
             {
-                adapter->setView(view * transform.toMat4());
+                adapter->setModelAndView(glm::mat4(1), view * transform.toMat4());
                 model.mModel->draw(adapter);
             }
         }
@@ -287,7 +298,7 @@ void C3DRenderSystem::renderBoundingBoxes(const glm::mat4& view, const glm::mat4
             prog->uniform("background") =
                 picking.isPicked ? glm::vec4(1.f, 0.f, 0.f, 1.f) : glm::vec4(0.f, 1.f, 0.f, 1.f);
 
-            adapter->setView(view * (transform.toMat4() * AABBTransform));
+            adapter->setModelAndView(glm::mat4(1), view * (transform.toMat4() * AABBTransform));
             mBoundingBoxModel->draw(adapter);
         }
     }

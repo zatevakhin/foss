@@ -14,14 +14,16 @@ void CModelProgramAdapter::setProjection(glm::mat4 projection)
     mProgram->uniform("projection") = projection;
 }
 
-void CModelProgramAdapter::setView(glm::mat4 view)
+void CModelProgramAdapter::setModelAndView(glm::mat4 model, glm::mat4 view)
 {
+    mProgram->uniform("model") = model;
     mProgram->uniform("view") = view;
 }
 
 void CModelProgramAdapter::setMaterial(TPhongMaterialPtr material)
 {
     mProgram->uniform("material.shininess") = material->mShininess;
+    mProgram->uniform("material.specular") = material->mSpecular;
     mProgram->uniform("material.colorDiffuse") = material->mDiffuseColor;
     mProgram->uniform("material.colorSpecular") = material->mSpecularColor;
     mProgram->uniform("material.colorEmissive") = material->mEmissiveColor;

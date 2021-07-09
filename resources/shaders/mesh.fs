@@ -2,14 +2,15 @@
 
 out vec4 FragColor;
 
-in vec2 fragTextureUV;
-in vec3 Normal;
 in vec3 FragmentPosition;
+in vec3 Normal;
+in vec2 FragTextureUV;
 
 
 struct Material
 {
     float shininess;
+    float specular;
 
     vec4 colorDiffuse;
     vec4 colorSpecular;
@@ -27,25 +28,25 @@ uniform vec3 viewPosition;
 
 void main()
 {
-    vec3 color = texture(material.textureDiffuse, fragTextureUV.st).rgb;
+    vec3 color = texture(material.textureDiffuse, FragTextureUV.st).rgb;
 
-    // ambient
-    vec3 ambient = 0.05 * color;
-
-    // diffuse
-    vec3 lightDir = normalize(lightPosition - FragmentPosition);
     vec3 normal = normalize(Normal);
-    float diff = max(dot(lightDir, normal), 0.0);
-    vec3 diffuse = diff * color;
-
-    // specular
+    vec3 lightDir = normalize(lightPosition - FragmentPosition);
     vec3 viewDir = normalize(viewPosition - FragmentPosition);
     vec3 reflectDir = reflect(-lightDir, normal);
-    float spec = 0.0;
-
     vec3 halfwayDir = normalize(lightDir + viewDir);
-    spec = pow(max(dot(normal, halfwayDir), 0.0), 32.0);
 
-    vec3 specular = vec3(0.3) * spec; // assuming bright white light color
+    // ambient
+    vec3 ambient = 0.05 * color + vec3(material.colorEmissive) ;
+
+    // diffuse
+    float diff = max(dot(lightDir, normal), 0.0);
+    vec3 diffuse = diff * color + vec3(material.colorDiffuse);
+
+    // specular
+    float spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess); // blinn-phong
+    // float spec = pow(max(dot(normal, reflectDir), 0.0), material.shininess); // phong
+
+    vec3 specular = vec3(material.specular) * spec;
     FragColor = vec4(ambient + diffuse + specular, 1.0);
 }

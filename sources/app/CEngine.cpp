@@ -7,14 +7,17 @@
 
 #include "components/CCameraComponent.hpp"
 #include "components/CEditableComponent.hpp"
+#include "components/CLightComponent.hpp"
 #include "components/CModelComponent.hpp"
 #include "components/CParticleSystemComponent.hpp"
 #include "components/CPickingComponent.hpp"
+#include "components/CProceduralComponent.hpp"
 #include "components/CSkyboxComponent.hpp"
 #include "components/CTransform3DComponent.hpp"
 #include "components/CWindowComponent.hpp"
 
-#include "app/scene/CCubeSphere.hpp"
+#include "app/scene/CAsteroidGenerator.hpp"
+#include "app/scene/CPlanetGenerator.hpp"
 #include "app/scene/Mesh.hpp"
 
 #include "resources/CRegistry.hpp"
@@ -235,6 +238,16 @@ void CEngine::prepare()
     mRotationUpdateSystem.reset(new CRotationUpdateSystem(mEntityManager));
     mParticleUpdateSystem.reset(new CParticleUpdateSystem(mEntityManager));
 
+    {
+        auto position = glm::vec3(10.f, 10.f, 10.f);
+        auto color = glm::vec4(0.5f, 0.5f, 0.5f, 1.f);
+
+        auto light = std::make_shared<TBasicLight>(position, color);
+
+        auto e = mEntityManager.createEntity();
+        mEntityManager.addComponent<CEditableComponent>(e, "Light");
+        mEntityManager.addComponent<CLightComponent>(e, light);
+    }
 
     {
         auto loader = std::make_shared<CStaticModelLoader>("resources/models/cube/cube.obj",
@@ -249,18 +262,44 @@ void CEngine::prepare()
 
     {
         auto e = mEntityManager.createEntity();
-        mEntityManager.addComponent<CEditableComponent>(e, "Sphere");
+        mEntityManager.addComponent<CEditableComponent>(e, "Asteroid");
         mEntityManager.addComponent<CPickingComponent>(e);
 
-        CCubeSphere sphere(40);
-        auto model = sphere.getModel();
+
+        TAsteroidSettings settings{1, 10};
+
+        auto generator = new CAsteroidGenerator(settings);
+        auto& p = mEntityManager.addComponent<CProceduralComponent>(e, generator);
+
+        auto model = p.get();
 
         auto& m = mEntityManager.addComponent<CModelComponent>(e, model);
         auto& t = mEntityManager.addComponent<CTransform3DComponent>(e);
 
-        t.mScale = glm::vec3(5);
+        t.mScale = glm::vec3(1);
         t.mPosition = glm::vec3(0.f, 0.f, -50.f);
         t.mOrientation = glm::quat(glm::vec3(90.f, 0.f, 0.f));
+    }
+
+    {
+        auto e = mEntityManager.createEntity();
+        mEntityManager.addComponent<CEditableComponent>(e, "Planet");
+        mEntityManager.addComponent<CPickingComponent>(e);
+
+
+        TPlanetSettings settings{1, 10};
+
+        auto generator = new CPlanetGenerator(settings);
+        auto& p = mEntityManager.addComponent<CProceduralComponent>(e, generator);
+
+        auto model = p.get();
+
+        auto& m = mEntityManager.addComponent<CModelComponent>(e, model);
+        auto& t = mEntityManager.addComponent<CTransform3DComponent>(e);
+
+        t.mScale = glm::vec3(1);
+        t.mPosition = glm::vec3(0.f, 20.f, -50.f);
+        t.mOrientation = glm::quat(glm::vec3(0.f, 0.f, 0.f));
     }
 
 
@@ -315,7 +354,7 @@ void CEngine::prepare()
         auto& t = mEntityManager.addComponent<CTransform3DComponent>(e);
 
         t.mScale = glm::vec3(1);
-        t.mPosition = glm::vec3(0.f, 0.f, -50.f);
+        t.mPosition = glm::vec3(50.f, 0.f, -50.f);
         t.mOrientation = glm::quat(glm::vec3(0));
 
         auto system = std::make_shared<CParticleSystem>();
@@ -396,6 +435,21 @@ void CEngine::onEvent()
 
 void CEngine::onUpdate(double delta)
 {
+
+    // Updating procedural model if it was re-generated.
+    for (auto [entity, components] :
+         mEntityManager.getEntitySet<CModelComponent, CProceduralComponent>())
+    {
+        auto& [m, g] = components;
+        auto model = g.get();
+
+        std::swap(m.mModel, model);
+
+        // if (m.mModel != model)
+        // {
+        // }
+    }
+
     const auto& projection = m_camera->get_projection();
     const auto& view = m_camera->get_view();
 

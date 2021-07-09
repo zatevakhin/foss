@@ -11,7 +11,7 @@ public:
     ~CModelProgramAdapter() = default;
 
     void setProjection(glm::mat4 projection) override;
-    void setView(glm::mat4 view) override;
+    void setModelAndView(glm::mat4 model, glm::mat4 view) override;
     void setMaterial(TPhongMaterialPtr material) override;
 
 private:
