@@ -106,7 +106,16 @@ void C3DRenderSystem::render(const glm::mat4& view, const glm::mat4& projection)
     mFbo.bind();
     gl::clear_color(0.f, 0.f, 0.f, 1.0f);
     gl::clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    renderForeground(view, projection);
+
+    if (CRegistry::get<bool>("renderer.pbr"))
+    {
+        renderForegroundPBR(view, projection);
+    }
+    else
+    {
+        renderForeground(view, projection);
+    }
+
     renderBoundingBoxes(view, projection);
 
     renderEnvironment(view, projection);
@@ -117,6 +126,9 @@ void C3DRenderSystem::render(const glm::mat4& view, const glm::mat4& projection)
 
     screen->use();
     screen->uniform("frameNumber") = static_cast<int>(mFrame);
+    screen->uniform("ppNoise") = CRegistry::get<int>("ppNoise");
+    screen->uniform("ppGamma") = CRegistry::get<int>("ppGamma");
+
 
     mScreenQuad.bind();
     colorTexture->bind();
@@ -161,6 +173,48 @@ void C3DRenderSystem::renderEnvironment(const glm::mat4& view, const glm::mat4& 
     glFrontFace(GL_CCW);
 }
 
+void C3DRenderSystem::renderForegroundPBR(const glm::mat4& view, const glm::mat4& projection)
+{
+    auto shaders = mResourceManager.get_shader_manager();
+    auto camera = CRegistry::get<CFreeCamera*>("camera");
+
+    auto prog = shaders->getByName("pbr");
+    auto adapter = std::make_shared<CModelProgramAdapter>(prog);
+
+    prog->use();
+    adapter->setProjection(projection);
+
+    prog->uniform("view_position") = camera->get_position();
+
+    int lightCount = 0;
+    for (auto [entity, components] : mEntityManager.getEntitySet<CLightComponent>())
+    {
+        auto& [lightComponent] = components;
+        auto light = lightComponent.getLight();
+
+        const auto& a = "light[" + std::to_string(lightCount) + "].position";
+        const auto& b = "light[" + std::to_string(lightCount) + "].color";
+
+        prog->uniform(a.c_str()) = light->mPosition;
+        prog->uniform(b.c_str()) = light->mColor * light->mStrength;
+
+        ++lightCount;
+    }
+    prog->uniform("lightCount") = lightCount;
+
+    for (auto [entity, components] :
+         mEntityManager.getEntitySet<CModelComponent, CTransform3DComponent>())
+    {
+        auto [model, transform] = components;
+        if (model.mIsInView && !model.mDebug.mHideModel)
+        {
+            adapter->setModelAndView(transform.toMat4(), view);
+
+            model.mModel->draw(adapter);
+        }
+    }
+}
+
 void C3DRenderSystem::renderForeground(const glm::mat4& view, const glm::mat4& projection)
 {
     auto shaders = mResourceManager.get_shader_manager();
@@ -185,8 +239,6 @@ void C3DRenderSystem::renderForeground(const glm::mat4& view, const glm::mat4& p
 
         prog->uniform("lightPosition") = light->mPosition;
     }
-
-    // prog->uniform("lightPosition") = glm::vec3(13.f, 0.f, -20.f);
 
 
     for (auto [entity, components] :

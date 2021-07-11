@@ -151,6 +151,9 @@ void CEngine::initialize()
 
     CRegistry::set("settings", &mSettings);
     CRegistry::set("mouse/position", mSettings.mWindowSize / 2);
+    CRegistry::set("ppNoise", 0);
+    CRegistry::set("ppGamma", 0);
+    CRegistry::set("renderer.pbr", false);
 }
 
 void CEngine::initializeVideo()
@@ -240,7 +243,18 @@ void CEngine::prepare()
 
     {
         auto position = glm::vec3(10.f, 10.f, 10.f);
-        auto color = glm::vec4(0.5f, 0.5f, 0.5f, 1.f);
+        auto color = glm::vec3(0.5f, 0.5f, 0.5f);
+
+        auto light = std::make_shared<TBasicLight>(position, color);
+
+        auto e = mEntityManager.createEntity();
+        mEntityManager.addComponent<CEditableComponent>(e, "Light");
+        mEntityManager.addComponent<CLightComponent>(e, light);
+    }
+
+    {
+        auto position = glm::vec3(100.f, 100.f, -100.f);
+        auto color = glm::vec3(1.0f, 0.0f, 0.0f);
 
         auto light = std::make_shared<TBasicLight>(position, color);
 

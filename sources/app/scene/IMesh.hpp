@@ -1,18 +1,21 @@
 #pragma once
 
+#include "IMaterialAccessor.hpp"
 #include "app/geometry/CBoundingBox.hpp"
-#include "app/scene/PhongMaterial.hpp"
 #include "app/shading/IProgramAdapter.hpp"
 #include <memory>
 #include <vector>
 
 
-class IMesh
+//@todo: remove materials from mesh
+// matterials should be in model and mapped to meshes.
+
+class IMesh : public IMaterialAccessor
 {
 public:
     virtual void draw(TProgramAdapterPtr program) = 0;
     virtual geometry::CBoundingBox getBoundingBox() const = 0;
-    virtual TPhongMaterialPtr getMaterial() = 0; // @TODO: move to some other interface
+
     virtual ~IMesh(){};
 };
 

@@ -7,8 +7,8 @@
 #include <vector>
 
 #include "IModelLoader.hpp"
+#include "app/scene/CPhongMaterial.hpp"
 #include "app/scene/Mesh.hpp"
-#include "app/scene/PhongMaterial.hpp"
 
 
 enum class EImportQuality

@@ -9,6 +9,7 @@
 
 #include "app/scene/CAsteroidGenerator.hpp"
 #include "app/scene/CPlanetGenerator.hpp"
+#include "app/scene/IMaterialAccessor.hpp"
 
 #include "CEntityManagerWindow.hpp"
 #include "app/auxiliary/imgui.hpp"
@@ -319,26 +320,57 @@ void CEntityManagerWindow::draw()
             auto& model = component.mModel;
             auto& meshes = component.mModel->getMeshList();
 
-            std::vector<TPhongMaterialPtr> materials;
+            std::vector<TPhongMaterialPtr> phong;
+            std::vector<TPbrMaterialPtr> pbrs;
 
-            std::transform(meshes.begin(), meshes.end(), std::back_inserter(materials),
-                           [](auto& mesh) { return mesh->getMaterial(); });
+            std::transform(meshes.begin(), meshes.end(), std::back_inserter(phong),
+                           [](auto& mesh) { return mesh->getPhongMaterial(); });
+
+            std::transform(meshes.begin(), meshes.end(), std::back_inserter(pbrs),
+                           [](auto& mesh) { return mesh->getPbrMaterial(); });
+
+            auto isNullptr = [](const auto& a) { return a == nullptr; };
+
+            phong.erase(std::remove_if(phong.begin(), phong.end(), isNullptr), phong.end());
+            pbrs.erase(std::remove_if(pbrs.begin(), pbrs.end(), isNullptr), pbrs.end());
 
             // @note: some generated objects can contain one material for all meshes.
-            auto last = std::unique(materials.begin(), materials.end());
-            materials.erase(last, materials.end());
+            phong.erase(std::unique(phong.begin(), phong.end()), phong.end());
+            pbrs.erase(std::unique(pbrs.begin(), pbrs.end()), pbrs.end());
 
-            for (auto& material : materials)
+            for (auto& material : phong)
             {
-                ImGui::SliderFloat("Shininess", &material->mShininess, 0.0f, 256.0f, "%.4f", 3.f);
-                ImGui::SliderFloat("Spec Strength", &material->mSpecular, 0.0f, 256.0f, "%.4f",
-                                   3.f);
-                ImGui::ColorEdit4("Diffuse color", &material->mDiffuseColor[0],
-                                  ImGuiColorEditFlags_Float);
-                ImGui::ColorEdit4("Specular color", &material->mSpecularColor[0],
-                                  ImGuiColorEditFlags_Float);
-                ImGui::ColorEdit4("Emissive color", &material->mEmissiveColor[0],
-                                  ImGuiColorEditFlags_Float);
+                auto title = fmt::format("Phong material ({:#08X})",
+                                         reinterpret_cast<std::uintptr_t>(material.get()));
+
+                if (ImGui::CollapsingHeader(title.c_str()))
+                {
+                    ImGui::SliderFloat("Shininess", &material->mShininess, 0.0f, 256.0f, "%.4f",
+                                       3.f);
+                    ImGui::SliderFloat("Spec Strength", &material->mSpecular, 0.0f, 256.0f, "%.4f",
+                                       3.f);
+                    ImGui::ColorEdit4("Diffuse color", &material->mDiffuseColor[0],
+                                      ImGuiColorEditFlags_Float);
+                    ImGui::ColorEdit4("Specular color", &material->mSpecularColor[0],
+                                      ImGuiColorEditFlags_Float);
+                    ImGui::ColorEdit4("Emissive color", &material->mEmissiveColor[0],
+                                      ImGuiColorEditFlags_Float);
+                }
+            }
+
+            for (auto& material : pbrs)
+            {
+                auto title = fmt::format("PBR material ({:#08X})",
+                                         reinterpret_cast<std::uintptr_t>(material.get()));
+
+                if (ImGui::CollapsingHeader(title.c_str()))
+                {
+                    ImGui::SliderFloat("AO", &material->ao, 0.0f, 1.0f, "%.4f");
+
+                    ImGui::SliderFloat("Metallic", &material->metallic, 0.0f, 1.0f, "%.4f");
+                    ImGui::SliderFloat("PBR Roughness", &material->roughness, 0.0f, 1.0f, "%.4f");
+                    ImGui::ColorEdit3("Albedo", &material->albedo[0], ImGuiColorEditFlags_Float);
+                }
             }
         }
     }
@@ -352,6 +384,8 @@ void CEntityManagerWindow::draw()
             auto light = component.getLight();
 
             ImGui::InputFloat3("Position", &light->mPosition[0]);
+            ImGui::ColorEdit3("Color", &light->mColor[0], ImGuiColorEditFlags_Float);
+            ImGui::SliderFloat("Strength", &light->mStrength, 1.0f, 65536.0f, "%.4f", 3.f);
         }
     }
 

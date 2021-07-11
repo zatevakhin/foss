@@ -38,6 +38,19 @@ void CEngineDebugWindow::draw()
 
     ImGui::Begin("ENGINE CONTROLS");
 
+    auto ppNoise = !!CRegistry::get<int>("ppNoise");
+    auto ppGamma = !!CRegistry::get<int>("ppGamma");
+
+    auto usePbrRenderer = CRegistry::get<bool>("renderer.pbr");
+
+    ImGui::Checkbox("Use PBR renderer", &usePbrRenderer);
+    ImGui::Checkbox("Postprocessing Noise", &ppNoise);
+    ImGui::Checkbox("Postprocessing Gamma", &ppGamma);
+
+    CRegistry::set("renderer.pbr", usePbrRenderer);
+    CRegistry::set("ppNoise", int(ppNoise));
+    CRegistry::set("ppGamma", int(ppGamma));
+
     if (ImGui::Button("EXIT"))
     {
         SDL_Event e;

@@ -41,7 +41,7 @@ void CAsteroidGenerator::generate()
         return point * glm::vec3(mSettings.mRadius) * (1 + noiseValue);
     };
 
-    auto material = TPhongMaterialPtr(new SMaterialPhong());
+    auto material = std::make_shared<CPhongMaterial>();
     material->mShininess = 30.f;
     material->mDiffuseColor = glm::vec4(1.f, 0.f, 0.f, 1.f);
     material->mEmissiveColor = glm::vec4(1.f, 0.f, 0.f, 1.f);
@@ -55,7 +55,7 @@ void CAsteroidGenerator::generate()
                       TIndiceList indices;
                       face.buildMesh(filter, vertices, indices);
 
-                      mMeshes.emplace_back(new Mesh(vertices, indices, material));
+                      mMeshes.emplace_back(new Mesh(vertices, indices, material, nullptr));
                   });
     mProceduralModel.reset(new CStaticModel(mMeshes));
 

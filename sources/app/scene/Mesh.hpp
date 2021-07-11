@@ -7,7 +7,6 @@
 #include "CVertexArrayObject.hpp"
 #include "CVertexBufferObject.hpp"
 #include "IMesh.hpp"
-#include "PhongMaterial.hpp"
 #include "app/textures/ITexture.hpp"
 
 struct Vertex
@@ -43,8 +42,8 @@ using TIndiceList = std::vector<unsigned int>;
 class Mesh : public IMesh
 {
 public:
-    Mesh(TVerticeList& vertices, TIndiceList& indices, const TPhongMaterialPtr& material,
-         unsigned int primitiveType = GL_TRIANGLES);
+    Mesh(TVerticeList& vertices, TIndiceList& indices, const TPhongMaterialPtr& phong,
+         const TPbrMaterialPtr& pbr, unsigned int primitiveType = GL_TRIANGLES);
 
     ~Mesh();
 
@@ -53,7 +52,16 @@ public:
 
     void draw(TProgramAdapterPtr) override;
     geometry::CBoundingBox getBoundingBox() const override;
-    TPhongMaterialPtr getMaterial() override;
+
+    TPhongMaterialPtr getPhongMaterial() const override
+    {
+        return mMaterial;
+    }
+
+    TPbrMaterialPtr getPbrMaterial() const override
+    {
+        return mPbrMaterial;
+    }
 
 
 private:
@@ -66,7 +74,9 @@ private:
     CVertexArrayObject m_vao;
     CVertexBufferObject m_vbo;
     CVertexBufferObject m_ebo;
+
     TPhongMaterialPtr mMaterial;
+    TPbrMaterialPtr mPbrMaterial;
 
     unsigned int mPrimitiveType;
 

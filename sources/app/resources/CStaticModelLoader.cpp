@@ -138,7 +138,7 @@ void CStaticModelLoader::loadMaterials()
 
     for (auto i = 0U; i < mScene->mNumMaterials; ++i)
     {
-        auto& mat = mMaterials.emplace_back(new SMaterialPhong());
+        auto& mat = mMaterials.emplace_back(new CPhongMaterial());
 
         const auto& material = *(mScene->mMaterials[i]);
         CMaterialReader reader(material, mModelDirectory.parent_path());
@@ -213,7 +213,7 @@ void CStaticModelLoader::add(const aiMesh& mesh)
     copyVertices(mesh, vertices);
     copyIndices(mesh, indices);
 
-    mMeshes.emplace_back(new Mesh(vertices, indices, mMaterials[mesh.mMaterialIndex]));
+    mMeshes.emplace_back(new Mesh(vertices, indices, mMaterials[mesh.mMaterialIndex], nullptr));
 }
 
 void CStaticModelLoader::copyVertices(const aiMesh& mesh, TVerticeList& vertices) const

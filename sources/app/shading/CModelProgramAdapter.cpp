@@ -49,3 +49,11 @@ void CModelProgramAdapter::setMaterial(TPhongMaterialPtr material)
         mProgram->uniform("material.textureDiffuse") = 0;
     }
 }
+
+void CModelProgramAdapter::setMaterial(TPbrMaterialPtr material)
+{
+    mProgram->uniform("albedo") = material->albedo;
+    mProgram->uniform("ao") = material->ao;
+    mProgram->uniform("metallic") = material->metallic;
+    mProgram->uniform("roughness") = material->roughness;
+}
