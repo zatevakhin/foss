@@ -7,6 +7,7 @@
 
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
+#include <memory>
 #include <unordered_map>
 
 namespace
@@ -59,6 +60,7 @@ public:
         {
             const auto abspath = mResourceDir / filename.data;
             auto texture = std::make_shared<CTexture2D>();
+            spdlog::debug("Load texture: {}", abspath.c_str());
             CTextureManager::getTexture<CTexture2D>(abspath, texture);
             return texture;
         }
@@ -119,28 +121,69 @@ TModelPtr CStaticModelLoader::getModel()
         return TModelPtr(0);
     }
 
+    spdlog::debug("Model: {}", mModelDirectory.c_str());
     visitNodeTree();
 
     // should be before adding meshes
     loadMaterials();
 
+    TMaterialToMeshMap mat2mesh;
+
     for (auto i = 0U; i < mScene->mNumMeshes; ++i)
     {
-        add(*(mScene->mMeshes[i]));
+        add(*(mScene->mMeshes[i]), mat2mesh);
     }
 
-    return std::make_shared<CStaticModel>(mMeshes);
+
+    return std::make_shared<CStaticModel>(mMeshes, mMaterials, mat2mesh);
 }
 
 void CStaticModelLoader::loadMaterials()
 {
     const auto DEFAULT_SHININESS = 30.f;
 
+    spdlog::debug("Num materials: {}", mScene->mNumMaterials);
+
+
     for (auto i = 0U; i < mScene->mNumMaterials; ++i)
     {
-        auto& mat = mMaterials.emplace_back(new CPhongMaterial());
+        auto mat = std::make_shared<CPhongMaterial>();
+        mMaterials.emplace_back(mat);
+
 
         const auto& material = *(mScene->mMaterials[i]);
+        spdlog::debug("aiTextureType_DIFFUSE: {}", material.GetTextureCount(aiTextureType_DIFFUSE));
+        spdlog::debug("aiTextureType_SPECULAR: {} ",
+                      material.GetTextureCount(aiTextureType_SPECULAR));
+        spdlog::debug("aiTextureType_AMBIENT: {}", material.GetTextureCount(aiTextureType_AMBIENT));
+        spdlog::debug("aiTextureType_EMISSIVE: {} ",
+                      material.GetTextureCount(aiTextureType_EMISSIVE));
+        spdlog::debug("aiTextureType_HEIGHT: {}", material.GetTextureCount(aiTextureType_HEIGHT));
+        spdlog::debug("aiTextureType_NORMALS: {}", material.GetTextureCount(aiTextureType_NORMALS));
+        spdlog::debug("aiTextureType_SHININESS: {}",
+                      material.GetTextureCount(aiTextureType_SHININESS));
+        spdlog::debug("aiTextureType_OPACITY: {}", material.GetTextureCount(aiTextureType_OPACITY));
+        spdlog::debug("aiTextureType_DISPLACEMENT: {}",
+                      material.GetTextureCount(aiTextureType_DISPLACEMENT));
+        spdlog::debug("aiTextureType_LIGHTMAP: {}",
+                      material.GetTextureCount(aiTextureType_LIGHTMAP));
+        spdlog::debug("aiTextureType_REFLECTION: {}",
+                      material.GetTextureCount(aiTextureType_REFLECTION));
+        spdlog::debug("aiTextureType_BASE_COLOR: {}",
+                      material.GetTextureCount(aiTextureType_BASE_COLOR));
+        spdlog::debug("aiTextureType_NORMAL_CAMERA: {}",
+                      material.GetTextureCount(aiTextureType_NORMAL_CAMERA));
+        spdlog::debug("aiTextureType_EMISSION_COLOR: {}",
+                      material.GetTextureCount(aiTextureType_EMISSION_COLOR));
+        spdlog::debug("aiTextureType_METALNESS: {}",
+                      material.GetTextureCount(aiTextureType_METALNESS));
+        spdlog::debug("aiTextureType_DIFFUSE_ROUGHNESS: {}",
+                      material.GetTextureCount(aiTextureType_DIFFUSE_ROUGHNESS));
+        spdlog::debug("aiTextureType_AMBIENT_OCCLUSION: {}",
+                      material.GetTextureCount(aiTextureType_AMBIENT_OCCLUSION));
+        spdlog::debug("aiTextureType_UNKNOWN: {}", material.GetTextureCount(aiTextureType_UNKNOWN));
+
+
         CMaterialReader reader(material, mModelDirectory.parent_path());
 
         const unsigned int shadingMode = reader.getUnsigned(AI_MATKEY_SHADING_MODEL);
@@ -173,6 +216,9 @@ void CStaticModelLoader::loadMaterials()
         {
             mat->mSpecularColor = reader.getColor(AI_MATKEY_COLOR_EMISSIVE);
         }
+
+        reader.getTexture(AI_MATKEY_TEXTURE_NORMALS(0));
+        reader.getTexture(AI_MATKEY_TEXTURE_AMBIENT(0));
     }
 }
 
@@ -205,7 +251,7 @@ void CStaticModelLoader::visitNode(const aiNode& node, const glm::mat4& parentTr
     }
 }
 
-void CStaticModelLoader::add(const aiMesh& mesh)
+void CStaticModelLoader::add(const aiMesh& mesh, TMaterialToMeshMap& mat2mesh)
 {
     TVerticeList vertices;
     TIndiceList indices;
@@ -213,7 +259,9 @@ void CStaticModelLoader::add(const aiMesh& mesh)
     copyVertices(mesh, vertices);
     copyIndices(mesh, indices);
 
-    mMeshes.emplace_back(new Mesh(vertices, indices, mMaterials[mesh.mMaterialIndex], nullptr));
+    auto m = mMeshes.emplace_back(new Mesh(vertices, indices));
+    auto mt = mMaterials[mesh.mMaterialIndex];
+    mat2mesh.emplace_back(m, mt);
 }
 
 void CStaticModelLoader::copyVertices(const aiMesh& mesh, TVerticeList& vertices) const

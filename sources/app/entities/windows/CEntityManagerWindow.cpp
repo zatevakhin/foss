@@ -9,7 +9,6 @@
 
 #include "app/scene/CAsteroidGenerator.hpp"
 #include "app/scene/CPlanetGenerator.hpp"
-#include "app/scene/IMaterialAccessor.hpp"
 
 #include "CEntityManagerWindow.hpp"
 #include "app/auxiliary/imgui.hpp"
@@ -318,16 +317,22 @@ void CEntityManagerWindow::draw()
         {
             auto& component = m_entity_manager.getComponent<CModelComponent>(entity);
             auto& model = component.mModel;
-            auto& meshes = component.mModel->getMeshList();
+            auto& meshes = component.mModel->getMaterials();
 
             std::vector<TPhongMaterialPtr> phong;
             std::vector<TPbrMaterialPtr> pbrs;
 
-            std::transform(meshes.begin(), meshes.end(), std::back_inserter(phong),
-                           [](auto& mesh) { return mesh->getPhongMaterial(); });
-
-            std::transform(meshes.begin(), meshes.end(), std::back_inserter(pbrs),
-                           [](auto& mesh) { return mesh->getPbrMaterial(); });
+            for (const auto& mat : meshes)
+            {
+                if (mat->isPbr())
+                {
+                    pbrs.emplace_back(std::static_pointer_cast<CPbrMaterial>(mat));
+                }
+                else
+                {
+                    phong.emplace_back(std::static_pointer_cast<CPhongMaterial>(mat));
+                }
+            }
 
             auto isNullptr = [](const auto& a) { return a == nullptr; };
 

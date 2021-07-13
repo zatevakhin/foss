@@ -22,11 +22,11 @@ public:
     void initialize();
 
     std::shared_ptr<CModelManager> get_model_manager() const;
-    std::shared_ptr<CShaderManager> get_shader_manager() const;
-    std::shared_ptr<CTextureManager> getTextureManager() const;
+    TShaderManagerPtr get_shader_manager() const;
+    TTextureManagerPtr getTextureManager() const;
 
 private:
     std::shared_ptr<CModelManager> m_model_manager;
-    std::shared_ptr<CShaderManager> m_shader_manager;
-    std::shared_ptr<CTextureManager> mTextureManager;
+    TShaderManagerPtr m_shader_manager;
+    TTextureManagerPtr mTextureManager;
 };

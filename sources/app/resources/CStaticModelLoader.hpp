@@ -24,8 +24,8 @@ class CStaticModelLoader : public IModelLoader
 
 private:
     std::unordered_map<unsigned, glm::mat4> mMeshTransforms;
-    std::vector<TMeshPtr> mMeshes;
-    std::vector<TPhongMaterialPtr> mMaterials;
+    TMeshesList mMeshes;
+    TMaterialList mMaterials;
     aiScene* mScene;
     const std::filesystem::path mModelDirectory;
     EImportQuality mQuality;
@@ -42,7 +42,7 @@ private:
 
     void visitNode(const aiNode& node, const glm::mat4& parentTransform);
 
-    void add(const aiMesh& mesh);
+    void add(const aiMesh& mesh, TMaterialToMeshMap& mat2mesh);
 
     void copyIndices(const aiMesh& mesh, TIndiceList& indices) const;
     void copyVertices(const aiMesh& mesh, TVerticeList& vertices) const;

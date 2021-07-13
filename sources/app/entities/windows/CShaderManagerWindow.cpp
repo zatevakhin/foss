@@ -28,7 +28,7 @@ CShaderManagerWindow::CShaderManagerWindow(TShaderManagerPtr shader_manager)
 
 void CShaderManagerWindow::draw()
 {
-    static int currentProgrmName = 1;
+    static int currentProgrmName = 0;
     const auto programs = m_shader_manager->getProgramsList();
 
     std::vector<std::string> programsNames;

@@ -27,6 +27,7 @@
 #include "entities/windows/CEngineDebugWindow.hpp"
 #include "entities/windows/CEntityManagerWindow.hpp"
 #include "entities/windows/CShaderManagerWindow.hpp"
+#include "entities/windows/CTextureManagerWindow.hpp"
 
 #include "app/textures/CTexture2D.hpp"
 #include "app/textures/CTextureCubeMap.hpp"
@@ -223,6 +224,12 @@ void CEngine::prepare()
     auto orange =
         texManager->create<CTexture2D>("resources/textures/orange.png", ETextureType::FILE);
 
+    texManager->create<CTexture2D>("trash/pbr/gold/albedo.png", ETextureType::FILE);
+    texManager->create<CTexture2D>("trash/pbr/gold/ao.png", ETextureType::FILE);
+    texManager->create<CTexture2D>("trash/pbr/gold/metallic.png", ETextureType::FILE);
+    texManager->create<CTexture2D>("trash/pbr/gold/normal.png", ETextureType::FILE);
+    texManager->create<CTexture2D>("trash/pbr/gold/roughness.png", ETextureType::FILE);
+
     CRegistry::set("camera", m_camera.get());
 
     constexpr auto nbEntities = std::size_t(10000);
@@ -264,7 +271,7 @@ void CEngine::prepare()
     }
 
     {
-        auto loader = std::make_shared<CStaticModelLoader>("resources/models/cube/cube.obj",
+        auto loader = std::make_shared<CStaticModelLoader>("resources/models/cube/cube.gltf",
                                                            EImportQuality::MAX);
         auto model = loader->getModel();
 
@@ -335,7 +342,7 @@ void CEngine::prepare()
         t.mPosition = glm::vec3(10.f, 0.f, -20.f);
         t.mOrientation = glm::quat(glm::vec3(90.f, 0.f, 0.f));
 
-        auto loader = std::make_shared<CStaticModelLoader>("resources/models/rock/rock.obj",
+        auto loader = std::make_shared<CStaticModelLoader>("resources/models/rock/rock.gltf",
                                                            EImportQuality::MAX);
         auto model = loader->getModel();
         mEntityManager.addComponent<CModelComponent>(e, model);
@@ -351,6 +358,11 @@ void CEngine::prepare()
         auto e = mEntityManager.createEntity();
         auto& w = mEntityManager.addComponent<CWindowComponent>(e);
         w.mWindow = std::make_shared<CShaderManagerWindow>(mResourceManager->get_shader_manager());
+    }
+    {
+        auto e = mEntityManager.createEntity();
+        auto& w = mEntityManager.addComponent<CWindowComponent>(e);
+        w.mWindow = std::make_shared<CTextureManagerWindow>(mResourceManager->getTextureManager());
     }
 
     {

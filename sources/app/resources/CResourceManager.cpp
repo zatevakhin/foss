@@ -21,12 +21,12 @@ std::shared_ptr<CModelManager> CResourceManager::get_model_manager() const
     return m_model_manager;
 }
 
-std::shared_ptr<CShaderManager> CResourceManager::get_shader_manager() const
+TShaderManagerPtr CResourceManager::get_shader_manager() const
 {
     return m_shader_manager;
 }
 
-std::shared_ptr<CTextureManager> CResourceManager::getTextureManager() const
+TTextureManagerPtr CResourceManager::getTextureManager() const
 {
     return mTextureManager;
 }

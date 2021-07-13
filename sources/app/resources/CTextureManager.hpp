@@ -1,5 +1,6 @@
 #pragma once
 
+#include "app/auxiliary/trace.hpp"
 #include "app/textures/ITexture.hpp"
 
 #include <filesystem>
@@ -7,13 +8,14 @@
 #include <string>
 #include <unordered_map>
 
-
 enum class ETextureType
 {
     VIRTUAL,
     FILE
 };
 
+
+using TTextureMap = std::unordered_map<std::string, TTextureSharedPtr>;
 
 class CTextureManager
 {
@@ -32,6 +34,8 @@ public:
     {
         std::string name = std::filesystem::path(path).filename();
         TTextureSharedPtr texturePtr(nullptr);
+
+        spdlog::debug("Create texture<{}>: {}", type, name);
 
         if (mTextureCache.find(name) == mTextureCache.end())
         {
@@ -56,7 +60,14 @@ public:
     template <class T>
     static void getTexture(const std::filesystem::path path, std::shared_ptr<T> texture);
 
+    const TTextureMap& getTexturesList() const
+    {
+        return mTextureCache;
+    }
+
 
 private:
-    std::unordered_map<std::string, TTextureSharedPtr> mTextureCache;
+    TTextureMap mTextureCache;
 };
+
+using TTextureManagerPtr = std::shared_ptr<CTextureManager>;

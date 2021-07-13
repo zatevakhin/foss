@@ -3,16 +3,29 @@
 #include "CStaticModel.hpp"
 
 
-CStaticModel::CStaticModel(TMeshesList& meshes)
+CStaticModel::CStaticModel(TMeshesList& meshes, TMaterialList& materials, TMaterialToMeshMap& m2m)
     : mMeshes(meshes)
+    , mMaterials(materials)
+    , mMatToMesh(m2m)
 {
 }
 
 void CStaticModel::draw(TProgramAdapterPtr program)
 {
-    for (const auto& m : mMeshes)
+    // for (const auto& m : mMeshes)
+
+    for (const auto& x : mMatToMesh)
     {
-        m->draw(program);
+        if (x.second->isPbr())
+        {
+            program->setMaterial(std::static_pointer_cast<CPbrMaterial>(x.second));
+        }
+        else
+        {
+            program->setMaterial(std::static_pointer_cast<CPhongMaterial>(x.second));
+        }
+
+        x.first->draw(program);
     }
 }
 
@@ -31,7 +44,28 @@ geometry::CBoundingBox CStaticModel::getBoundingBox() const
     return bbox;
 }
 
-TMeshesList& CStaticModel::getMeshList()
+TMeshesList& CStaticModel::getMeshes()
 {
     return mMeshes;
+}
+
+TMaterialList& CStaticModel::getMaterials()
+{
+    return mMaterials;
+}
+
+TMaterialList CStaticModel::getMaterials(TMeshPtr mesh)
+{
+
+    TMaterialList materials;
+
+    for (const auto& m : mMatToMesh)
+    {
+        if (m.first == mesh)
+        {
+            materials.push_back(m.second);
+        }
+    }
+
+    return materials;
 }

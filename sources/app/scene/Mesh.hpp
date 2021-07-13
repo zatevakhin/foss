@@ -42,8 +42,7 @@ using TIndiceList = std::vector<unsigned int>;
 class Mesh : public IMesh
 {
 public:
-    Mesh(TVerticeList& vertices, TIndiceList& indices, const TPhongMaterialPtr& phong,
-         const TPbrMaterialPtr& pbr, unsigned int primitiveType = GL_TRIANGLES);
+    Mesh(TVerticeList& vertices, TIndiceList& indices, unsigned int primitiveType = GL_TRIANGLES);
 
     ~Mesh();
 
@@ -52,17 +51,6 @@ public:
 
     void draw(TProgramAdapterPtr) override;
     geometry::CBoundingBox getBoundingBox() const override;
-
-    TPhongMaterialPtr getPhongMaterial() const override
-    {
-        return mMaterial;
-    }
-
-    TPbrMaterialPtr getPbrMaterial() const override
-    {
-        return mPbrMaterial;
-    }
-
 
 private:
     void setup_mesh();
@@ -74,9 +62,6 @@ private:
     CVertexArrayObject m_vao;
     CVertexBufferObject m_vbo;
     CVertexBufferObject m_ebo;
-
-    TPhongMaterialPtr mMaterial;
-    TPbrMaterialPtr mPbrMaterial;
 
     unsigned int mPrimitiveType;
 

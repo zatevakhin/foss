@@ -9,6 +9,8 @@
 
 CPlanetGenerator::CPlanetGenerator(IProceduralSettings& settings)
     : mSettings(static_cast<TPlanetSettings&>(settings))
+    , mMaterialsToMeshes()
+    , mMeshes()
 {
     mNoise.randomize(mSettings.mSeed);
 }
@@ -55,6 +57,9 @@ void CPlanetGenerator::generate()
     pbr->metallic = 0.0f;
     pbr->roughness = 0.0f;
 
+    mMaterials.emplace_back(material);
+    mMaterials.emplace_back(pbr);
+
     std::for_each(CUBE_FACES_DIRECTIONS.begin(), CUBE_FACES_DIRECTIONS.end(),
                   [this, &filter, &material, &pbr](auto& direction) {
                       CTerrainFace face(mSettings.mResolution, direction);
@@ -63,10 +68,13 @@ void CPlanetGenerator::generate()
                       TIndiceList indices;
                       face.buildMesh(filter, vertices, indices);
 
-                      mMeshes.emplace_back(new Mesh(vertices, indices, material, pbr));
+                      auto mesh = mMeshes.emplace_back(new Mesh(vertices, indices));
+
+                      mMaterialsToMeshes.emplace_back(mesh, material);
+                      mMaterialsToMeshes.emplace_back(mesh, pbr);
                   });
 
-    mProceduralModel.reset(new CStaticModel(mMeshes));
+    mProceduralModel.reset(new CStaticModel(mMeshes, mMaterials, mMaterialsToMeshes));
     mMeshes.clear();
 }
 

@@ -28,6 +28,8 @@ CBoundingBox::CBoundingBox()
 void CBoundingBox::setupModel()
 {
     TMeshesList meshes;
+    TMaterialList materials;
+    TMaterialToMeshMap mat2mesh;
 
     TVerticeList vertices;
     TIndiceList indices;
@@ -38,9 +40,9 @@ void CBoundingBox::setupModel()
     std::move(AABB_INDECIES.begin(), AABB_INDECIES.end(), std::back_inserter(indices));
 
 
-    meshes.emplace_back(new Mesh(vertices, indices, nullptr, nullptr, GL_LINES));
+    meshes.emplace_back(new Mesh(vertices, indices, GL_LINES));
 
-    mModel.reset(new CStaticModel(meshes));
+    mModel.reset(new CStaticModel(meshes, materials, mat2mesh));
 }
 
 TModelPtr CBoundingBox::getModel() const

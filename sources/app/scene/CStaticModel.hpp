@@ -10,14 +10,19 @@ class CStaticModel : public IModel
 {
 
 public:
-    explicit CStaticModel(TMeshesList& meshes);
+    CStaticModel(TMeshesList& meshes, TMaterialList& materials, TMaterialToMeshMap& m2m);
     ~CStaticModel() = default;
 
     void draw(TProgramAdapterPtr program) override;
     geometry::CBoundingBox getBoundingBox() const override;
     EModelType getType() const override;
-    TMeshesList& getMeshList() override;
+
+    virtual TMeshesList& getMeshes() override;
+    virtual TMaterialList& getMaterials() override;
+    virtual TMaterialList getMaterials(TMeshPtr mesh) override;
 
 private:
     TMeshesList mMeshes;
+    TMaterialList mMaterials;
+    TMaterialToMeshMap mMatToMesh;
 };

@@ -8,6 +8,8 @@
 
 CAsteroidGenerator::CAsteroidGenerator(IProceduralSettings& settings)
     : mSettings(static_cast<TAsteroidSettings&>(settings))
+    , mMaterialsToMeshes()
+    , mMeshes()
 {
     mNoise.randomize(mSettings.mSeed);
 }
@@ -46,6 +48,7 @@ void CAsteroidGenerator::generate()
     material->mDiffuseColor = glm::vec4(1.f, 0.f, 0.f, 1.f);
     material->mEmissiveColor = glm::vec4(1.f, 0.f, 0.f, 1.f);
     material->mSpecularColor = glm::vec4(1.f, 0.f, 0.f, 1.f);
+    mMaterials.emplace_back(material);
 
     std::for_each(CUBE_FACES_DIRECTIONS.begin(), CUBE_FACES_DIRECTIONS.end(),
                   [this, &filter, &material](auto& direction) {
@@ -55,9 +58,10 @@ void CAsteroidGenerator::generate()
                       TIndiceList indices;
                       face.buildMesh(filter, vertices, indices);
 
-                      mMeshes.emplace_back(new Mesh(vertices, indices, material, nullptr));
+                      auto mesh = mMeshes.emplace_back(new Mesh(vertices, indices));
+                      mMaterialsToMeshes.emplace_back(mesh, material);
                   });
-    mProceduralModel.reset(new CStaticModel(mMeshes));
+    mProceduralModel.reset(new CStaticModel(mMeshes, mMaterials, mMaterialsToMeshes));
 
     mMeshes.clear();
 }

@@ -50,7 +50,10 @@ public:
 private:
     TAsteroidSettings mSettings;
     std::shared_ptr<CStaticModel> mProceduralModel;
+
     TMeshesList mMeshes;
+    TMaterialList mMaterials;
+    TMaterialToMeshMap mMaterialsToMeshes;
 
     Noise mNoise;
 };

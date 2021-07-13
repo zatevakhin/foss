@@ -1,6 +1,5 @@
 #pragma once
 
-#include "IMaterialAccessor.hpp"
 #include "app/geometry/CBoundingBox.hpp"
 #include "app/shading/IProgramAdapter.hpp"
 #include <memory>
@@ -10,7 +9,7 @@
 //@todo: remove materials from mesh
 // matterials should be in model and mapped to meshes.
 
-class IMesh : public IMaterialAccessor
+class IMesh
 {
 public:
     virtual void draw(TProgramAdapterPtr program) = 0;

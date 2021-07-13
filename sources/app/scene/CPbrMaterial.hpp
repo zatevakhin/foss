@@ -1,6 +1,7 @@
 #pragma once
 
 #include "app/scene/IMaterial.hpp"
+#include "app/textures/ITexture.hpp"
 
 #include <glm/vec3.hpp>
 #include <memory>
@@ -17,6 +18,11 @@ public:
     float roughness{0.f}; // 0.05-1.0
 
     // textures...
+    TTextureSharedPtr mAlbedoTex;
+    TTextureSharedPtr mAmbientOclusionTex;
+    TTextureSharedPtr mMetallicTex;
+    TTextureSharedPtr mNormalTex;
+    TTextureSharedPtr mRoughnessTex;
 
     CPbrMaterial() = default;
     virtual ~CPbrMaterial() override = default;

@@ -27,15 +27,12 @@ struct SBoxFinder
 
 } // namespace
 
-Mesh::Mesh(TVerticeList& vertices, TIndiceList& indices, const TPhongMaterialPtr& phong,
-           const TPbrMaterialPtr& pbr, unsigned int primitiveType)
+Mesh::Mesh(TVerticeList& vertices, TIndiceList& indices, unsigned int primitiveType)
     : m_vao()
     , m_vbo(EBufferType::eArrayBuffer)
     , m_ebo(EBufferType::eElementArrayBuffer)
     , m_vertices(vertices)
     , m_indices(indices)
-    , mMaterial(phong)
-    , mPbrMaterial(pbr)
     , mPrimitiveType(primitiveType)
 {
     setup_mesh();
@@ -69,15 +66,15 @@ geometry::CBoundingBox Mesh::getBoundingBox() const
 
 void Mesh::draw(TProgramAdapterPtr program)
 {
-    if (mMaterial)
-    {
-        program->setMaterial(mMaterial);
-    }
+    // if (mMaterial)
+    // {
+    //     program->setMaterial(mMaterial);
+    // }
 
-    if (mPbrMaterial)
-    {
-        program->setMaterial(mPbrMaterial);
-    }
+    // if (mPbrMaterial)
+    // {
+    //     program->setMaterial(mPbrMaterial);
+    // }
 
     m_vao.bind();
     glDrawElements(mPrimitiveType, m_indices.size(), GL_UNSIGNED_INT, 0);
