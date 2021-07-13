@@ -21,7 +21,6 @@ public:
 private:
     void renderEnvironment(const glm::mat4& view, const glm::mat4& projection);
     void renderForeground(const glm::mat4& view, const glm::mat4& projection);
-    void renderForegroundPBR(const glm::mat4& view, const glm::mat4& projection);
     void renderInstanced(const glm::mat4& view, const glm::mat4& projection);
     void renderBoundingBoxes(const glm::mat4& view, const glm::mat4& projection);
 

@@ -20,40 +20,12 @@ void CModelProgramAdapter::setModelAndView(glm::mat4 model, glm::mat4 view)
     mProgram->uniform("view") = view;
 }
 
-void CModelProgramAdapter::setMaterial(TPhongMaterialPtr material)
-{
-    mProgram->uniform("material.shininess") = material->mShininess;
-    mProgram->uniform("material.specular") = material->mSpecular;
-    mProgram->uniform("material.colorDiffuse") = material->mDiffuseColor;
-    mProgram->uniform("material.colorSpecular") = material->mSpecularColor;
-    mProgram->uniform("material.colorEmissive") = material->mEmissiveColor;
-
-    if (material->mEmissiveTexture)
-    {
-        glActiveTexture(GL_TEXTURE2);
-        material->mEmissiveTexture->bind();
-        mProgram->uniform("material.textureEmissive") = 2;
-    }
-
-    if (material->mSpecularTexture)
-    {
-        glActiveTexture(GL_TEXTURE1);
-        material->mSpecularTexture->bind();
-        mProgram->uniform("material.textureSpecular") = 1;
-    }
-
-    if (material->mDiffuseTexture)
-    {
-        glActiveTexture(GL_TEXTURE0);
-        material->mDiffuseTexture->bind();
-        mProgram->uniform("material.textureDiffuse") = 0;
-    }
-}
-
 void CModelProgramAdapter::setMaterial(TPbrMaterialPtr material)
 {
-    mProgram->uniform("albedo") = material->albedo;
-    mProgram->uniform("ao") = material->ao;
-    mProgram->uniform("metallic") = material->metallic;
-    mProgram->uniform("roughness") = material->roughness;
+    if (material->mAlbedoTex)
+    {
+        glActiveTexture(GL_TEXTURE0);
+        material->mAlbedoTex->bind();
+        mProgram->uniform("albedoMap") = 0;
+    }
 }

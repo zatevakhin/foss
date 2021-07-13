@@ -319,49 +319,19 @@ void CEntityManagerWindow::draw()
             auto& model = component.mModel;
             auto& meshes = component.mModel->getMaterials();
 
-            std::vector<TPhongMaterialPtr> phong;
             std::vector<TPbrMaterialPtr> pbrs;
 
             for (const auto& mat : meshes)
             {
-                if (mat->isPbr())
-                {
-                    pbrs.emplace_back(std::static_pointer_cast<CPbrMaterial>(mat));
-                }
-                else
-                {
-                    phong.emplace_back(std::static_pointer_cast<CPhongMaterial>(mat));
-                }
+                pbrs.emplace_back(std::static_pointer_cast<CPbrMaterial>(mat));
             }
 
             auto isNullptr = [](const auto& a) { return a == nullptr; };
 
-            phong.erase(std::remove_if(phong.begin(), phong.end(), isNullptr), phong.end());
             pbrs.erase(std::remove_if(pbrs.begin(), pbrs.end(), isNullptr), pbrs.end());
 
             // @note: some generated objects can contain one material for all meshes.
-            phong.erase(std::unique(phong.begin(), phong.end()), phong.end());
             pbrs.erase(std::unique(pbrs.begin(), pbrs.end()), pbrs.end());
-
-            for (auto& material : phong)
-            {
-                auto title = fmt::format("Phong material ({:#08X})",
-                                         reinterpret_cast<std::uintptr_t>(material.get()));
-
-                if (ImGui::CollapsingHeader(title.c_str()))
-                {
-                    ImGui::SliderFloat("Shininess", &material->mShininess, 0.0f, 256.0f, "%.4f",
-                                       3.f);
-                    ImGui::SliderFloat("Spec Strength", &material->mSpecular, 0.0f, 256.0f, "%.4f",
-                                       3.f);
-                    ImGui::ColorEdit4("Diffuse color", &material->mDiffuseColor[0],
-                                      ImGuiColorEditFlags_Float);
-                    ImGui::ColorEdit4("Specular color", &material->mSpecularColor[0],
-                                      ImGuiColorEditFlags_Float);
-                    ImGui::ColorEdit4("Emissive color", &material->mEmissiveColor[0],
-                                      ImGuiColorEditFlags_Float);
-                }
-            }
 
             for (auto& material : pbrs)
             {

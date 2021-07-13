@@ -45,23 +45,16 @@ void CPlanetGenerator::generate()
         return point * glm::vec3(mSettings.mRadius) * (1 + noiseValue);
     };
 
-    auto material = std::make_shared<CPhongMaterial>();
-
-    material->mDiffuseColor = glm::vec4(0.f, 0.f, 0.f, 1.f);
-    material->mEmissiveColor = glm::vec4(0.f, 0.f, 0.f, 1.f);
-    material->mSpecularColor = glm::vec4(0.f, 0.f, 0.f, 1.f);
-
     auto pbr = std::make_shared<CPbrMaterial>();
     pbr->albedo = glm::vec3(0.5f, 0.0f, 0.0f);
     pbr->ao = 1.0f;
     pbr->metallic = 0.0f;
     pbr->roughness = 0.0f;
 
-    mMaterials.emplace_back(material);
     mMaterials.emplace_back(pbr);
 
     std::for_each(CUBE_FACES_DIRECTIONS.begin(), CUBE_FACES_DIRECTIONS.end(),
-                  [this, &filter, &material, &pbr](auto& direction) {
+                  [this, &filter, &pbr](auto& direction) {
                       CTerrainFace face(mSettings.mResolution, direction);
 
                       TVerticeList vertices;
@@ -70,8 +63,7 @@ void CPlanetGenerator::generate()
 
                       auto mesh = mMeshes.emplace_back(new Mesh(vertices, indices));
 
-                      mMaterialsToMeshes.emplace_back(mesh, material);
-                      mMaterialsToMeshes.emplace_back(mesh, pbr);
+                      mMaterialsToMeshes.emplace(mesh, pbr);
                   });
 
     mProceduralModel.reset(new CStaticModel(mMeshes, mMaterials, mMaterialsToMeshes));

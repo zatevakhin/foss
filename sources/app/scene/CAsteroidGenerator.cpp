@@ -43,11 +43,11 @@ void CAsteroidGenerator::generate()
         return point * glm::vec3(mSettings.mRadius) * (1 + noiseValue);
     };
 
-    auto material = std::make_shared<CPhongMaterial>();
-    material->mShininess = 30.f;
-    material->mDiffuseColor = glm::vec4(1.f, 0.f, 0.f, 1.f);
-    material->mEmissiveColor = glm::vec4(1.f, 0.f, 0.f, 1.f);
-    material->mSpecularColor = glm::vec4(1.f, 0.f, 0.f, 1.f);
+    auto material = std::make_shared<CPbrMaterial>();
+    material->albedo = glm::vec4(1.f, 0.f, 0.f, 1.f);
+    material->metallic = 0.f;
+    material->roughness = 1.f;
+
     mMaterials.emplace_back(material);
 
     std::for_each(CUBE_FACES_DIRECTIONS.begin(), CUBE_FACES_DIRECTIONS.end(),
@@ -59,7 +59,7 @@ void CAsteroidGenerator::generate()
                       face.buildMesh(filter, vertices, indices);
 
                       auto mesh = mMeshes.emplace_back(new Mesh(vertices, indices));
-                      mMaterialsToMeshes.emplace_back(mesh, material);
+                      mMaterialsToMeshes.emplace(mesh, material);
                   });
     mProceduralModel.reset(new CStaticModel(mMeshes, mMaterials, mMaterialsToMeshes));
 

@@ -26,11 +26,6 @@ public:
 
     CPbrMaterial() = default;
     virtual ~CPbrMaterial() override = default;
-
-    virtual bool isPbr() const override
-    {
-        return true;
-    }
 };
 
 using TPbrMaterialPtr = std::shared_ptr<CPbrMaterial>;

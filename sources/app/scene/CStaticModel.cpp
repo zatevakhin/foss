@@ -16,13 +16,9 @@ void CStaticModel::draw(TProgramAdapterPtr program)
 
     for (const auto& x : mMatToMesh)
     {
-        if (x.second->isPbr())
+        if (x.second)
         {
             program->setMaterial(std::static_pointer_cast<CPbrMaterial>(x.second));
-        }
-        else
-        {
-            program->setMaterial(std::static_pointer_cast<CPhongMaterial>(x.second));
         }
 
         x.first->draw(program);

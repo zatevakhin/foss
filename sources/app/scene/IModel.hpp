@@ -34,4 +34,4 @@ public:
 using TModelPtr = std::shared_ptr<IModel>;
 
 // many materials to many meshes
-using TMaterialToMeshMap = std::vector<std::pair<TMeshPtr, TMaterialPtr>>;
+using TMaterialToMeshMap = std::map<TMeshPtr, TMaterialPtr>;

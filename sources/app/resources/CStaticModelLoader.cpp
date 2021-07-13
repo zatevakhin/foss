@@ -141,13 +141,12 @@ TModelPtr CStaticModelLoader::getModel()
 void CStaticModelLoader::loadMaterials()
 {
     const auto DEFAULT_SHININESS = 30.f;
-
     spdlog::debug("Num materials: {}", mScene->mNumMaterials);
 
 
     for (auto i = 0U; i < mScene->mNumMaterials; ++i)
     {
-        auto mat = std::make_shared<CPhongMaterial>();
+        auto mat = std::make_shared<CPbrMaterial>();
         mMaterials.emplace_back(mat);
 
 
@@ -192,33 +191,26 @@ void CStaticModelLoader::loadMaterials()
             spdlog::error("Given shading model was not implemented");
         }
 
-        mat->mShininess = reader.getFloat(AI_MATKEY_SHININESS);
-
-        if (mat->mShininess < 1.f)
+        mat->mAlbedoTex = reader.getTexture(AI_MATKEY_TEXTURE_DIFFUSE(0));
+        if (mat->mAlbedoTex)
         {
-            mat->mShininess = DEFAULT_SHININESS;
+            mat->albedo = reader.getColor(AI_MATKEY_COLOR_DIFFUSE);
         }
 
-        mat->mDiffuseTexture = reader.getTexture(AI_MATKEY_TEXTURE_DIFFUSE(0));
-        if (mat->mDiffuseTexture)
-        {
-            mat->mDiffuseColor = reader.getColor(AI_MATKEY_COLOR_DIFFUSE);
-        }
+        // mat->mSpecularTexture = reader.getTexture(AI_MATKEY_TEXTURE_SPECULAR(0));
+        // if (mat->mDiffuseTexture)
+        // {
+        //     mat->mSpecularColor = reader.getColor(AI_MATKEY_COLOR_SPECULAR);
+        // }
 
-        mat->mSpecularTexture = reader.getTexture(AI_MATKEY_TEXTURE_SPECULAR(0));
-        if (mat->mDiffuseTexture)
-        {
-            mat->mSpecularColor = reader.getColor(AI_MATKEY_COLOR_SPECULAR);
-        }
+        // mat->mEmissiveTexture = reader.getTexture(AI_MATKEY_TEXTURE_EMISSIVE(0));
+        // if (mat->mDiffuseTexture)
+        // {
+        //     mat->mSpecularColor = reader.getColor(AI_MATKEY_COLOR_EMISSIVE);
+        // }
 
-        mat->mEmissiveTexture = reader.getTexture(AI_MATKEY_TEXTURE_EMISSIVE(0));
-        if (mat->mDiffuseTexture)
-        {
-            mat->mSpecularColor = reader.getColor(AI_MATKEY_COLOR_EMISSIVE);
-        }
-
-        reader.getTexture(AI_MATKEY_TEXTURE_NORMALS(0));
-        reader.getTexture(AI_MATKEY_TEXTURE_AMBIENT(0));
+        // reader.getTexture(AI_MATKEY_TEXTURE_NORMALS(0));
+        // reader.getTexture(AI_MATKEY_TEXTURE_AMBIENT(0));
     }
 }
 
@@ -261,7 +253,7 @@ void CStaticModelLoader::add(const aiMesh& mesh, TMaterialToMeshMap& mat2mesh)
 
     auto m = mMeshes.emplace_back(new Mesh(vertices, indices));
     auto mt = mMaterials[mesh.mMaterialIndex];
-    mat2mesh.emplace_back(m, mt);
+    mat2mesh.emplace(m, mt);
 }
 
 void CStaticModelLoader::copyVertices(const aiMesh& mesh, TVerticeList& vertices) const

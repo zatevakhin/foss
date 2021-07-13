@@ -154,7 +154,6 @@ void CEngine::initialize()
     CRegistry::set("mouse/position", mSettings.mWindowSize / 2);
     CRegistry::set("ppNoise", 0);
     CRegistry::set("ppGamma", 0);
-    CRegistry::set("renderer.pbr", false);
 }
 
 void CEngine::initializeVideo()

@@ -107,15 +107,7 @@ void C3DRenderSystem::render(const glm::mat4& view, const glm::mat4& projection)
     gl::clear_color(0.f, 0.f, 0.f, 1.0f);
     gl::clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    if (CRegistry::get<bool>("renderer.pbr"))
-    {
-        renderForegroundPBR(view, projection);
-    }
-    else
-    {
-        renderForeground(view, projection);
-    }
-
+    renderForeground(view, projection);
     renderBoundingBoxes(view, projection);
 
     renderEnvironment(view, projection);
@@ -173,10 +165,14 @@ void C3DRenderSystem::renderEnvironment(const glm::mat4& view, const glm::mat4& 
     glFrontFace(GL_CCW);
 }
 
-void C3DRenderSystem::renderForegroundPBR(const glm::mat4& view, const glm::mat4& projection)
+void C3DRenderSystem::renderForeground(const glm::mat4& view, const glm::mat4& projection)
 {
     auto shaders = mResourceManager.get_shader_manager();
     auto camera = CRegistry::get<CFreeCamera*>("camera");
+
+    std::vector<ecs::Entity> debugDraw;
+    std::vector<ecs::Entity> debugDrawNormals;
+
 
     auto prog = shaders->getByName("pbr");
     auto adapter = std::make_shared<CModelProgramAdapter>(prog);
@@ -201,45 +197,6 @@ void C3DRenderSystem::renderForegroundPBR(const glm::mat4& view, const glm::mat4
         ++lightCount;
     }
     prog->uniform("lightCount") = lightCount;
-
-    for (auto [entity, components] :
-         mEntityManager.getEntitySet<CModelComponent, CTransform3DComponent>())
-    {
-        auto [model, transform] = components;
-        if (model.mIsInView && !model.mDebug.mHideModel)
-        {
-            adapter->setModelAndView(transform.toMat4(), view);
-
-            model.mModel->draw(adapter);
-        }
-    }
-}
-
-void C3DRenderSystem::renderForeground(const glm::mat4& view, const glm::mat4& projection)
-{
-    auto shaders = mResourceManager.get_shader_manager();
-
-    auto camera = CRegistry::get<CFreeCamera*>("camera");
-    auto prog = shaders->getByName("mesh");
-
-    std::vector<ecs::Entity> debugDraw;
-    std::vector<ecs::Entity> debugDrawNormals;
-
-    auto adapter = std::make_shared<CModelProgramAdapter>(prog);
-
-    prog->use();
-    adapter->setProjection(projection);
-
-    prog->uniform("viewPosition") = camera->get_position();
-
-    for (auto [entity, components] : mEntityManager.getEntitySet<CLightComponent>())
-    {
-        auto& [lightComponent] = components;
-        auto light = lightComponent.getLight();
-
-        prog->uniform("lightPosition") = light->mPosition;
-    }
-
 
     for (auto [entity, components] :
          mEntityManager.getEntitySet<CModelComponent, CTransform3DComponent>())

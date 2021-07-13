@@ -40,7 +40,8 @@ void CBoundingBox::setupModel()
     std::move(AABB_INDECIES.begin(), AABB_INDECIES.end(), std::back_inserter(indices));
 
 
-    meshes.emplace_back(new Mesh(vertices, indices, GL_LINES));
+    auto mesh = meshes.emplace_back(new Mesh(vertices, indices, GL_LINES));
+    mat2mesh.emplace(mesh, nullptr);
 
     mModel.reset(new CStaticModel(meshes, materials, mat2mesh));
 }
