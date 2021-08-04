@@ -1,7 +1,7 @@
 #pragma once
 
 #include "app/auxiliary/opengl.hpp"
-
+#include <memory>
 
 class CVertexArrayObject
 {
@@ -19,3 +19,6 @@ public:
 private:
     GLuint mId{0};
 };
+
+
+using TVaoSharedPtr = std::shared_ptr<CVertexArrayObject>;
