@@ -1,9 +1,11 @@
 
-#include "Mesh.hpp"
+// #include "Mesh.hpp"
 
 #include <functional>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/matrix.hpp>
+
+#include "app/types/lists.hpp"
 
 
 constexpr int CUBE_FACES_COUNT = 6;
@@ -19,8 +21,8 @@ class CTerrainFace
 public:
     CTerrainFace(int resolution, glm::vec3 localUp);
 
-    void buildMesh(std::function<glm::vec3(glm::vec3)>& shapeFilter, TVerticeList& vertices,
-                   TIndiceList& indices);
+    void buildMesh(std::function<glm::vec3(glm::vec3)>& shapeFilter, TVec3List& positions,
+                   TVec3List& normals, TIndiceList& indices);
 
 private:
     const int mResolution;

@@ -3,11 +3,11 @@
 #include "IModel.hpp"
 
 
-class CBoundingBox
+class CBoundingBoxModel
 {
 public:
-    CBoundingBox();
-    ~CBoundingBox() = default;
+    CBoundingBoxModel();
+    ~CBoundingBoxModel() = default;
 
     TModelPtr getModel() const;
 

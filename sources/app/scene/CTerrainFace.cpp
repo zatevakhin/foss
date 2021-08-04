@@ -13,10 +13,11 @@ CTerrainFace::CTerrainFace(int resolution, glm::vec3 localUp)
 }
 
 
-void CTerrainFace::buildMesh(std::function<glm::vec3(glm::vec3)>& shapeFilter,
-                             TVerticeList& vertices, TIndiceList& indices)
+void CTerrainFace::buildMesh(std::function<glm::vec3(glm::vec3)>& shapeFilter, TVec3List& positions,
+                             TVec3List& normals, TIndiceList& indices)
 {
-    vertices.resize(mResolution * mResolution);
+    positions.resize(mResolution * mResolution);
+    normals.resize(mResolution * mResolution);
     indices.resize((mResolution - 1) * (mResolution - 1) * 6);
 
     int index = 0;
@@ -32,8 +33,8 @@ void CTerrainFace::buildMesh(std::function<glm::vec3(glm::vec3)>& shapeFilter,
             glm::vec3 pointOnUnitSphere = glm::normalize(pointOnUnitCube);
 
             auto point = shapeFilter(pointOnUnitSphere);
-            vertices[i].position = point;
-            vertices[i].normal = glm::normalize(point);
+            positions[i] = point;
+            normals[i] = glm::normalize(point);
 
             if ((x < mResolution - 1) && (y < mResolution - 1))
             {

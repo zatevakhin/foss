@@ -1,6 +1,5 @@
 #pragma once
 
-#include "EProceduralType.hpp"
 #include "IModel.hpp"
 #include "IProceduralSettings.hpp"
 
@@ -12,7 +11,6 @@ public:
     virtual void generate() = 0;
 
     virtual TModelPtr get() const = 0;
-    virtual EProceduralType getType() const = 0;
 
     virtual ~IProceduralGenerator(){};
 };

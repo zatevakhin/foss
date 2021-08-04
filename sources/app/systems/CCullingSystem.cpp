@@ -19,16 +19,20 @@ void CCullingSystem::update(double& delta)
          mEntityManager.getEntitySet<CModelComponent, CTransform3DComponent>())
     {
         auto [model, transform] = components;
-        cullObjects(model.mModel->getBoundingBox(), model.mIsInView, transform.toMat4());
+
+        if (const auto aabb = model.mModel->getBoundingBox())
+        {
+            cullObjects(aabb, model.mIsInView, transform.toMat4());
+        }
     }
 }
 
-void CCullingSystem::cullObjects(const geometry::CBoundingBox& aabb, bool& isInView,
+void CCullingSystem::cullObjects(const TBoundingBoxSharedPtr aabb, bool& isInView,
                                  const glm::mat4 transform)
 {
-    const auto& bounds = aabb.getBounds<glm::vec3>();
+    const auto& bounds = aabb->getBounds<glm::vec3>();
 
-    glm::vec3 center = aabb.getCenter();
+    glm::vec3 center = aabb->getCenter();
     glm::vec3 extent = bounds.mMax;
 
     glm::mat4 matrix = mProjection * mView * transform;

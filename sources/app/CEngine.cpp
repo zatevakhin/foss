@@ -16,12 +16,10 @@
 #include "components/CTransform3DComponent.hpp"
 #include "components/CWindowComponent.hpp"
 
-#include "app/scene/CAsteroidGenerator.hpp"
-#include "app/scene/CPlanetGenerator.hpp"
-#include "app/scene/Mesh.hpp"
+#include "app/scene/CSpaceBodyGenerator.hpp"
 
+#include "resources/CAssetLoader.hpp"
 #include "resources/CRegistry.hpp"
-#include "resources/CStaticModelLoader.hpp"
 #include "resources/resources.hpp"
 
 #include "entities/windows/CEngineDebugWindow.hpp"
@@ -241,6 +239,8 @@ void CEngine::prepare()
     mRotationUpdateSystem.reset(new CRotationUpdateSystem(mEntityManager));
     mParticleUpdateSystem.reset(new CParticleUpdateSystem(mEntityManager));
 
+    CAssetLoader modelLoader;
+
     {
         auto position = glm::vec3(10.f, 10.f, 10.f);
         auto color = glm::vec3(0.5f, 0.5f, 0.5f);
@@ -264,9 +264,7 @@ void CEngine::prepare()
     }
 
     {
-        auto loader = std::make_shared<CStaticModelLoader>("resources/models/cube/cube.gltf",
-                                                           EImportQuality::MAX);
-        auto model = loader->getModel();
+        auto model = modelLoader.getModel("resources/models/cube/cube.gltf");
 
         auto e = mEntityManager.createEntity();
         mEntityManager.addComponent<CEditableComponent>(e, "Skybox");
@@ -280,9 +278,9 @@ void CEngine::prepare()
         mEntityManager.addComponent<CPickingComponent>(e);
 
 
-        TAsteroidSettings settings{1, 10};
+        TSpaceBodySettings settings{1, 10};
 
-        auto generator = new CAsteroidGenerator(settings);
+        auto generator = new CSpaceBodyGenerator(settings);
         auto& p = mEntityManager.addComponent<CProceduralComponent>(e, generator);
 
         auto model = p.get();
@@ -297,32 +295,9 @@ void CEngine::prepare()
 
     {
         auto e = mEntityManager.createEntity();
-        mEntityManager.addComponent<CEditableComponent>(e, "Planet");
-        mEntityManager.addComponent<CPickingComponent>(e);
-
-
-        TPlanetSettings settings{1, 10};
-
-        auto generator = new CPlanetGenerator(settings);
-        auto& p = mEntityManager.addComponent<CProceduralComponent>(e, generator);
-
-        auto model = p.get();
-
-        auto& m = mEntityManager.addComponent<CModelComponent>(e, model);
-        auto& t = mEntityManager.addComponent<CTransform3DComponent>(e);
-
-        t.mScale = glm::vec3(1);
-        t.mPosition = glm::vec3(0.f, 20.f, -50.f);
-        t.mOrientation = glm::quat(glm::vec3(0.f, 0.f, 0.f));
-    }
-
-
-    {
-        auto e = mEntityManager.createEntity();
         mEntityManager.addComponent<CEditableComponent>(e, "Camera");
         mEntityManager.addComponent<CCameraComponent>(e, m_camera);
     }
-
 
     {
         auto e = mEntityManager.createEntity();
@@ -335,9 +310,7 @@ void CEngine::prepare()
         t.mPosition = glm::vec3(10.f, 0.f, -20.f);
         t.mOrientation = glm::quat(glm::vec3(90.f, 0.f, 0.f));
 
-        auto loader = std::make_shared<CStaticModelLoader>("resources/models/rock/rock.gltf",
-                                                           EImportQuality::MAX);
-        auto model = loader->getModel();
+        auto model = modelLoader.getModel("resources/models/rock/rock.gltf");
         mEntityManager.addComponent<CModelComponent>(e, model);
     }
 
@@ -363,7 +336,6 @@ void CEngine::prepare()
         auto& w = mEntityManager.addComponent<CWindowComponent>(e);
         w.mWindow = std::make_shared<CEntityManagerWindow>(mEntityManager);
     }
-
 
     {
         auto e = mEntityManager.createEntity();

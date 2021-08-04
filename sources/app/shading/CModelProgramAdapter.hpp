@@ -12,7 +12,8 @@ public:
 
     void setProjection(glm::mat4 projection) override;
     void setModelAndView(glm::mat4 model, glm::mat4 view) override;
-    void setMaterial(TPbrMaterialPtr material) override;
+    void setMaterial(TMaterialSharedPtr material) override;
+    void unsetMaterial(TMaterialSharedPtr material) override;
 
 private:
     TProgramSharedPtr mProgram;

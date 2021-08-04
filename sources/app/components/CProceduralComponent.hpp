@@ -19,11 +19,6 @@ public:
         return mGenerator->get();
     }
 
-    EProceduralType getType() const
-    {
-        return mGenerator->getType();
-    }
-
     const IProceduralSettings& getSettings() const
     {
         return mGenerator->getSettings();

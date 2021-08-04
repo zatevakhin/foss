@@ -15,7 +15,7 @@
 #include "app/geometry/CBoundingBox.hpp"
 #include "app/resources/CRegistry.hpp"
 #include "app/resources/CShaderManager.hpp"
-#include "app/scene/CBoundingBox.hpp"
+#include "app/scene/CBoundingBoxModel.hpp"
 #include "app/scene/CFreeCamera.hpp"
 #include "app/shading/CModelProgramAdapter.hpp"
 #include "app/shading/CUniform.hpp"
@@ -36,7 +36,7 @@ C3DRenderSystem::C3DRenderSystem(ecs::EntityManager& entityManager,
     , mBoundingBoxModel(nullptr)
     , mFbo()
 {
-    CBoundingBox box;
+    CBoundingBoxModel box;
     mBoundingBoxModel = box.getModel();
 
     std::vector<float> vtx({-1.0f, 1.0f,  0.0f, 1.0f, -1.0f, -1.0f, 0.0f, 0.0f,
@@ -104,7 +104,7 @@ void C3DRenderSystem::render(const glm::mat4& view, const glm::mat4& projection)
     gl::clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     mFbo.bind();
-    gl::clear_color(0.f, 0.f, 0.f, 1.0f);
+    gl::clear_color(0.2f, 0.3f, 0.3f, 1.0f);
     gl::clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     renderForeground(view, projection);
@@ -300,15 +300,17 @@ void C3DRenderSystem::renderBoundingBoxes(const glm::mat4& view, const glm::mat4
 
         if (model.mIsInView && !model.mDebug.mHideBox)
         {
-            auto aabb = model.mModel->getBoundingBox();
-            glm::mat4 AABBTransform = glm::translate(glm::mat4(1), aabb.getCenter()) *
-                                      glm::scale(glm::mat4(1), aabb.getSize());
+            if (const auto aabb = model.mModel->getBoundingBox())
+            {
+                glm::mat4 AABBTransform = glm::translate(glm::mat4(1), aabb->getCenter()) *
+                                          glm::scale(glm::mat4(1), aabb->getSize());
 
-            prog->uniform("background") =
-                picking.isPicked ? glm::vec4(1.f, 0.f, 0.f, 1.f) : glm::vec4(0.f, 1.f, 0.f, 1.f);
+                prog->uniform("background") = picking.isPicked ? glm::vec4(1.f, 0.f, 0.f, 1.f)
+                                                               : glm::vec4(0.f, 1.f, 0.f, 1.f);
 
-            adapter->setModelAndView(glm::mat4(1), view * (transform.toMat4() * AABBTransform));
-            mBoundingBoxModel->draw(adapter);
+                adapter->setModelAndView(glm::mat4(1), view * (transform.toMat4() * AABBTransform));
+                mBoundingBoxModel->draw(adapter);
+            }
         }
     }
 }

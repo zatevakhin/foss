@@ -5,8 +5,6 @@
 #include "app/textures/CTexture2D.hpp"
 #include "app/textures/CTextureCubeMap.hpp"
 
-#include "CStaticModelLoader.hpp"
-
 #include <cstddef>
 #include <iostream>
 #include <sstream>

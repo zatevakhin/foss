@@ -32,3 +32,21 @@ public:
 private:
     CValueRange<glm::vec3> mBounds;
 };
+
+
+struct BoundingBoxBuilder
+{
+    void operator()(const glm::vec3& v)
+    {
+        mLowerBound = glm::min(mLowerBound, v);
+        mUpperBound = glm::max(mUpperBound, v);
+    }
+
+    TBoundingBoxSharedPtr get() const
+    {
+        return std::make_shared<CBoundingBox>(mLowerBound, mUpperBound);
+    }
+
+    glm::vec3 mLowerBound{0};
+    glm::vec3 mUpperBound{0};
+};

@@ -25,7 +25,7 @@ public:
     void update(double& delta);
 
 private:
-    void cullObjects(const geometry::CBoundingBox& aabb, bool& isInView, const glm::mat4 transform);
+    void cullObjects(const TBoundingBoxSharedPtr aabb, bool& isInView, const glm::mat4 transform);
 
 private:
     glm::mat4 mProjection = glm::mat4(1);

@@ -132,11 +132,15 @@ void CPickingSystem::update(double& delta)
 
         if (model.mIsInView)
         {
-            float intersection = 0.f;
-            const auto& bounds = model.mModel->getBoundingBox().getBounds<glm::vec3>();
+            if (const auto aabb = model.mModel->getBoundingBox())
+            {
+                float intersection = 0.f;
+                const auto& bounds = aabb->getBounds<glm::vec3>();
 
-            picking.isPicked = testRayIntersect(ray_origin, ray_direction, bounds.mMin, bounds.mMax,
-                                                transform.toMat4(), picking.intersection);
+                picking.isPicked =
+                    testRayIntersect(ray_origin, ray_direction, bounds.mMin, bounds.mMax,
+                                     transform.toMat4(), picking.intersection);
+            }
         }
     }
 }
