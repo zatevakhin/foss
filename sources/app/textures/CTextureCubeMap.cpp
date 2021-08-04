@@ -22,12 +22,18 @@ unsigned int CTextureCubeMap::id() const
     return mTextureId;
 }
 
+void CTextureCubeMap::bind(unsigned int texture) const
+{
+    glActiveTexture(texture);
+    bind();
+}
+
 void CTextureCubeMap::bind() const
 {
     glBindTexture(GL_TEXTURE_CUBE_MAP, mTextureId);
 }
 
-void CTextureCubeMap::unbind()
+void CTextureCubeMap::unbind() const
 {
     glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 }

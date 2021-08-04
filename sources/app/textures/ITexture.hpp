@@ -12,7 +12,10 @@ public:
      * @brief
      *
      */
+    virtual void bind(unsigned int texture) const = 0;
     virtual void bind() const = 0;
+
+    virtual void unbind() const = 0;
 
     virtual unsigned int id() const = 0;
 };

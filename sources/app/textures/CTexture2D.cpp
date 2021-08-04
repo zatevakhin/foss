@@ -25,12 +25,18 @@ unsigned int CTexture2D::id() const
     return mTextureId;
 }
 
+void CTexture2D::bind(unsigned int texture) const
+{
+    glActiveTexture(texture);
+    bind();
+}
+
 void CTexture2D::bind() const
 {
     glBindTexture(GL_TEXTURE_2D, mTextureId);
 }
 
-void CTexture2D::unbind()
+void CTexture2D::unbind() const
 {
     glBindTexture(GL_TEXTURE_2D, 0);
 }

@@ -13,9 +13,10 @@ public:
     CTextureCubeMap(const CTextureCubeMap&) = delete;
 
     unsigned int id() const override;
+    void bind(unsigned int) const override;
     void bind() const override;
 
-    static void unbind();
+    void unbind() const override;
 
 private:
     unsigned int mTextureId;
