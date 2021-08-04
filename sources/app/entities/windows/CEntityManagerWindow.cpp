@@ -7,8 +7,7 @@
 #include "app/components/CProceduralComponent.hpp"
 #include "app/components/CTransform3DComponent.hpp"
 
-#include "app/scene/CAsteroidGenerator.hpp"
-#include "app/scene/CPlanetGenerator.hpp"
+#include "app/scene/CSpaceBodyGenerator.hpp"
 
 #include "CEntityManagerWindow.hpp"
 #include "app/auxiliary/imgui.hpp"
@@ -158,18 +157,6 @@ void CEntityManagerWindow::draw()
         auto title2 = fmt::format("Particle emitter ({})", static_cast<size_t>(entity));
         if (ImGui::CollapsingHeader(title2.c_str()))
         {
-            // {
-            //     auto position = component.m_particle_emitter->getPosition();
-            //     ImGui::InputFloat3("Position", &position[0]);
-            //     component.m_particle_emitter->setPosition(position);
-            // }
-
-            // {
-            //     auto direction = component.m_particle_emitter->getDirection();
-            //     ImGui::InputFloat3("Direction", &direction[0]);
-            //     component.m_particle_emitter->setDirection(direction);
-            // }
-
             {
                 auto range = component.m_particle_emitter->getDistanceRange();
                 ImGui::InputFloat2("Distance range", &range[0]);
@@ -226,126 +213,6 @@ void CEntityManagerWindow::draw()
                 auto nearAndFar = camera->get_near_far();
                 ImGui::SliderFloat2("Near / Far", &nearAndFar[0], 0.0001f, 10000.0f, "%.5f", 3.f);
                 camera->set_near_far(nearAndFar);
-            }
-        }
-    }
-
-    if (m_entity_manager.hasComponent<CProceduralComponent>(entity))
-    {
-        auto title = fmt::format("CProceduralComponent ({})", static_cast<size_t>(entity));
-        if (ImGui::CollapsingHeader(title.c_str()))
-        {
-            auto& component = m_entity_manager.getComponent<CProceduralComponent>(entity);
-
-            if (EProceduralType::ASTEROID == component.getType())
-            {
-                const auto& settings = static_cast<TAsteroidSettings&>(
-                    const_cast<IProceduralSettings&>(component.getSettings()));
-
-                TAsteroidSettings newSettings{settings};
-
-                ImGui::SliderInt("Object Resolution", &newSettings.mResolution, 10, 1024);
-
-                ImGui::SliderInt("Seed", &newSettings.mSeed, 0, 10);
-                ImGui::SliderInt("Raduis", &newSettings.mRadius, 1, 256);
-
-                bool updated = false;
-                updated |= settings.mResolution != newSettings.mResolution;
-                updated |= settings.mSeed != newSettings.mSeed;
-                updated |= settings.mRadius != newSettings.mRadius;
-
-                auto title = fmt::format("Noise Settings ({})", static_cast<size_t>(entity));
-                if (ImGui::CollapsingHeader(title.c_str()))
-                {
-                    auto& noise = newSettings.mNoiseSettings;
-                    ImGui::SliderFloat("Strength", &noise.strength, 0.0f, 1.0f, "%.4f");
-                    ImGui::SliderFloat("Roughness", &noise.roughness, 0.0f, 5.0f, "%.4f");
-                    ImGui::SliderFloat3("Noise center", &noise.center[0], 0.0f, 5.0f, "%.4f", 1.f);
-
-                    updated |= settings.mNoiseSettings.center != noise.center;
-                    updated |= settings.mNoiseSettings.roughness != noise.roughness;
-                    updated |= settings.mNoiseSettings.strength != noise.strength;
-                }
-
-                if (updated)
-                {
-                    component.setSettings(newSettings);
-                }
-            }
-            else if (EProceduralType::PLANET == component.getType())
-            {
-                const auto& settings = static_cast<TPlanetSettings&>(
-                    const_cast<IProceduralSettings&>(component.getSettings()));
-
-                TPlanetSettings newSettings{settings};
-
-                ImGui::SliderInt("Object Resolution", &newSettings.mResolution, 10, 1024);
-
-                ImGui::SliderInt("Seed", &newSettings.mSeed, 0, 10);
-                ImGui::SliderInt("Raduis", &newSettings.mRadius, 1, 256);
-
-                bool updated = false;
-                updated |= settings.mResolution != newSettings.mResolution;
-                updated |= settings.mSeed != newSettings.mSeed;
-                updated |= settings.mRadius != newSettings.mRadius;
-
-                auto title = fmt::format("Noise Settings ({})", static_cast<size_t>(entity));
-                if (ImGui::CollapsingHeader(title.c_str()))
-                {
-                    auto& noise = newSettings.mNoiseSettings;
-                    ImGui::SliderFloat("Strength", &noise.strength, 0.0f, 1.0f, "%.4f");
-                    ImGui::SliderFloat("Roughness", &noise.roughness, 0.0f, 5.0f, "%.4f");
-                    ImGui::SliderFloat3("Noise center", &noise.center[0], 0.0f, 5.0f, "%.4f", 1.f);
-
-                    updated |= settings.mNoiseSettings.center != noise.center;
-                    updated |= settings.mNoiseSettings.roughness != noise.roughness;
-                    updated |= settings.mNoiseSettings.strength != noise.strength;
-                }
-
-                if (updated)
-                {
-                    component.setSettings(newSettings);
-                }
-            }
-        }
-    }
-
-    if (m_entity_manager.hasComponent<CModelComponent>(entity))
-    {
-        auto title = fmt::format("CModelComponent ({})", static_cast<size_t>(entity));
-        if (ImGui::CollapsingHeader(title.c_str()))
-        {
-            auto& component = m_entity_manager.getComponent<CModelComponent>(entity);
-            auto& model = component.mModel;
-            auto& meshes = component.mModel->getMaterials();
-
-            std::vector<TPbrMaterialPtr> pbrs;
-
-            for (const auto& mat : meshes)
-            {
-                pbrs.emplace_back(std::static_pointer_cast<CPbrMaterial>(mat));
-            }
-
-            auto isNullptr = [](const auto& a) { return a == nullptr; };
-
-            pbrs.erase(std::remove_if(pbrs.begin(), pbrs.end(), isNullptr), pbrs.end());
-
-            // @note: some generated objects can contain one material for all meshes.
-            pbrs.erase(std::unique(pbrs.begin(), pbrs.end()), pbrs.end());
-
-            for (auto& material : pbrs)
-            {
-                auto title = fmt::format("PBR material ({:#08X})",
-                                         reinterpret_cast<std::uintptr_t>(material.get()));
-
-                if (ImGui::CollapsingHeader(title.c_str()))
-                {
-                    ImGui::SliderFloat("AO", &material->ao, 0.0f, 1.0f, "%.4f");
-
-                    ImGui::SliderFloat("Metallic", &material->metallic, 0.0f, 1.0f, "%.4f");
-                    ImGui::SliderFloat("PBR Roughness", &material->roughness, 0.0f, 1.0f, "%.4f");
-                    ImGui::ColorEdit3("Albedo", &material->albedo[0], ImGuiColorEditFlags_Float);
-                }
             }
         }
     }
