@@ -1,0 +1,9 @@
+[requires]
+tinygltf/2.5.0
+# will be integrated later
+# imgui/1.83
+# glm/0.9.9.8
+# fmt/8.0.0
+
+[generators]
+cmake
