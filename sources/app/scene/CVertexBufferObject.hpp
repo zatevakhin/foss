@@ -2,6 +2,8 @@
 
 #include "app/auxiliary/opengl.hpp"
 #include <array>
+#include <map>
+#include <memory>
 #include <vector>
 
 
@@ -22,13 +24,16 @@ enum class EBufferUsage
 class CVertexBufferObject
 {
 public:
+    explicit CVertexBufferObject(GLenum type, GLenum usage);
     explicit CVertexBufferObject(EBufferType type, EBufferUsage usage = EBufferUsage::eStaticDraw);
     ~CVertexBufferObject();
 
     CVertexBufferObject(const CVertexBufferObject&) = delete;
 
-
-    static void unbind(EBufferType type);
+    GLuint id() const
+    {
+        return mId;
+    }
 
     void bind() const;
 
@@ -58,6 +63,9 @@ public:
 private:
     GLuint mId{0};
 
-    EBufferType mType;
-    EBufferUsage mUsage;
+    GLenum mType;
+    GLenum mUsage;
 };
+
+using TVboSharedPtr = std::shared_ptr<CVertexBufferObject>;
+using TVboList = std::vector<TVboSharedPtr>;

@@ -2,8 +2,6 @@
 #include "CVertexBufferObject.hpp"
 #include "app/auxiliary/trace.hpp"
 
-#include <map>
-
 
 namespace
 {
@@ -33,9 +31,17 @@ inline GLenum mapType(EBufferUsage type)
 } // namespace
 
 
-CVertexBufferObject::CVertexBufferObject(EBufferType type, EBufferUsage usage)
+CVertexBufferObject::CVertexBufferObject(GLenum type, GLenum usage)
     : mType(type)
     , mUsage(usage)
+{
+    glGenBuffers(1, &mId);
+    spdlog::debug("ctor: CVertexBufferObject({})", mId);
+}
+
+
+CVertexBufferObject::CVertexBufferObject(EBufferType type, EBufferUsage usage)
+    : CVertexBufferObject(mapType(type), mapType(usage))
 {
     glGenBuffers(1, &mId);
     spdlog::debug("ctor: CVertexBufferObject({})", mId);
@@ -49,27 +55,20 @@ CVertexBufferObject::~CVertexBufferObject()
 }
 
 
-void CVertexBufferObject::unbind(EBufferType type)
-{
-    glBindBuffer(mapType(type), 0);
-}
-
-
 void CVertexBufferObject::bind() const
 {
-    glBindBuffer(mapType(mType), mId);
+    glBindBuffer(mType, mId);
 }
 
 
 void CVertexBufferObject::unbind() const
 {
-    CVertexBufferObject::unbind(mType);
+    glBindBuffer(mType, 0);
 }
 
 
 void CVertexBufferObject::copy(const void* data, size_t size)
 {
-    const GLenum bufferType = mapType(mType);
-    glBindBuffer(bufferType, mId);
-    glBufferData(bufferType, size, data, mapType(mUsage));
+    glBindBuffer(mType, mId);
+    glBufferData(mType, size, data, mUsage);
 }
