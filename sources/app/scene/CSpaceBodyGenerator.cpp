@@ -76,8 +76,13 @@ void CSpaceBodyGenerator::generate2(std::function<glm::vec3(glm::vec3)> shapeFil
         TBoundingBoxSharedPtr bbox =
             std::for_each(positions.begin(), positions.end(), BoundingBoxBuilder()).get();
 
-        mMeshes.emplace_back(
-            new Mesh(vbos, bbox, GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0, -1));
+        MeshInfo meshInfo;
+
+        meshInfo.mode = GL_TRIANGLES;
+        meshInfo.count = indices.size();
+        meshInfo.type = GL_UNSIGNED_INT;
+
+        mMeshes.emplace_back(new Mesh(vbos, bbox, meshInfo));
     }
 
     mProceduralModel.reset(new Model(vao, mMeshes, mMaterials));

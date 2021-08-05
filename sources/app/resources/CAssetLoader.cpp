@@ -57,10 +57,10 @@ public:
         mMeshes.push_back(mesh);
     }
 
-    size_t addMaterial(TMaterialSharedPtr material)
+    int addMaterial(TMaterialSharedPtr material)
     {
         mMaterials.push_back(material);
-        return mMaterials.size() - 1;
+        return static_cast<int>(mMaterials.size()) - 1;
     }
 
     TModelPtr getModel() const
@@ -240,7 +240,13 @@ void bindMesh(ModelBuilder& builder, const tinygltf::Model& model, const tinyglt
         const auto& material = model.materials[primitive.material];
 
         auto mat = std::make_shared<Material>();
-        auto materialId = builder.addMaterial(mat);
+
+        MeshInfo meshInfo;
+
+        meshInfo.materialId = builder.addMaterial(mat);
+        meshInfo.mode = primitive.mode;
+        meshInfo.count = indexAccessor.count;
+        meshInfo.type = indexAccessor.componentType;
 
         const auto& pbr = material.pbrMetallicRoughness;
 
@@ -266,10 +272,7 @@ void bindMesh(ModelBuilder& builder, const tinygltf::Model& model, const tinyglt
         auto to = getTextureFromModel(model, material.occlusionTexture.index);
         mat->setOcclusionTexture(to, material.occlusionTexture.strength);
 
-
-        auto mesh = std::make_shared<Mesh>(vbos, bbox, primitive.mode, indexAccessor.count,
-                                           indexAccessor.componentType,
-                                           BUFFER_OFFSET(indexAccessor.byteOffset), materialId);
+        auto mesh = std::make_shared<Mesh>(vbos, bbox, meshInfo);
 
         builder.addMesh(mesh);
     }

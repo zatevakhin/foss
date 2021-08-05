@@ -48,13 +48,17 @@ void CBoundingBoxModel::setupModel()
         vbo->copy(AABB_INDECIES);
     }
 
-    const auto indeciseCount = AABB_INDECIES.size();
-
     gl::vertex_attrib_pointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), 0);
 
     vao->unbind();
 
-    meshes.emplace_back(new Mesh(vbos, nullptr, GL_LINES, indeciseCount, GL_UNSIGNED_INT, 0, -1));
+    MeshInfo meshInfo;
+
+    meshInfo.mode = GL_LINES;
+    meshInfo.count = AABB_INDECIES.size();
+    meshInfo.type = GL_UNSIGNED_INT;
+
+    meshes.emplace_back(new Mesh(vbos, nullptr, meshInfo));
 
     materials.emplace_back(new Material());
     mModel.reset(new Model(vao, meshes, materials));
