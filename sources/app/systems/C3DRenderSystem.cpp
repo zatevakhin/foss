@@ -155,9 +155,7 @@ void C3DRenderSystem::renderEnvironment(const glm::mat4& view, const glm::mat4& 
 
         adapter->setModelAndView(glm::mat4(1), glm::mat4(glm::mat3(view)));
 
-        glActiveTexture(GL_TEXTURE0);
-        cubeMap->bind();
-        prog->uniform("cubemap") = 0;
+        prog->uniform("cubemap") = cubeMap->bind(GL_TEXTURE0);
 
         model.mModel->draw(adapter);
     }

@@ -25,22 +25,19 @@ void CModelProgramAdapter::setMaterial(TMaterialSharedPtr material)
 {
     if (material)
     {
-        if (const auto occlusionTexture = material->getOcclusionTexture())
+        if (const auto t = material->getOcclusionTexture())
         {
-            occlusionTexture->bind(GL_TEXTURE2);
-            mProgram->uniform("aoMap") = 2;
+            mProgram->uniform("aoMap") = t->bind(GL_TEXTURE2);
         }
 
-        if (const auto normalTexture = material->getNormalTexture())
+        if (const auto t = material->getNormalTexture())
         {
-            normalTexture->bind(GL_TEXTURE1);
-            mProgram->uniform("normalMap") = 1;
+            mProgram->uniform("normalMap") = t->bind(GL_TEXTURE1);
         }
 
-        if (const auto baseColorTexture = material->getBaseColorTexture())
+        if (const auto t = material->getBaseColorTexture())
         {
-            baseColorTexture->bind(GL_TEXTURE0);
-            mProgram->uniform("albedoMap") = 0;
+            mProgram->uniform("albedoMap") = t->bind(GL_TEXTURE0);
         }
     }
 }
@@ -50,19 +47,19 @@ void CModelProgramAdapter::unsetMaterial(TMaterialSharedPtr material)
 {
     if (material)
     {
-        if (const auto baseColorTexture = material->getBaseColorTexture())
+        if (const auto t = material->getBaseColorTexture())
         {
-            baseColorTexture->unbind();
+            t->unbind();
         }
 
-        if (const auto occlusionTexture = material->getOcclusionTexture())
+        if (const auto t = material->getOcclusionTexture())
         {
-            occlusionTexture->unbind();
+            t->unbind();
         }
 
-        if (const auto normalTexture = material->getNormalTexture())
+        if (const auto t = material->getNormalTexture())
         {
-            normalTexture->unbind();
+            t->unbind();
         }
     }
 }

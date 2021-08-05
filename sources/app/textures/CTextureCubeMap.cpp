@@ -1,7 +1,7 @@
 
 #include "CTextureCubeMap.hpp"
 #include "app/auxiliary/opengl.hpp"
-
+#include "app/textures/util.hpp"
 
 CTextureCubeMap::CTextureCubeMap()
     : mTextureId(0)
@@ -22,10 +22,14 @@ unsigned int CTextureCubeMap::id() const
     return mTextureId;
 }
 
-void CTextureCubeMap::bind(unsigned int texture) const
+int CTextureCubeMap::bind(unsigned int texture) const
 {
+    auto uniformId = mapToUniformId(texture);
+
     glActiveTexture(texture);
     bind();
+
+    return uniformId;
 }
 
 void CTextureCubeMap::bind() const
