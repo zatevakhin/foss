@@ -290,7 +290,7 @@ void CEngine::prepare()
 
         t.mScale = glm::vec3(1);
         t.mPosition = glm::vec3(0.f, 0.f, -50.f);
-        t.mOrientation = glm::quat(glm::vec3(90.f, 0.f, 0.f));
+        t.mOrientation = glm::quat(glm::vec3(0.f));
     }
 
     {
@@ -308,7 +308,7 @@ void CEngine::prepare()
 
         t.mScale = glm::vec3(1);
         t.mPosition = glm::vec3(10.f, 0.f, -20.f);
-        t.mOrientation = glm::quat(glm::vec3(90.f, 0.f, 0.f));
+        t.mOrientation = glm::quat(glm::vec3(0.f));
 
         auto model = modelLoader.getModel("resources/models/rock/rock.gltf");
         mEntityManager.addComponent<CModelComponent>(e, model);
