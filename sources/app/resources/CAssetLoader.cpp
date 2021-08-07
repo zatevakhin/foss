@@ -29,28 +29,8 @@ namespace
 class ModelBuilder
 {
 public:
-    ModelBuilder()
-        : mVao(std::make_shared<CVertexArrayObject>())
-    {
-    }
-
-    ~ModelBuilder()
-    {
-        for (const auto& mesh : mMeshes)
-        {
-            mesh->free();
-        }
-    }
-
-    void bind()
-    {
-        mVao->bind();
-    }
-
-    void unbind()
-    {
-        mVao->unbind();
-    }
+    ModelBuilder() = default;
+    ~ModelBuilder() = default;
 
     void addMesh(TMeshPtr mesh)
     {
@@ -65,13 +45,12 @@ public:
 
     TModelPtr getModel() const
     {
-        return std::make_shared<Model>(mVao, mMeshes, mMaterials);
+        return std::make_shared<Model>(mMeshes, mMaterials);
     }
 
 private:
     TMeshesList mMeshes;
     TMaterialsList mMaterials;
-    TVaoSharedPtr mVao;
 };
 
 } // namespace
@@ -142,68 +121,48 @@ TTextureSharedPtr getTextureFromModel(const tinygltf::Model& model, const int in
 
 void bindMesh(ModelBuilder& builder, const tinygltf::Model& model, const tinygltf::Mesh& mesh)
 {
-    const auto numBufferViews = model.bufferViews.size();
-    const auto numBuffers = model.buffers.size();
-
-    spdlog::info("Num buffers: {}", numBuffers);
-    spdlog::info("Num buffer views: {}", numBufferViews);
-
-    TVboList vbos;
-    vbos.resize(numBufferViews);
-
-    for (size_t i = 0; i < numBufferViews; ++i)
-    {
-        const auto& bufferView = model.bufferViews[i];
-        if (bufferView.target == 0)
-        {
-            spdlog::warn("Unsupported bufferView");
-            continue; // Unsupported bufferView.
-            // https://github.com/KhronosGroup/glTF/tree/master/specification/2.0
-        }
-
-        const auto& buffer = model.buffers[bufferView.buffer];
-
-        vbos[i] = std::make_unique<CVertexBufferObject>(bufferView.target, GL_STATIC_DRAW);
-        vbos[i]->copy(&buffer.data.at(0) + bufferView.byteOffset, bufferView.byteLength);
-    }
-
-    TBoundingBoxSharedPtr bbox = nullptr;
-
-    for (const auto& accessor : model.accessors)
-    {
-        auto isCorrectBuffer = ((0 == accessor.bufferView) || (1 == accessor.bufferView));
-        auto isCorrectType = TINYGLTF_TYPE_VEC3 == accessor.type;
-        auto isBoundingBoxNotSet = !bbox;
-
-        if (isCorrectBuffer && isCorrectType && isBoundingBoxNotSet)
-        {
-            const auto& bv = model.bufferViews[accessor.bufferView];
-            const auto& buffer = model.buffers[bv.buffer];
-
-            auto begin = &(buffer.data.at(0)) + bv.byteOffset;
-            auto end = begin + bv.byteLength;
-
-            auto numPoints = bv.byteLength / sizeof(glm::vec3);
-            std::vector<glm::vec3> positions;
-            positions.resize(numPoints);
-
-            std::memcpy(&(positions[0]), begin, numPoints * sizeof(glm::vec3));
-
-            bbox = std::for_each(positions.begin(), positions.end(), BoundingBoxBuilder()).get();
-        }
-    }
-
+    auto vao = std::make_shared<CVertexArrayObject>();
+    vao->bind();
 
     for (size_t i = 0; i < mesh.primitives.size(); ++i)
     {
+        TBoundingBoxSharedPtr bbox = nullptr;
         auto primitive = mesh.primitives[i];
         auto indexAccessor = model.accessors[primitive.indices];
 
+        TVboList vbos;
+
         for (auto& attrib : primitive.attributes)
         {
+            spdlog::debug("Primiteve attrib: {} -> {}", attrib.first, attrib.second);
+
             auto accessor = model.accessors[attrib.second];
+
+            if (!attrib.first.compare("POSITION"))
+            {
+                const auto& bv = model.bufferViews[accessor.bufferView];
+                const auto& buffer = model.buffers[bv.buffer];
+
+                auto begin = &(buffer.data.at(0)) + bv.byteOffset;
+
+                auto numPoints = bv.byteLength / sizeof(glm::vec3);
+                std::vector<glm::vec3> positions;
+                positions.resize(numPoints);
+
+                std::memcpy(&(positions[0]), begin, numPoints * sizeof(glm::vec3));
+
+                bbox =
+                    std::for_each(positions.begin(), positions.end(), BoundingBoxBuilder()).get();
+            }
+
+            const auto& bv = model.bufferViews[accessor.bufferView];
+            const auto& buffer = model.buffers[bv.buffer];
+
+            auto vbo = vbos.emplace_back(new CVertexBufferObject(bv.target, GL_STATIC_DRAW));
+            vbo->copy(&buffer.data.at(0) + bv.byteOffset, bv.byteLength);
+
             auto byteStride = accessor.ByteStride(model.bufferViews[accessor.bufferView]);
-            vbos[accessor.bufferView]->bind();
+            vbo->bind();
 
             int size = 1;
             if (accessor.type != TINYGLTF_TYPE_SCALAR)
@@ -236,6 +195,12 @@ void bindMesh(ModelBuilder& builder, const tinygltf::Model& model, const tinyglt
                 spdlog::warn("vaa missing: {}", attrib.first);
             }
         }
+
+        const auto& bv = model.bufferViews[indexAccessor.bufferView];
+        const auto& buffer = model.buffers[bv.buffer];
+
+        auto vbo = vbos.emplace_back(new CVertexBufferObject(bv.target, GL_STATIC_DRAW));
+        vbo->copy(&buffer.data.at(0) + bv.byteOffset, bv.byteLength);
 
         const auto& material = model.materials[primitive.material];
 
@@ -272,10 +237,11 @@ void bindMesh(ModelBuilder& builder, const tinygltf::Model& model, const tinyglt
         auto to = getTextureFromModel(model, material.occlusionTexture.index);
         mat->setOcclusionTexture(to, material.occlusionTexture.strength);
 
-        auto mesh = std::make_shared<Mesh>(vbos, bbox, meshInfo);
-
+        auto mesh = std::make_shared<Mesh>(vao, vbos, bbox, meshInfo);
         builder.addMesh(mesh);
     }
+
+    vao->unbind();
 }
 
 void bindModelNodes(ModelBuilder& builder, const tinygltf::Model& model, const tinygltf::Node& node)
@@ -311,12 +277,7 @@ TModelPtr CAssetLoader::getModel(const std::string file)
     getFromFile(model, file);
 
     ModelBuilder builder;
-
-    builder.bind();
     getDefaultScene(builder, model);
-    builder.unbind();
-
-    spdlog::debug("VBO Map destroyed");
 
     return builder.getModel();
 }

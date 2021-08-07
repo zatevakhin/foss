@@ -37,8 +37,14 @@ void CModelProgramAdapter::setMaterial(TMaterialSharedPtr material)
 
         if (const auto t = material->getBaseColorTexture())
         {
-            mProgram->uniform("albedoMap") = t->bind(GL_TEXTURE0);
+            mProgram->uniform("baseColorMap") = t->bind(GL_TEXTURE0);
         }
+
+
+        mProgram->uniform("baseColorFactor") = material->getBaseColorFactor();
+
+        mProgram->uniform("mettalicFactor") = material->getMetallicFactor();
+        mProgram->uniform("roughnessFactor") = material->getRoughnessFactor();
     }
 }
 

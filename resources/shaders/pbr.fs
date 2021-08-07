@@ -8,10 +8,13 @@ in vec3 WorldPos;
 in vec3 Normal;
 
 // material parameters
-uniform sampler2D albedoMap;
+uniform sampler2D baseColorMap;
+uniform vec4 baseColorFactor;
 uniform sampler2D normalMap;
 uniform sampler2D metallicMap;
+uniform float mettalicFactor;
 uniform sampler2D roughnessMap;
+uniform float roughnessFactor;
 uniform sampler2D aoMap;
 
 // lights
@@ -96,7 +99,7 @@ vec3 fresnelSchlick(float cosTheta, vec3 F0)
 // ----------------------------------------------------------------------------
 void main()
 {
-    vec3 albedo     = pow(texture(albedoMap, TexCoords).rgb, vec3(2.2));
+    vec3 albedo     = pow(texture(baseColorMap, TexCoords).rgb, vec3(2.2));
     float metallic  = texture(metallicMap, TexCoords).r;
     float roughness = texture(roughnessMap, TexCoords).g; //@fixit
     float ao        = texture(aoMap, TexCoords).r;

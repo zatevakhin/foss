@@ -3,8 +3,9 @@
 #include "app/auxiliary/trace.hpp"
 
 
-Mesh::Mesh(TVboList vbos, TBoundingBoxSharedPtr bbox, MeshInfo& meshInfo)
-    : mVbos(vbos)
+Mesh::Mesh(TVaoSharedPtr vao, TVboList vbos, TBoundingBoxSharedPtr bbox, MeshInfo& meshInfo)
+    : mVao(vao)
+    , mVbos(vbos)
     , mBoundingBox(bbox)
     , mMeshInfo(meshInfo)
 {
@@ -12,5 +13,7 @@ Mesh::Mesh(TVboList vbos, TBoundingBoxSharedPtr bbox, MeshInfo& meshInfo)
 
 void Mesh::draw(TProgramAdapterPtr)
 {
+    mVao->bind();
     glDrawElements(mMeshInfo.mode, mMeshInfo.count, mMeshInfo.type, mMeshInfo.indicies);
+    mVao->unbind();
 }

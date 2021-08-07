@@ -1,5 +1,6 @@
 #pragma once
 
+#include "CVertexArrayObject.hpp"
 #include "CVertexBufferObject.hpp"
 #include "IMesh.hpp"
 
@@ -39,7 +40,7 @@ struct MeshInfo
 class Mesh : public IMesh
 {
 public:
-    Mesh(TVboList vbos, TBoundingBoxSharedPtr bbox, MeshInfo& meshInfo);
+    Mesh(TVaoSharedPtr vao, TVboList vbos, TBoundingBoxSharedPtr bbox, MeshInfo& meshInfo);
 
     ~Mesh() override = default;
 
@@ -53,11 +54,6 @@ public:
         return mBoundingBox;
     }
 
-    void free()
-    {
-        mVbos.clear();
-    }
-
     int getMaterialId() override
     {
         return mMeshInfo.materialId;
@@ -65,7 +61,7 @@ public:
 
 private:
     TVboList mVbos;
+    TVaoSharedPtr mVao;
     TBoundingBoxSharedPtr mBoundingBox;
-
     MeshInfo mMeshInfo;
 };

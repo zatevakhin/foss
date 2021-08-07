@@ -1,6 +1,5 @@
 #pragma once
 
-#include "CVertexArrayObject.hpp"
 #include "IMesh.hpp"
 #include "IModel.hpp"
 
@@ -11,9 +10,8 @@ class Model : public IModel
 {
 
 public:
-    Model(TVaoSharedPtr vao, TMeshesList meshes, TMaterialsList materials)
-        : mVao(vao)
-        , mMeshes(meshes)
+    Model(TMeshesList meshes, TMaterialsList materials)
+        : mMeshes(meshes)
         , mMaterials(materials)
         , mBoundingBox(std::make_shared<CBoundingBox>())
     {
@@ -30,8 +28,6 @@ public:
 
     void draw(TProgramAdapterPtr program) override
     {
-        mVao->bind();
-
         const auto meshesCount = mMeshes.size();
         for (size_t i = 0; i < meshesCount; ++i)
         {
@@ -48,7 +44,6 @@ public:
             mesh->draw(program);
             program->unsetMaterial(mat);
         }
-        mVao->unbind();
     }
 
     TBoundingBoxSharedPtr getBoundingBox() const override
@@ -66,13 +61,7 @@ public:
         return mMeshes;
     }
 
-    // virtual TMaterialList& getMaterials() override
-    // {
-    //     return mMaterialsOld;
-    // }
-
 private:
-    TVaoSharedPtr mVao;
     TMeshesList mMeshes;
     TMaterialsList mMaterials;
     TBoundingBoxSharedPtr mBoundingBox;
