@@ -14,7 +14,7 @@ struct TBasicLight
     TBasicLight(const glm::vec3& position, const glm::vec3& color)
         : mPosition(position)
         , mColor(color)
-        , mStrength(1.f)
+        , mStrength(0.f)
     {
     }
 

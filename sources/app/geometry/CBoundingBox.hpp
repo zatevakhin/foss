@@ -1,8 +1,8 @@
 #pragma once
 
 #include "CValueRange.hpp"
+#include "app/types/lists.hpp"
 #include <memory>
-
 
 class CBoundingBox;
 
@@ -41,6 +41,13 @@ struct BoundingBoxBuilder
         mLowerBound = glm::min(mLowerBound, v);
         mUpperBound = glm::max(mUpperBound, v);
     }
+
+    void operator()(const Vertex& v)
+    {
+        mLowerBound = glm::min(mLowerBound, v.position);
+        mUpperBound = glm::max(mUpperBound, v.position);
+    }
+
 
     TBoundingBoxSharedPtr get() const
     {

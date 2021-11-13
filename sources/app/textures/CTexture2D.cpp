@@ -42,5 +42,12 @@ void CTexture2D::bind() const
 
 void CTexture2D::unbind() const
 {
+    // glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+void CTexture2D::unbind(unsigned int texture) const
+{
+    glActiveTexture(texture);
     glBindTexture(GL_TEXTURE_2D, 0);
 }

@@ -28,6 +28,11 @@ public:
     void unbind() const override;
 
     /**
+     * @see ITexture::unbind()
+     */
+    void unbind(unsigned int texture) const override;
+
+    /**
      * @see ITexture::id()
      */
     unsigned int id() const override;

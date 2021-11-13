@@ -24,6 +24,9 @@ public:
     void buildMesh(std::function<glm::vec3(glm::vec3)>& shapeFilter, TVec3List& positions,
                    TVec3List& normals, TIndiceList& indices);
 
+    void buildMesh(std::function<glm::vec3(glm::vec3)>& shapeFilter, TVerticesList& vertices,
+                   TIndiceList& indices);
+
 private:
     const int mResolution;
     const glm::vec3 mLocalUp;

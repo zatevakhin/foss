@@ -1,5 +1,6 @@
 #pragma once
 
+#include "app/auxiliary/glm.hpp"
 #include "app/auxiliary/trace.hpp"
 #include "app/textures/ITexture.hpp"
 
@@ -64,6 +65,8 @@ public:
     {
         return mTextureCache;
     }
+
+    static void setTexture(ITexture* texture, const size_t size, const glm::vec3 color);
 
 
 private:

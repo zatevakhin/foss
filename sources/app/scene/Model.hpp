@@ -61,6 +61,11 @@ public:
         return mMeshes;
     }
 
+    virtual TMaterialSharedPtr getMaterialById(int id) override
+    {
+        return mMaterials.at(id);
+    }
+
 private:
     TMeshesList mMeshes;
     TMaterialsList mMaterials;

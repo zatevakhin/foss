@@ -74,9 +74,11 @@ void CEntityManagerWindow::draw()
             ImGui::SameLine(300);
             ImGui::Checkbox("Draw normals", &debug.mEnableNormalsDraw);
 
-            static SModelDebug::EDebugDrawMode modes[3] = {SModelDebug::EDebugDrawMode::FILL,
-                                                           SModelDebug::EDebugDrawMode::LINE,
-                                                           SModelDebug::EDebugDrawMode::POINT};
+            static SModelDebug::EDebugDrawMode modes[3] = {
+                SModelDebug::EDebugDrawMode::FILL,
+                SModelDebug::EDebugDrawMode::LINE,
+                SModelDebug::EDebugDrawMode::POINT,
+            };
 
             static const char* modeNames[3] = {"FILL", "LINE", "POINT"};
             static int modeIndex = 0;
@@ -227,7 +229,135 @@ void CEntityManagerWindow::draw()
 
             ImGui::InputFloat3("Position", &light->mPosition[0]);
             ImGui::ColorEdit3("Color", &light->mColor[0], ImGuiColorEditFlags_Float);
-            ImGui::SliderFloat("Strength", &light->mStrength, 1.0f, 65536.0f, "%.4f", 3.f);
+            ImGui::SliderFloat("Strength", &light->mStrength, 0.0f, 65536.0f, "%.4f", 3.f);
+        }
+    }
+
+    if (m_entity_manager.hasComponent<CProceduralComponent>(entity))
+    {
+        auto title = fmt::format("CProceduralComponent ({})", static_cast<size_t>(entity));
+        if (ImGui::CollapsingHeader(title.c_str()))
+        {
+            auto& component = m_entity_manager.getComponent<CProceduralComponent>(entity);
+
+            const auto& s = static_cast<TSpaceBodySettings&>(const_cast<IProceduralSettings&>(component.getSettings()));
+
+            TSpaceBodySettings settings{s};
+
+
+            bool updated = false;
+
+            updated |= ImGui::SliderInt("Object Resolution", &settings.mResolution, 10, 1024);
+            updated |= ImGui::SliderInt("Seed", &settings.mSeed, 0, 10);
+            updated |= ImGui::SliderInt("Raduis", &settings.mRadius, 1, 256);
+
+
+            auto title = fmt::format("Noise Settings ({})", static_cast<size_t>(entity));
+            if (ImGui::CollapsingHeader(title.c_str()))
+            {
+                auto& noise = settings.mNoiseSettings;
+
+                updated |= ImGui::SliderFloat("Strength", &noise.strength, 0.0f, 1.0f, "%.4f");
+                updated |= ImGui::SliderFloat("Roughness", &noise.roughness, 0.0f, 5.0f, "%.4f");
+                updated |= ImGui::SliderFloat3("Noise center", &noise.center[0], 0.0f, 5.0f, "%.4f", 1.f);
+            }
+
+            if (updated)
+            {
+                component.setSettings(settings);
+            }
+        }
+    }
+
+    if (m_entity_manager.hasComponent<CModelComponent>(entity))
+    {
+        auto title = fmt::format("CModelComponent ({})", static_cast<size_t>(entity));
+        if (ImGui::CollapsingHeader(title.c_str()))
+        {
+            auto& component = m_entity_manager.getComponent<CModelComponent>(entity);
+            auto model = component.mModel;
+            auto& meshes = model->getMeshes();
+
+            std::vector<int> materialIds;
+
+            std::transform(meshes.begin(), meshes.end(), std::back_inserter(materialIds),
+                           [](auto& mesh) -> int { return mesh->getMaterialId(); });
+
+            // @note: some generated objects can have no material.
+            materialIds.erase(std::remove_if(materialIds.begin(), materialIds.end(), [](auto id) { return id < 0; }),
+                              materialIds.end());
+
+            // @note: some generated objects can contain one material for all meshes.
+            materialIds.erase(std::unique(materialIds.begin(), materialIds.end()), materialIds.end());
+
+            for (const auto& materialId : materialIds)
+            {
+                auto material = model->getMaterialById(materialId);
+
+                if (nullptr == material)
+                {
+                    continue;
+                }
+
+                auto title = fmt::format("Material ({})", material->getId());
+
+                if (ImGui::CollapsingHeader(title.c_str()))
+                {
+                    auto metallic = material->getMetallicFactor();
+                    if (ImGui::SliderFloat("Metallic", &metallic, 0.0f, 1.0f, "%.4f"))
+                    {
+                        material->setMetallicFactor(metallic);
+                    }
+
+                    auto roughness = material->getRoughnessFactor();
+                    if (ImGui::SliderFloat("Roughness", &roughness, 0.0f, 1.0f, "%.4f"))
+                    {
+                        material->setRoughnessFactor(roughness);
+                    }
+
+                    auto emissive = material->getEmissiveFactor();
+                    if (ImGui::SliderFloat3("Emissive", &(emissive[0]), 0.0f, 1.0f, "%.4f"))
+                    {
+                        material->setEmissiveFactor(emissive);
+                    }
+
+                    auto baseColor = material->getBaseColorFactor();
+                    if (ImGui::ColorEdit4("Base color", &(baseColor[0]), ImGuiColorEditFlags_Float))
+                    {
+                        material->setBaseColorFactor(baseColor);
+                    }
+
+                    if (auto tex = material->getBaseColorTexture())
+                    {
+                        ImGui::Image(reinterpret_cast<void*>(tex->id()), {64, 64}, ImVec2(0, 1), ImVec2(1, 0));
+                    }
+
+                    if (auto tex = material->getNormalTexture())
+                    {
+                        ImGui::Image(reinterpret_cast<void*>(tex->id()), {64, 64}, ImVec2(0, 1), ImVec2(1, 0));
+                    }
+
+                    if (auto tex = material->getMetallicTexture())
+                    {
+                        ImGui::Image(reinterpret_cast<void*>(tex->id()), {64, 64}, ImVec2(0, 1), ImVec2(1, 0));
+                    }
+
+                    if (auto tex = material->getRoughnessTexture())
+                    {
+                        ImGui::Image(reinterpret_cast<void*>(tex->id()), {64, 64}, ImVec2(0, 1), ImVec2(1, 0));
+                    }
+
+                    if (auto tex = material->getEmissiveTexture())
+                    {
+                        ImGui::Image(reinterpret_cast<void*>(tex->id()), {64, 64}, ImVec2(0, 1), ImVec2(1, 0));
+                    }
+
+                    if (auto tex = material->getOcclusionTexture())
+                    {
+                        ImGui::Image(reinterpret_cast<void*>(tex->id()), {64, 64}, ImVec2(0, 1), ImVec2(1, 0));
+                    }
+                }
+            }
         }
     }
 

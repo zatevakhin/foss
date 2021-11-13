@@ -189,6 +189,7 @@ void bindMesh(ModelBuilder& builder, const tinygltf::Model& model, const tinyglt
                 auto normalized = accessor.normalized ? GL_TRUE : GL_FALSE;
                 gl::vertex_attrib_pointer(vaa, size, accessor.componentType, normalized, byteStride,
                                           BUFFER_OFFSET(accessor.byteOffset));
+                // spdlog::debug("Offset: {}", accessor.byteOffset);
             }
             else
             {

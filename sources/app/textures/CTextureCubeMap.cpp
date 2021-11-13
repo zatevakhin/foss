@@ -41,3 +41,9 @@ void CTextureCubeMap::unbind() const
 {
     glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 }
+
+void CTextureCubeMap::unbind(unsigned int texture) const
+{
+    glActiveTexture(texture);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+}

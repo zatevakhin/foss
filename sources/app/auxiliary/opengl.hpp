@@ -10,8 +10,7 @@ namespace gl
 
 using TTexParametriList = std::vector<std::tuple<GLenum, GLenum, GLint>>;
 
-inline void vertex_attrib_pointer(GLuint index, GLint size, GLenum type, GLboolean normalized,
-                                  GLsizei stride, const void* pointer)
+inline void vertex_attrib_pointer(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void* pointer)
 {
     glEnableVertexAttribArray(index);
     glVertexAttribPointer(index, size, type, normalized, stride, pointer);

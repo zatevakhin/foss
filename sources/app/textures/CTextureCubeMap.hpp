@@ -26,6 +26,7 @@ public:
      * @see ITexture::unbind()
      */
     void unbind() const override;
+    void unbind(unsigned int texture) const override;
 
     /**
      * @see ITexture::id()

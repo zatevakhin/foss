@@ -73,9 +73,8 @@ void checkOpenGLErrors()
     }
 }
 
-void GLAPIENTRY DebugOutputCallback(GLenum /*source*/, GLenum type, GLuint id, GLenum /*severity*/,
-                                    GLsizei /*length*/, const GLchar* message,
-                                    const void* /*userParam*/)
+void GLAPIENTRY DebugOutputCallback(GLenum /*source*/, GLenum type, GLuint id, GLenum /*severity*/, GLsizei /*length*/,
+                                    const GLchar* message, const void* /*userParam*/)
 {
     // errors only
     if (type != GL_DEBUG_TYPE_ERROR)
@@ -215,11 +214,9 @@ void CEngine::prepare()
 
     auto texManager = mResourceManager->getTextureManager();
 
-    auto skyboxTexture = texManager->create<CTextureCubeMap>("resources/skybox/purple-nebula.4096",
-                                                             ETextureType::FILE);
+    auto skyboxTexture = texManager->create<CTextureCubeMap>("resources/skybox/purple-nebula.4096", ETextureType::FILE);
 
-    auto orange =
-        texManager->create<CTexture2D>("resources/textures/orange.png", ETextureType::FILE);
+    auto orange = texManager->create<CTexture2D>("resources/textures/orange.png", ETextureType::FILE);
 
     CRegistry::set("camera", m_camera.get());
 
@@ -239,10 +236,12 @@ void CEngine::prepare()
     mRotationUpdateSystem.reset(new CRotationUpdateSystem(mEntityManager));
     mParticleUpdateSystem.reset(new CParticleUpdateSystem(mEntityManager));
 
+    m_camera->set_moving_speed(10);
+
     CAssetLoader modelLoader;
 
     {
-        auto position = glm::vec3(10.f, 10.f, 10.f);
+        auto position = glm::vec3(50.f, 0.f, -50.f);
         auto color = glm::vec3(0.5f, 0.5f, 0.5f);
 
         auto light = std::make_shared<TBasicLight>(position, color);
@@ -301,21 +300,6 @@ void CEngine::prepare()
 
     {
         auto e = mEntityManager.createEntity();
-        mEntityManager.addComponent<CEditableComponent>(e, "Model");
-        mEntityManager.addComponent<CPickingComponent>(e);
-
-        auto& t = mEntityManager.addComponent<CTransform3DComponent>(e);
-
-        t.mScale = glm::vec3(1);
-        t.mPosition = glm::vec3(10.f, 0.f, -20.f);
-        t.mOrientation = glm::quat(glm::vec3(0.f));
-
-        auto model = modelLoader.getModel("resources/models/rock/rock.gltf");
-        mEntityManager.addComponent<CModelComponent>(e, model);
-    }
-
-    {
-        auto e = mEntityManager.createEntity();
         auto& w = mEntityManager.addComponent<CWindowComponent>(e);
         w.mWindow = std::make_shared<CEngineDebugWindow>(m_camera);
     }
@@ -353,7 +337,7 @@ void CEngine::prepare()
 
         system->setGravity(glm::vec3(0));
         system->setParticleTexture(orange);
-        system->setMaxPatricles(1000);
+        system->setMaxPatricles(10000);
 
         auto createEmitter = []() -> std::shared_ptr<CParticleEmitter> {
             auto emitter = std::make_shared<CParticleEmitter>();
@@ -362,8 +346,8 @@ void CEngine::prepare()
             emitter->setMaxDeviationAngle(3.14f);
             emitter->setDistanceRange(5, 5.1);
             emitter->setEmitIntervalRange(0.0003, 0.0004);
-            emitter->setLifetimeRange(0.3, 0.4);
-            emitter->setSpeedRange(1.0, 1.1);
+            emitter->setLifetimeRange(0.3, 5.0);
+            emitter->setSpeedRange(0.3, 0.5);
 
             return emitter;
         };
@@ -371,6 +355,38 @@ void CEngine::prepare()
         p.m_particle_emitter = createEmitter();
 
         system->setEmitter(p.m_particle_emitter);
+    }
+
+
+    {
+        auto e = mEntityManager.createEntity();
+        mEntityManager.addComponent<CEditableComponent>(e, "Model");
+        mEntityManager.addComponent<CPickingComponent>(e);
+
+        auto& t = mEntityManager.addComponent<CTransform3DComponent>(e);
+
+        t.mScale = glm::vec3(1);
+        t.mPosition = glm::vec3(1.f, 1.f, 1.f);
+        t.mOrientation = glm::quat(glm::vec3(0.f));
+
+        auto model =
+            modelLoader.getModel("/mnt/sandbox/cxx-opengl/glTF-Sample-Models/2.0/SciFiHelmet/glTF/SciFiHelmet.gltf");
+        mEntityManager.addComponent<CModelComponent>(e, model);
+    }
+
+    {
+        auto e = mEntityManager.createEntity();
+        mEntityManager.addComponent<CEditableComponent>(e, "Model");
+        mEntityManager.addComponent<CPickingComponent>(e);
+
+        auto& t = mEntityManager.addComponent<CTransform3DComponent>(e);
+
+        t.mScale = glm::vec3(1);
+        t.mPosition = glm::vec3(10.f, 1.f, 1.f);
+        t.mOrientation = glm::quat(glm::vec3(0.f));
+
+        auto model = modelLoader.getModel("trash/nanosuit_gltf/untitled.gltf");
+        mEntityManager.addComponent<CModelComponent>(e, model);
     }
 }
 
@@ -428,8 +444,7 @@ void CEngine::onUpdate(double delta)
 {
 
     // Updating procedural model if it was re-generated.
-    for (auto [entity, components] :
-         mEntityManager.getEntitySet<CModelComponent, CProceduralComponent>())
+    for (auto [entity, components] : mEntityManager.getEntitySet<CModelComponent, CProceduralComponent>())
     {
         auto& [m, g] = components;
         auto model = g.get();

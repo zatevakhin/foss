@@ -25,6 +25,8 @@ public:
      */
     virtual void unbind() const = 0;
 
+    virtual void unbind(unsigned int texture) const = 0;
+
     /**
      * @brief get texture id
      * @return generated in constructor texture name
