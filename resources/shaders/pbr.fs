@@ -2,20 +2,18 @@
 
 // https://learnopengl.com/PBR/Theory
 
-out vec4 FragColor;
-in vec2 TexCoords;
-in vec3 WorldPos;
-in vec3 Normal;
-
 // material parameters
 uniform sampler2D baseColorMap;
-uniform vec4 baseColorFactor;
 uniform sampler2D normalMap;
 uniform sampler2D metallicMap;
-uniform float mettalicFactor;
 uniform sampler2D roughnessMap;
-uniform float roughnessFactor;
 uniform sampler2D aoMap;
+
+in vec3 Normal;
+in vec3 WorldPos;
+in vec2 TexCoords;
+
+out vec4 FragColor;
 
 // lights
 // Seems better use SSBO
@@ -105,6 +103,7 @@ void main()
     float ao        = texture(aoMap, TexCoords).r;
 
     vec3 N = getNormalFromMap();
+    // vec3 N = normalize(Normal);
     vec3 V = normalize(view_position - WorldPos);
 
     // calculate reflectance at normal incidence; if dia-electric (like plastic) use F0
@@ -118,6 +117,8 @@ void main()
     {
         // calculate per-light radiance
         vec3 L = normalize(light[i].position - WorldPos);
+        float NdotL = max(dot(N, L), 0.0);
+
         vec3 H = normalize(V + L);
         float distance = length(light[i].position - WorldPos);
         float attenuation = 1.0 / (distance * distance);
@@ -130,7 +131,7 @@ void main()
         // vec3 F    = fresnelSchlick(clamp(dot(H, V), 0.0, 1.0), F0);
 
         vec3 numerator    = NDF * G * F;
-        float denominator = 4/* - what is this? */ * max(dot(N, V), 0.0) * max(dot(N, L), 0.0);
+        float denominator = 4/* - what is this? */ * max(dot(N, V), 0.0) * NdotL;
         vec3 specular = numerator / max(denominator, 0.001); // prevent divide by zero for NdotV=0.0 or NdotL=0.0
 
         // kS is equal to Fresnel
@@ -143,9 +144,6 @@ void main()
         // have diffuse lighting, or a linear blend if partly metal (pure metals
         // have no diffuse light).
         kD *= 1.0 - metallic;
-
-        // scale light by NdotL
-        float NdotL = max(dot(N, L), 0.0);
 
         // add to outgoing radiance Lo
         Lo += (kD * albedo / PI + specular) * radiance * NdotL;  // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
