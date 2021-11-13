@@ -1,0 +1,21 @@
+{
+    "name": "vcpkg-example",
+    "version": "1.83",
+    "dependencies": [
+        "imgui",
+        {
+            "name": "imgui",
+            "default-features": false,
+            "features": [ "sdl2-binding" ]
+        },
+        "imguizmo",
+        "fmt",
+        "spdlog",
+        "stb",
+        "tinygltf",
+        "glm",
+        "sdl2",
+        "sdl2-image"
+    ]
+}
+

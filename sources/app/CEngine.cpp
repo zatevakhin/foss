@@ -223,7 +223,7 @@ void CEngine::prepare()
     constexpr auto nbEntities = std::size_t(10000);
     mEntityManager.reserve(nbEntities);
 
-    ImGui_ImplSdlGL3_Init(SDL_GetWindowFromID(mMainWindow->getId()));
+    ImGui_ImplSDL2_InitForOpenGL(SDL_GetWindowFromID(mMainWindow->getId()), nullptr);
 
     ImGuiStyle& style = ImGui::GetStyle();
     style.WindowRounding = 0;
@@ -432,7 +432,7 @@ void CEngine::onSwapBuffers()
 
 void CEngine::finalize()
 {
-    ImGui_ImplSdlGL3_Shutdown();
+    ImGui_ImplSDL2_Shutdown();
 }
 
 void CEngine::onEvent()
@@ -490,7 +490,7 @@ void CEngine::onDraw()
 
     m3dRenderSystem->render(view, projection);
 
-    ImGui_ImplSdlGL3_NewFrame(SDL_GetWindowFromID(mMainWindow->getId()));
+    ImGui_ImplSDL2_NewFrame(SDL_GetWindowFromID(mMainWindow->getId()));
     m2dRenderSystem->render(view, projection);
     ImGui::Render();
 }

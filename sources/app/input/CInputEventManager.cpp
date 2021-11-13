@@ -30,7 +30,8 @@ void CInputEventManager::handle()
 
     while (SDL_PollEvent(&event))
     {
-        ImGui_ImplSdlGL3_ProcessEvent(&event);
+        ImGui_ImplSDL2_ProcessEvent(&event);
+        // ImGui_ImplSdlGL3_ProcessEvent(&event);
         switch (event.type)
         {
         case SDL_KEYDOWN:

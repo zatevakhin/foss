@@ -13,6 +13,7 @@ add_subdirectory(math)
 
 
 cmake_auxiliary_add_execultable(foss.app hpp cpp)
+
 target_link_libraries(foss.app
         app_input
         app_systems
@@ -26,11 +27,12 @@ target_link_libraries(foss.app
         app_gears
         app_math
 
-        imgui
+        imgui::imgui
+        imguizmo::imguizmo
 
-        GL
-        SDL2
-        SDL2_image
-        assimp
-        fmt
+        X11 Xrandr Xi Xxf86vm Xext GL
+        SDL2::SDL2 SDL2::SDL2main SDL2::SDL2-static SDL2::SDL2_image
+        fmt::fmt
+        spdlog::spdlog spdlog::spdlog_header_only
     )
+

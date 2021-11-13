@@ -5,3 +5,4 @@ docs/
 imgui.ini
 .cache
 *.code-workspace
+vcpkg_installed
