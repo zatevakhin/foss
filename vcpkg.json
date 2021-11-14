@@ -6,7 +6,7 @@
         {
             "name": "imgui",
             "default-features": false,
-            "features": [ "sdl2-binding" ]
+            "features": [ "sdl2-binding", "opengl3-binding" ]
         },
         "imguizmo",
         "fmt",

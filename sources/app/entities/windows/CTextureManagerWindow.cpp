@@ -44,8 +44,7 @@ void CTextureManagerWindow::draw()
     }
 
     ImGui::Begin("Textures manager");
-    ImGui::ListBox("", &currentProgrmName, vector_getter, static_cast<void*>(&texturesNames),
-                   texturesNames.size(), 6);
+    ImGui::ListBox("", &currentProgrmName, vector_getter, static_cast<void*>(&texturesNames), texturesNames.size(), 6);
     if (numTextures > currentProgrmName)
     {
         auto tex = textures.at(texturesIds[currentProgrmName]);

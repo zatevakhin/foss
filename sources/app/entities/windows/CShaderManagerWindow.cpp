@@ -40,8 +40,7 @@ void CShaderManagerWindow::draw()
     }
 
     ImGui::Begin("Shader manager");
-    ImGui::ListBox("", &currentProgrmName, vector_getter, static_cast<void*>(&programsNames),
-                   programsNames.size(), 6);
+    ImGui::ListBox("", &currentProgrmName, vector_getter, static_cast<void*>(&programsNames), programsNames.size(), 6);
 
     if (ImGui::Button("Reload"))
     {

@@ -167,19 +167,19 @@ void CEntityManagerWindow::draw()
 
             {
                 auto range = component.m_particle_emitter->getEmitIntervalRange();
-                ImGui::SliderFloat2("Emit interval", &range[0], 0.00001f, 2.0f, "%.5f", 3.f);
+                ImGui::SliderFloat2("Emit interval", &range[0], 0.00001f, 2.0f, "%.5f", 1.f);
                 component.m_particle_emitter->setEmitIntervalRange(range.x, range.y);
             }
 
             {
                 auto range = component.m_particle_emitter->getLifetimeRange();
-                ImGui::SliderFloat2("Lifetime range", &range[0], 0.0001f, 100.0f, "%.4f", 3.f);
+                ImGui::SliderFloat2("Lifetime range", &range[0], 0.0001f, 100.0f, "%.4f", 1.f);
                 component.m_particle_emitter->setLifetimeRange(range.x, range.y);
             }
 
             {
                 auto range = component.m_particle_emitter->getSpeedRange();
-                ImGui::SliderFloat2("Speed range", &range[0], -100.f, 100.0f, "%.3f", 3.f);
+                ImGui::SliderFloat2("Speed range", &range[0], -100.f, 100.0f, "%.3f", 1.f);
                 component.m_particle_emitter->setSpeedRange(range.x, range.y);
             }
 
@@ -213,7 +213,7 @@ void CEntityManagerWindow::draw()
 
             {
                 auto nearAndFar = camera->get_near_far();
-                ImGui::SliderFloat2("Near / Far", &nearAndFar[0], 0.0001f, 10000.0f, "%.5f", 3.f);
+                ImGui::SliderFloat2("Near / Far", &nearAndFar[0], 0.0001f, 10000.0f, "%.5f", 1.f);
                 camera->set_near_far(nearAndFar);
             }
         }
@@ -228,8 +228,8 @@ void CEntityManagerWindow::draw()
             auto light = component.getLight();
 
             ImGui::InputFloat3("Position", &light->mPosition[0]);
-            ImGui::ColorEdit3("Color", &light->mColor[0], ImGuiColorEditFlags_Float);
-            ImGui::SliderFloat("Strength", &light->mStrength, 0.0f, 65536.0f, "%.4f", 3.f);
+            // ImGui::ColorEdit3("Color", &light->mColor[0], ImGuiColorEditFlags_Float);
+            ImGui::SliderFloat("Strength", &light->mStrength, 0.0f, 65536.0f, "%.4f", 1.f);
         }
     }
 
@@ -321,11 +321,11 @@ void CEntityManagerWindow::draw()
                         material->setEmissiveFactor(emissive);
                     }
 
-                    auto baseColor = material->getBaseColorFactor();
-                    if (ImGui::ColorEdit4("Base color", &(baseColor[0]), ImGuiColorEditFlags_Float))
-                    {
-                        material->setBaseColorFactor(baseColor);
-                    }
+                    // auto baseColor = material->getBaseColorFactor();
+                    // if (ImGui::ColorEdit4("Base color", &(baseColor[0]), ImGuiColorEditFlags_Float))
+                    // {
+                    //     material->setBaseColorFactor(baseColor);
+                    // }
 
                     if (auto tex = material->getBaseColorTexture())
                     {

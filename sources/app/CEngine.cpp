@@ -122,7 +122,7 @@ void CEngine::initialize()
     spdlog::debug("Engine.initialize()");
 
     initializeVideo();
-
+    initializeImGui();
     initializeInput();
 
     // Resource manager
@@ -180,6 +180,15 @@ void CEngine::initializeVideo()
     glEnable(GL_MULTISAMPLE);
 }
 
+void CEngine::initializeImGui()
+{
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+
+    ImGui_ImplSDL2_InitForOpenGL(SDL_GetWindowFromID(mMainWindow->getId()), nullptr);
+    ImGui_ImplOpenGL3_Init();
+}
+
 void CEngine::initializeInput()
 {
     spdlog::debug(" - input");
@@ -191,6 +200,7 @@ void CEngine::initializeInput()
 
 void CEngine::run()
 {
+
     spdlog::set_level(spdlog::level::debug);
 
     spdlog::info("Engine.run()");
@@ -223,11 +233,10 @@ void CEngine::prepare()
     constexpr auto nbEntities = std::size_t(10000);
     mEntityManager.reserve(nbEntities);
 
-    ImGui_ImplSDL2_InitForOpenGL(SDL_GetWindowFromID(mMainWindow->getId()), nullptr);
-
-    ImGuiStyle& style = ImGui::GetStyle();
-    style.WindowRounding = 0;
-    style.Colors[ImGuiCol_WindowBg] = ImVec4(0.00f, 0.00f, 0.00f, 0.30f);
+    ImGui::StyleColorsDark();
+    // ImGuiStyle& style = ImGui::GetStyle();
+    // style.WindowRounding = 0;
+    // style.Colors[ImGuiCol_WindowBg] = ImVec4(0.00f, 0.00f, 0.00f, 0.30f);
 
     m2dRenderSystem.reset(new C2DRenderSystem(mEntityManager));
     m3dRenderSystem.reset(new C3DRenderSystem(mEntityManager, *mResourceManager));
@@ -432,7 +441,7 @@ void CEngine::onSwapBuffers()
 
 void CEngine::finalize()
 {
-    ImGui_ImplSDL2_Shutdown();
+    imgui::shutdown();
 }
 
 void CEngine::onEvent()
@@ -487,10 +496,10 @@ void CEngine::onDraw()
     const glm::mat4 projection = m_camera->get_projection();
 
     m3dRenderSystem->prepare(m_camera.get());
-
     m3dRenderSystem->render(view, projection);
 
-    ImGui_ImplSDL2_NewFrame(SDL_GetWindowFromID(mMainWindow->getId()));
+    imgui::new_frame();
     m2dRenderSystem->render(view, projection);
     ImGui::Render();
+    imgui::draw();
 }

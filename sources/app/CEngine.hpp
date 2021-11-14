@@ -34,6 +34,7 @@ public:
 private:
     void initialize();
     void initializeVideo();
+    void initializeImGui(); // should be after initialize video
     void initializeInput();
 
     void prepare();
