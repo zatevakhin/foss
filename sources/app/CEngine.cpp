@@ -161,7 +161,7 @@ void CEngine::initializeVideo()
 
     mMainWindow->setSize(mSettings.mWindowSize);
     mMainWindow->setTitle("wtf.e");
-    mMainWindow->setFlags(SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN);
+    mMainWindow->setFlags(SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN | SDL_WINDOW_ALLOW_HIGHDPI);
 
     std::map<SDL_GLattr, int> attributes = {
         {SDL_GL_CONTEXT_MAJOR_VERSION, 4},

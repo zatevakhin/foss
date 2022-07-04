@@ -19,8 +19,7 @@ std::tuple<std::shared_ptr<SDL_Surface>, bool> get_image(const std::filesystem::
 } // namespace
 
 template <>
-void CTextureManager::getTexture(const std::filesystem::path path,
-                                 std::shared_ptr<CTexture2D> texture)
+void CTextureManager::getTexture(const std::filesystem::path path, std::shared_ptr<CTexture2D> texture)
 {
     const auto [surface, is_alpha] = get_image(path);
     const auto size = glm::ivec2(surface->w, surface->h);
@@ -38,8 +37,7 @@ void CTextureManager::getTexture(const std::filesystem::path path,
 
     gl::tex_parameteri(params);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, format, size.x, size.y, 0, format, GL_UNSIGNED_BYTE,
-                 surface->pixels);
+    glTexImage2D(GL_TEXTURE_2D, 0, format, size.x, size.y, 0, format, GL_UNSIGNED_BYTE, surface->pixels);
 
     glGenerateMipmap(GL_TEXTURE_2D);
 
@@ -47,8 +45,7 @@ void CTextureManager::getTexture(const std::filesystem::path path,
 }
 
 template <>
-void CTextureManager::getTexture(const std::filesystem::path path,
-                                 std::shared_ptr<CTextureCubeMap> texture)
+void CTextureManager::getTexture(const std::filesystem::path path, std::shared_ptr<CTextureCubeMap> texture)
 {
     texture->bind();
 
@@ -74,8 +71,8 @@ void CTextureManager::getTexture(const std::filesystem::path path,
         const auto [surface, is_alpha] = get_image(file);
         const GLenum format = is_alpha ? GL_RGBA : GL_RGB;
 
-        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GLint(format), surface->w, surface->h,
-                     0, format, GL_UNSIGNED_BYTE, surface->pixels);
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GLint(format), surface->w, surface->h, 0, format,
+                     GL_UNSIGNED_BYTE, surface->pixels);
     }
 
     texture->unbind();

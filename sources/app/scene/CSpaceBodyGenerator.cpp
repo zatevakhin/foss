@@ -10,6 +10,42 @@
 #include "app/scene/Model.hpp"
 #include "app/textures/CTexture2D.hpp"
 
+namespace
+{
+
+void tex(ITexture* texture, Noise& noise, TNoiseSettings& cfg, const size_t size, const glm::vec3 color)
+{
+    texture->bind();
+    // set texture wrap parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    // set texture filter parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    std::vector<glm::tvec3<unsigned char>> data;
+    data.resize(size * size);
+
+    for (int y = 0; y < size; ++y)
+    {
+        for (int x = 0; x < size; ++x)
+        {
+            int i = x + y * size;
+            auto f = (noise.evaluate(glm::vec3((float)x, (float)y, 0.f) * cfg.roughness + cfg.center) * cfg.strength);
+            auto c = (color * 255.0f) + f;
+            data[i] = glm::tvec3<unsigned char>(c);
+        }
+    }
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, size, size, 0, GL_RGB, GL_UNSIGNED_BYTE, &data[0]);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    texture->unbind();
+}
+
+} // namespace
+
+
 CSpaceBodyGenerator::CSpaceBodyGenerator(IProceduralSettings& settings)
     : mSettings(static_cast<TSpaceBodySettings&>(settings))
     , mMeshes()
@@ -48,8 +84,9 @@ void CSpaceBodyGenerator::generate2(std::function<glm::vec3(glm::vec3)> shapeFil
     auto roughness = std::make_shared<CTexture2D>();
     auto ao = std::make_shared<CTexture2D>();
 
-    CTextureManager::setTexture(albedo.get(), 128, glm::vec3(0.1f, 0.1f, 0.1f));
-    CTextureManager::setTexture(normal.get(), 128, glm::vec3(0.5f, 0.5f, 1.f));
+    // CTextureManager::setTexture(albedo.get(), 128, glm::vec3(0.1f, 0.1f, 0.1f));
+    tex(albedo.get(), mNoise, mSettings.mNoiseSettings3, 128, glm::vec3(0.1f, 0.1f, 0.1f));
+    tex(normal.get(), mNoise, mSettings.mNoiseSettings2, 128, glm::vec3(0.5f, 0.5f, 1.f));
     CTextureManager::setTexture(metallic.get(), 128, glm::vec3(0.f, 1.f, 1.f));
     CTextureManager::setTexture(roughness.get(), 128, glm::vec3(0.f, 1.f, 1.f));
     CTextureManager::setTexture(ao.get(), 128, glm::vec3(1.f, 1.f, 1.f));
@@ -108,12 +145,22 @@ void CSpaceBodyGenerator::generate()
 {
     std::function<glm::vec3(glm::vec3)> filter = [this](glm::vec3 point) -> glm::vec3 {
         auto& settings = mSettings.mNoiseSettings;
+        auto& settings2 = mSettings.mNoiseSettings2;
+        auto& settings3 = mSettings.mNoiseSettings3;
 
         auto noiseValue = mNoise.evaluate(point * settings.roughness + settings.center);
         noiseValue = (noiseValue + 1.f) * 0.5f;
         noiseValue = noiseValue * settings.strength;
 
-        return point * glm::vec3(mSettings.mRadius) * (1 + noiseValue);
+        auto noiseValue2 = mNoise.evaluate(point * settings2.roughness + settings2.center);
+        noiseValue2 = (noiseValue2 + 1.f) * 0.5f;
+        noiseValue2 = noiseValue2 * settings2.strength;
+
+        auto noiseValue3 = mNoise.evaluate(point * settings3.roughness + settings3.center);
+        noiseValue3 = (noiseValue3 + 1.f) * 0.5f;
+        noiseValue3 = noiseValue3 * settings2.strength;
+
+        return point * glm::vec3(mSettings.mRadius) * (1 + noiseValue + noiseValue2 + noiseValue3);
     };
 
     generate2(filter);

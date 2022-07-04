@@ -28,6 +28,8 @@ public:
     int mResolution;
 
     TNoiseSettings mNoiseSettings;
+    TNoiseSettings mNoiseSettings2;
+    TNoiseSettings mNoiseSettings3;
 };
 
 

@@ -228,7 +228,7 @@ void CEntityManagerWindow::draw()
             auto light = component.getLight();
 
             ImGui::InputFloat3("Position", &light->mPosition[0]);
-            // ImGui::ColorEdit3("Color", &light->mColor[0], ImGuiColorEditFlags_Float);
+            ImGui::ColorEdit3("Color", &light->mColor[0], ImGuiColorEditFlags_Float);
             ImGui::SliderFloat("Strength", &light->mStrength, 0.0f, 65536.0f, "%.4f", 1.f);
         }
     }
@@ -259,6 +259,26 @@ void CEntityManagerWindow::draw()
 
                 updated |= ImGui::SliderFloat("Strength", &noise.strength, 0.0f, 1.0f, "%.4f");
                 updated |= ImGui::SliderFloat("Roughness", &noise.roughness, 0.0f, 5.0f, "%.4f");
+                updated |= ImGui::SliderFloat3("Noise center", &noise.center[0], 0.0f, 5.0f, "%.4f", 1.f);
+            }
+
+            auto title2 = fmt::format("Noise Settings 2 ({})", static_cast<size_t>(entity));
+            if (ImGui::CollapsingHeader(title2.c_str()))
+            {
+                auto& noise = settings.mNoiseSettings2;
+
+                updated |= ImGui::SliderFloat("Strength", &noise.strength, 0.0f, 1.0f, "%.4f");
+                updated |= ImGui::SliderFloat("Roughness", &noise.roughness, 0.0f, 1.0f, "%.4f");
+                updated |= ImGui::SliderFloat3("Noise center", &noise.center[0], 0.0f, 5.0f, "%.4f", 1.f);
+            }
+
+            auto title3 = fmt::format("Noise Settings 3 ({})", static_cast<size_t>(entity));
+            if (ImGui::CollapsingHeader(title3.c_str()))
+            {
+                auto& noise = settings.mNoiseSettings3;
+
+                updated |= ImGui::SliderFloat("Strength", &noise.strength, 0.0f, 100.0f, "%.4f");
+                updated |= ImGui::SliderFloat("Roughness", &noise.roughness, 0.0f, 1.0f, "%.4f");
                 updated |= ImGui::SliderFloat3("Noise center", &noise.center[0], 0.0f, 5.0f, "%.4f", 1.f);
             }
 
@@ -321,11 +341,11 @@ void CEntityManagerWindow::draw()
                         material->setEmissiveFactor(emissive);
                     }
 
-                    // auto baseColor = material->getBaseColorFactor();
-                    // if (ImGui::ColorEdit4("Base color", &(baseColor[0]), ImGuiColorEditFlags_Float))
-                    // {
-                    //     material->setBaseColorFactor(baseColor);
-                    // }
+                    auto baseColor = material->getBaseColorFactor();
+                    if (ImGui::ColorEdit4("Base color", &(baseColor[0]), ImGuiColorEditFlags_Float))
+                    {
+                        material->setBaseColorFactor(baseColor);
+                    }
 
                     if (auto tex = material->getBaseColorTexture())
                     {
@@ -334,7 +354,7 @@ void CEntityManagerWindow::draw()
 
                     if (auto tex = material->getNormalTexture())
                     {
-                        ImGui::Image(reinterpret_cast<void*>(tex->id()), {64, 64}, ImVec2(0, 1), ImVec2(1, 0));
+                        ImGui::Image(reinterpret_cast<void*>(tex->id()), {256, 256}, ImVec2(0, 1), ImVec2(1, 0));
                     }
 
                     if (auto tex = material->getMetallicTexture())

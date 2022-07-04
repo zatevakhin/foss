@@ -30,8 +30,9 @@ target_link_libraries(foss.app
         imgui::imgui
         imguizmo::imguizmo
 
-        X11 Xrandr Xi Xxf86vm Xext GL
-        SDL2::SDL2 SDL2::SDL2main SDL2::SDL2-static SDL2::SDL2_image
+        GL SDL2 SDL2_image
+        # X11 Xrandr Xi Xxf86vm Xext GL
+        # SDL2::SDL2 SDL2::SDL2main SDL2::SDL2-static SDL2::SDL2_image
         fmt::fmt
         spdlog::spdlog spdlog::spdlog_header_only
     )
